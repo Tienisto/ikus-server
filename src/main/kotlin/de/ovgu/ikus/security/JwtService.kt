@@ -1,7 +1,7 @@
 package de.ovgu.ikus.security
 
 import de.ovgu.ikus.model.User
-import de.ovgu.ikus.model.UserRepo
+import de.ovgu.ikus.repository.UserRepo
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.util.*
 
-@Component
+@Service
 class JwtService (
         private val userRepo: UserRepo,
 
