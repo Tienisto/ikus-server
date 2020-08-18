@@ -1,3 +1,7 @@
+# vue
+/src/main/vue/node_modules/
+/src/main/vue/dist/
+
 HELP.md
 .gradle
 build/

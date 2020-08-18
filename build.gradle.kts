@@ -56,3 +56,12 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "1.8"
 	}
 }
+
+task<Copy>("updateVue") {
+	from("src/main/vue/dist", "src/main/vue/dist/index.html")
+	into("$buildDir/resources/main/static")
+}
+
+tasks.withType<ProcessResources> {
+	dependsOn("updateVue")
+}
