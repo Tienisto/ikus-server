@@ -25,9 +25,11 @@ CREATE TABLE post (
 CREATE TABLE post_file (
     id SERIAL PRIMARY KEY,
     post_id INT NOT NULL REFERENCES post(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
+    file_name TEXT NOT NULL,
     mime TEXT NOT NULL,
-    size BIGINT NOT NULL
+    size BIGINT NOT NULL,
+    description TEXT NOT NULL,
+    description_de TEXT NOT NULL
 );
 
 CREATE TABLE event (
