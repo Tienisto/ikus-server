@@ -1,6 +1,7 @@
 package de.ovgu.ikus.security
 
 import de.ovgu.ikus.model.User
+import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.repository.UserRepo
 import io.jsonwebtoken.Jwts
@@ -13,9 +14,12 @@ import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.util.*
 
+data class AuthContext(val user: User, val isAdmin: Boolean)
+
 @Service
 class JwtService (
-        private val env: JwtProperties,
+        private val propsAdmin: AdminProperties,
+        private val propsJwt: JwtProperties,
         private val userRepo: UserRepo
 ) {
 
@@ -24,7 +28,7 @@ class JwtService (
 
     fun createToken(user: User): String {
         val now = Date()
-        val validity = Date(now.time + env.timeout)
+        val validity = Date(now.time + propsJwt.timeout)
 
         return Jwts.builder()
                 .claim("userID", user.id)
@@ -36,7 +40,8 @@ class JwtService (
 
     suspend fun getAuthentication(token: String): Authentication? {
         val user = getUser(token) ?: return null
-        return UsernamePasswordAuthenticationToken(user, "", listOf(SimpleGrantedAuthority("not important")))
+        val context = AuthContext(user, user.name == propsAdmin.name)
+        return UsernamePasswordAuthenticationToken(context, "", listOf(SimpleGrantedAuthority("not important")))
     }
 
     suspend fun getUser(token: String) : User? {
@@ -51,5 +56,9 @@ class JwtService (
 }
 
 fun Authentication.toUser(): User {
-    return this.principal as User
+    return (this.principal as AuthContext).user
+}
+
+fun Authentication.isAdmin(): Boolean {
+    return (this.principal as AuthContext).isAdmin
 }
