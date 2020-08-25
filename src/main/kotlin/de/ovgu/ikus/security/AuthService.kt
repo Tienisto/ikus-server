@@ -1,16 +1,22 @@
 package de.ovgu.ikus.security
 
-import de.ovgu.ikus.model.User
 import de.ovgu.ikus.repository.UserRepo
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService (
+        private val hashService: HashService,
+        private val jwtService: JwtService,
         private val userRepo: UserRepo
 ) {
 
     suspend fun login(name: String, password: String): String? {
-        userRepo.save(User(0, "Max", "Mustermann"))
-        return ""
+
+        val user = userRepo.findByName(name) ?: return null
+
+        if (!hashService.check(password, user.password))
+            return null
+
+        return jwtService.createToken(user)
     }
 }

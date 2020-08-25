@@ -4,7 +4,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ConfigurationProperties(prefix = "security")
-class SecurityProperties (val jwt: JwtProperties) {
-    var bcryptStrength: Int = 0
+@ConfigurationProperties(prefix = "admin")
+class AdminProperties {
+    val name: String = "admin" // hardcoded admin user name
+    var password: String = ""
 }
