@@ -1,11 +1,11 @@
 package de.ovgu.ikus.security
 
 import de.ovgu.ikus.model.User
+import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.repository.UserRepo
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -15,10 +15,8 @@ import java.util.*
 
 @Service
 class JwtService (
-        private val userRepo: UserRepo,
-
-        @Value("\${security.jwt.timeout}")
-        private var validityInMilliseconds: Long
+        private val env: JwtProperties,
+        private val userRepo: UserRepo
 ) {
 
     private val jwtKey = Keys.secretKeyFor(SignatureAlgorithm.HS256)
@@ -26,7 +24,7 @@ class JwtService (
 
     fun createToken(user: User): String {
         val now = Date()
-        val validity = Date(now.time + validityInMilliseconds)
+        val validity = Date(now.time + env.timeout)
 
         return Jwts.builder()
                 .claim("userID", user.id)
