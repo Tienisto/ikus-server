@@ -4,15 +4,16 @@ import de.ovgu.ikus.model.User
 import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.repository.UserRepo
+import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.security.Keys
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.util.*
+import javax.annotation.PostConstruct
+import javax.crypto.spec.SecretKeySpec
 
 data class AuthContext(val user: User, val isAdmin: Boolean)
 
@@ -23,8 +24,15 @@ class JwtService (
         private val userRepo: UserRepo
 ) {
 
-    private val jwtKey = Keys.secretKeyFor(SignatureAlgorithm.HS256)
-    private val jwtParser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
+    private lateinit var jwtKey: SecretKeySpec
+    private lateinit var jwtParser: JwtParser
+
+    @PostConstruct
+    protected fun init() {
+        val jwtKeyBytes = propsJwt.key.toByteArray()
+        jwtKey = SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.size, "HmacSHA256")
+        jwtParser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
+    }
 
     fun createToken(user: User): String {
         val now = Date()
