@@ -10,6 +10,10 @@ class AuthService (
         private val userRepo: UserRepo
 ) {
 
+    /**
+     * checks if the login credentials are correct
+     * @return jwt token if correct, null otherwise
+     */
     suspend fun login(name: String, password: String): String? {
 
         val user = userRepo.findByName(name) ?: return null

@@ -1,4 +1,4 @@
-package de.ovgu.ikus
+package de.ovgu.ikus.config
 
 import de.ovgu.ikus.model.User
 import de.ovgu.ikus.properties.AdminProperties
