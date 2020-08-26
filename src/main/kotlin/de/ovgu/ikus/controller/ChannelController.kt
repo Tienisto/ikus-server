@@ -28,7 +28,7 @@ class ChannelController (
         channelService.save(Channel(type = type, name = request.name.en.trim(), nameDe = request.name.de.trim()))
     }
 
-    @PostMapping
+    @PutMapping
     suspend fun renameChannel(authentication: Authentication, @RequestParam type: ChannelType, @RequestBody request: Request.RenameChannel) {
         val channel = channelService.findById(request.id) ?: throw ErrorCode(404, "Channel not found")
         channel.name = request.name.en.trim()
