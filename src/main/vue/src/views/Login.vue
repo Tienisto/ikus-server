@@ -6,7 +6,7 @@
       <p class="white--text text-h5">Administration</p>
       <v-card class="mt-10">
         <v-card-text>
-          <v-text-field v-model="name" @keydown.enter="login" prepend-icon="mdi-account" type="text" placeholder="Passwort" :disabled="fetching" />
+          <v-text-field v-model="name" @keydown.enter="login" prepend-icon="mdi-account" type="text" placeholder="Name" :disabled="fetching" />
           <v-text-field v-model="password" @keydown.enter="login" prepend-icon="mdi-key" type="password" placeholder="Passwort" :disabled="fetching" />
         </v-card-text>
         <v-card-actions>
