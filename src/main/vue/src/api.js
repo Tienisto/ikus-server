@@ -9,7 +9,7 @@ export const CHANNEL_TYPE = {
     FAQ: 'FAQ'
 };
 
-async function makeRequest({ method, route, body, params, no401Callback }) {
+async function makeRequest({ method, route, body, params, no401Callback, noException }) {
     const url = new URL(API_URL+'/'+route, document.location);
     url.search = new URLSearchParams(params).toString();
 
@@ -26,7 +26,7 @@ async function makeRequest({ method, route, body, params, no401Callback }) {
         return {};
     }
 
-    if(response.status >= 400) {
+    if(!noException && response.status >= 400) {
         throw response.status;
     }
 
@@ -79,7 +79,8 @@ export async function logout() {
     await makeRequest({
         route: 'logout',
         method: 'POST',
-        no401Callback: true
+        no401Callback: true,
+        noException: true
     });
 }
 
