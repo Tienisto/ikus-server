@@ -1,9 +1,9 @@
 <template>
   <nav>
-    <v-app-bar v-if="loggedIn" class="hidden-lg-and-up light-blue darken-4" dark>
+    <v-app-bar v-if="loggedIn" class="hidden-lg-and-up primary" dark>
       <v-app-bar-nav-icon @click="drawerVisible = true"/>
       <v-toolbar-title>
-        IKUS - App
+        App - Administration
       </v-toolbar-title>
     </v-app-bar>
     <v-navigation-drawer v-if="loggedIn" v-model="drawerVisible" class="primary" dark app>
