@@ -16,7 +16,7 @@
 
       <v-list shaped dense>
         <v-divider/>
-        <v-subheader class="ml-3 mt-1">Inhalt</v-subheader>
+        <v-subheader class="ml-2 mt-1">Inhalt</v-subheader>
 
         <v-list-item v-for="p in contentPages" :key="p.route" link :to="p.route">
           <v-list-item-icon>
@@ -30,7 +30,7 @@
 
         <v-divider/>
 
-        <v-subheader class="ml-3 mt-1">Analysis</v-subheader>
+        <v-subheader class="ml-2 mt-1">Analysis</v-subheader>
 
         <v-list-item v-for="p in analysisPages" :key="p.route" link :to="p.route">
           <v-list-item-icon>
