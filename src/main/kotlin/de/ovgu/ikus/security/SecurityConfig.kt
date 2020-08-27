@@ -1,10 +1,12 @@
 package de.ovgu.ikus.security
 
 import org.springframework.context.annotation.Bean
+import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.web.reactive.config.WebFluxConfigurer
+import reactor.core.publisher.Mono
 
 
 @EnableWebFluxSecurity
@@ -22,6 +24,11 @@ class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : We
                 .pathMatchers("/**").permitAll()
                 .and()
                 .securityContextRepository(securityContextRepo)
+                .exceptionHandling().authenticationEntryPoint { exchange, _ ->
+                    exchange.response.statusCode = HttpStatus.UNAUTHORIZED
+                    Mono.empty()
+                }
+                .and()
                 .build()
     }
 }

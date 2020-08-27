@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navigation :logged-in="true" @update-login="updateLogin" />
+    <Navigation :logged-in="!!user" @update-login="updateLogin" />
     <v-main>
       <router-view @update-login="updateLogin" />
     </v-main>
@@ -9,25 +9,26 @@
 
 <script>
 import Navigation from "@/components/Navigation";
-import {isLoggedIn} from "@/api";
+import {getUserInfo, initAccountInfo} from "@/api";
 
 export default {
   name: 'App',
   components: { Navigation },
   data: () => ({
     user: null,
-    admin: false
   }),
   methods: {
     updateLogin: function() {
-      this.loggedIn = isLoggedIn();
+      this.user = getUserInfo();
     }
   },
+  mounted: async function() {
+    await initAccountInfo();
+    this.user = getUserInfo();
+    if (this.$router.currentRoute.path === '/' && this.user) {
+      // redirect to dashboard if already logged in
+      await this.$router.push('/dashboard').catch(() => {});
+    }
+  }
 };
 </script>
-
-<style>
-  .primary-color {
-    background-color: #7a003f;
-  }
-</style>

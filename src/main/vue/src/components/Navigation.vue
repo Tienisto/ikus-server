@@ -65,6 +65,8 @@
 
 <script>
 
+import {logout} from "@/api";
+
 export default {
   name: 'Navigation',
   props: ['loggedIn'],
@@ -127,7 +129,7 @@ export default {
   }),
   methods: {
     logout: async function () {
-      //logout();
+      await logout();
       await this.$emit('update-login');
       await this.$router.push('/');
     }

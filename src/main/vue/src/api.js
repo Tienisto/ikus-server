@@ -1,6 +1,6 @@
 const API_URL = "/api";
 
-let loggedIn = false;
+let me = null;
 let handle401 = null;
 
 export const CHANNEL_TYPE = {
@@ -9,7 +9,7 @@ export const CHANNEL_TYPE = {
     FAQ: 'FAQ'
 };
 
-async function makeRequest({ method, route, body, params }) {
+async function makeRequest({ method, route, body, params, no401Callback }) {
     const url = new URL(API_URL+'/'+route, document.location);
     url.search = new URLSearchParams(params).toString();
 
@@ -20,8 +20,8 @@ async function makeRequest({ method, route, body, params }) {
 
     });
 
-    if(response.status === 401) {
-        logout();
+    if(!no401Callback && response.status === 401) {
+        me = null;
         await handle401();
         return {};
     }
@@ -41,8 +41,22 @@ export function initAPI({ handle401: h401 }) {
     console.log("API initialized.");
 }
 
-export function isLoggedIn() {
-    return loggedIn;
+export function getUserInfo() {
+    return me;
+}
+
+export async function initAccountInfo() {
+    const response = await makeRequest({
+        route: "me",
+        method: "GET"
+    });
+
+    if (response.status === 200) {
+        me = response.data;
+        console.log("Already logged in.");
+    } else {
+        console.log("Not logged in.");
+    }
 }
 
 export async function login({ name, password }) {
@@ -53,15 +67,20 @@ export async function login({ name, password }) {
     });
 
     if(response.status === 200) {
-        loggedIn = true;
+        me = response.data;
         console.log('saved jwt');
     }
 
     return response;
 }
 
-export function logout() {
-    loggedIn = false;
+export async function logout() {
+    me = null;
+    await makeRequest({
+        route: 'logout',
+        method: 'POST',
+        no401Callback: true
+    });
 }
 
 export async function getChannels({ type }) {
