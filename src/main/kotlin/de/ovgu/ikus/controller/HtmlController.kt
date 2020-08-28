@@ -1,17 +1,43 @@
 package de.ovgu.ikus.controller
 
+import de.ovgu.ikus.security.JwtService
 import org.springframework.core.io.ClassPathResource
-import org.springframework.core.io.Resource
+import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import java.net.URI
 
 @Controller
-class HtmlController {
+class HtmlController (
+        private val jwtService: JwtService
+) {
 
-    @GetMapping("/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics", "/logs")
+    @GetMapping("/", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics", "/logs")
     @ResponseBody
-    fun routes(): Resource {
+    suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
+
+        val token = request.cookies["jwt"]?.firstOrNull()?.value
+        val user = jwtService.getUser(token)
+
+        when {
+            user != null && request.path.pathWithinApplication().value() == "/" -> {
+                // redirect to dashboard if already logged in
+                response.statusCode = HttpStatus.TEMPORARY_REDIRECT
+                response.headers.location = URI.create("/dashboard")
+                return null
+            }
+
+            user == null && request.path.pathWithinApplication().value() != "/" -> {
+                // redirect to login if not logged in
+                response.statusCode = HttpStatus.TEMPORARY_REDIRECT
+                response.headers.location = URI.create("/")
+                return null
+            }
+        }
+
         return ClassPathResource("static/index.html")
     }
 }

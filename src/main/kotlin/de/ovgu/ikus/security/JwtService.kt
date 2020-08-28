@@ -52,7 +52,11 @@ class JwtService (
         return UsernamePasswordAuthenticationToken(context, "", listOf(SimpleGrantedAuthority("not important")))
     }
 
-    suspend fun getUser(token: String) : User? {
+    suspend fun getUser(token: String?) : User? {
+
+        if (token == null)
+            return null
+
         val userID: Int
         try {
             userID = jwtParser.parseClaimsJws(token).body["userID"] as Int

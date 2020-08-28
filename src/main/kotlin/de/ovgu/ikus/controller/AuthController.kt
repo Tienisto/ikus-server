@@ -34,14 +34,14 @@ class AuthController (
         val admin = user.name == propsAdmin.name
 
         return ResponseEntity.ok()
-                .header("Set-Cookie", "jwt=$token")
+                .header("Set-Cookie", "jwt=$token; Path=/")
                 .body(MeDto(user.name, admin))
     }
 
     @PostMapping("/logout")
     suspend fun logout(): ResponseEntity<Any> {
         return ResponseEntity.ok()
-                .header("Set-Cookie", "jwt=an invalid jwt")
+                .header("Set-Cookie", "jwt=an invalid jwt; Path=/")
                 .build()
     }
 }
