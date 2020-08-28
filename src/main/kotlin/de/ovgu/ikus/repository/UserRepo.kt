@@ -6,4 +6,6 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 interface UserRepo : CoroutineCrudRepository<User, Int> {
 
     suspend fun findByName(name: String): User?
+
+    suspend fun existsByName(name: String): Boolean
 }
