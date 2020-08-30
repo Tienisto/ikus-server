@@ -15,32 +15,49 @@
       </v-container>
 
       <v-list shaped dense>
-        <v-divider/>
-        <v-subheader class="ml-2 mt-1">Inhalt</v-subheader>
 
-        <v-list-item v-for="p in contentPages" :key="p.route" link :to="p.route">
-          <v-list-item-icon>
-            <v-icon>{{ p.icon }}</v-icon>
-          </v-list-item-icon>
+        <template v-if="!admin">
+          <v-divider/>
+          <v-subheader class="ml-2 mt-1">Inhalt</v-subheader>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ p.label }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <v-list-item v-for="p in contentPages" :key="p.route" link :to="p.route">
+            <v-list-item-icon>
+              <v-icon>{{ p.icon }}</v-icon>
+            </v-list-item-icon>
 
-        <v-divider/>
+            <v-list-item-content>
+              <v-list-item-title>{{ p.label }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
-        <v-subheader class="ml-2 mt-1">Analysis</v-subheader>
+          <v-divider/>
 
-        <v-list-item v-for="p in analysisPages" :key="p.route" link :to="p.route">
-          <v-list-item-icon>
-            <v-icon>{{ p.icon }}</v-icon>
-          </v-list-item-icon>
+          <v-subheader class="ml-2 mt-1">Analysis</v-subheader>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ p.label }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <v-list-item v-for="p in analysisPages" :key="p.route" link :to="p.route">
+            <v-list-item-icon>
+              <v-icon>{{ p.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ p.label }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+
+        <template v-if="admin">
+          <v-divider/>
+
+          <v-list-item v-for="p in adminPages" :key="'a-'+p.route" link :to="p.route">
+            <v-list-item-icon>
+              <v-icon>{{ p.icon }}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ p.label }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
 
         <v-divider/>
 
@@ -69,7 +86,7 @@ import {logout} from "@/api";
 
 export default {
   name: 'Navigation',
-  props: ['loggedIn'],
+  props: ['loggedIn', 'admin'],
   data: () => ({
     drawerVisible: false,
     contentPages: [
@@ -119,6 +136,18 @@ export default {
         route: '/statistics',
         label: 'Statistiken',
         icon: 'mdi-finance'
+      },
+      {
+        route: '/logs',
+        label: 'Logs',
+        icon: 'mdi-text-subject'
+      }
+    ],
+    adminPages: [
+      {
+        route: '/users',
+        label: 'Moderatoren',
+        icon: 'mdi-account-multiple'
       },
       {
         route: '/logs',

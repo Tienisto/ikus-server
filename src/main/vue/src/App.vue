@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navigation :logged-in="!!user" @update-login="updateLogin" />
+    <Navigation :logged-in="!!user" :admin="user && user.admin" @update-login="updateLogin" />
     <v-main>
       <router-view @update-login="updateLogin" />
     </v-main>
