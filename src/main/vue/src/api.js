@@ -84,6 +84,46 @@ export async function logout() {
     });
 }
 
+// admin
+export async function getUsers() {
+    return await makeRequest({
+        route: 'users',
+        method: 'GET'
+    });
+}
+
+export async function addUser({ name, password }) {
+    return await makeRequest({
+        route: 'users',
+        method: 'POST',
+        body: { name, password }
+    });
+}
+
+export async function updateUserName({ id, name }) {
+    return await makeRequest({
+        route: 'users/name',
+        method: 'PUT',
+        body: { id, name }
+    });
+}
+
+export async function updateUserPassword({ id, password }) {
+    return await makeRequest({
+        route: 'users/password',
+        method: 'PUT',
+        body: { id, password }
+    });
+}
+
+export async function deleteUser({ id }) {
+    return await makeRequest({
+        route: 'users',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
 export async function getChannels({ type }) {
     return await makeRequest({
         route: 'channels',

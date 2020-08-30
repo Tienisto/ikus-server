@@ -18,29 +18,19 @@
         </v-card-actions>
       </v-card>
     </div>
-
-    <v-snackbar v-model="showError" :bottom="true" :right="true">
-      Login fehlgeschlagen
-
-      <template v-slot:action="{}">
-        <v-btn text @click="showError = false">
-          Schließen
-        </v-btn>
-      </template>
-    </v-snackbar>
   </div>
 </template>
 
 <script>
-import { login } from '@/api'
+import {getUserInfo, login} from '@/api'
+import {showSnackbar} from "@/utils";
 
 export default {
   name: 'Login',
   data: () => ({
     fetching: false,
     name: null,
-    password: null,
-    showError: false
+    password: null
   }),
   methods: {
     login: async function() {
@@ -48,9 +38,14 @@ export default {
       try {
         await login({ name: this.name, password: this.password });
         await this.$emit('update-login');
-        await this.$router.push('/dashboard');
+
+        const user = getUserInfo();
+        if (user.admin)
+          await this.$router.push('/users');
+        else
+          await this.$router.push('/dashboard');
       } catch(status) {
-        this.showError = true;
+        showSnackbar('Login fehlgeschlagen');
       } finally {
         this.fetching = false;
       }

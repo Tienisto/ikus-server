@@ -19,7 +19,7 @@ class UserController (
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        return userService.findAll().map { user -> UserDto(user.id, user.name) }
+        return userService.findAllOrdered().map { user -> UserDto(user.id, user.name) }
     }
 
     @PostMapping
@@ -30,12 +30,20 @@ class UserController (
         userService.addUser(request.name, request.password)
     }
 
-    @PutMapping
-    suspend fun updateUser(authentication: Authentication, @RequestBody request: Request.UpdateUser) {
+    @PutMapping("/name")
+    suspend fun updateName(authentication: Authentication, @RequestBody request: Request.UpdateName) {
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        userService.updateUser(request.id, request.name, request.password)
+        userService.updateName(request.id, request.name)
+    }
+
+    @PutMapping("/password")
+    suspend fun updatePassword(authentication: Authentication, @RequestBody request: Request.UpdatePassword) {
+        if (!authentication.isAdmin())
+            throw ErrorCode(403, "Admin only")
+
+        userService.updatePassword(request.id, request.password)
     }
 
     @DeleteMapping
