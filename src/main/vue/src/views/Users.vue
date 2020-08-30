@@ -2,7 +2,7 @@
   <MainContainer title="Moderatoren" icon="mdi-account-multiple">
 
     <template v-slot:meta>
-      <p class="text-h6">{{ users.length }} Moderatoren</p>
+      <p class="text-h6">{{ users.length }} {{ users.length === 1 ? 'Moderator' : 'Moderatoren' }}</p>
 
       <v-btn
           color="primary"
