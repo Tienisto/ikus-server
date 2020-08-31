@@ -79,7 +79,7 @@ CREATE TABLE contact (
 
 CREATE TABLE log (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES ikus_user(id) ON DELETE SET NULL,
+    user_id INT REFERENCES ikus_user(id) ON DELETE SET NULL,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
     type TEXT NOT NULL,
     info TEXT NOT NULL
