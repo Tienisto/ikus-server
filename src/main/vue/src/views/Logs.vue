@@ -23,7 +23,7 @@
       <tbody>
         <tr v-for="(l, index) in logs" :key="'log-'+index">
           <td>{{ typeString(l.type) }}</td>
-          <td>{{ l.user ? l.user.name : 'gelöscht' }}</td>
+          <td>{{ l.user ? l.user.name : '-' }}</td>
           <td>{{ l.info }}</td>
           <td>{{ timestamp(l.timestamp) }}</td>
         </tr>
