@@ -5,7 +5,7 @@
       <p class="text-h6">Limit</p>
 
       <v-btn
-          :color="limit === l ? 'primary' : 'grey'" class="ml-1 mr-1" dark
+          :color="limit === l ? 'primary' : 'white'" class="ml-1 mr-1"
           @click="updateLimit(l)" v-for="l in limits" :key="'limit-'+l">
         {{ l }}
       </v-btn>
