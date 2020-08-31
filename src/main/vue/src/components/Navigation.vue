@@ -61,19 +61,15 @@
 
         <v-divider/>
 
-        <v-list-item link class="mt-4 white" @click="logout" light>
+        <v-list-item link class="mt-4 white" @click="logout" light :disabled="loggingOut">
           <v-list-item-icon>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>Abmelden</v-list-item-title>
+            <v-list-item-title>{{ loggingOut ? 'Wird abgemeldet...' : 'Abmelden' }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-      </v-list>
-
-      <v-list shaped class="mt-4">
-
       </v-list>
 
     </v-navigation-drawer>
@@ -88,6 +84,7 @@ export default {
   name: 'Navigation',
   props: ['loggedIn', 'admin'],
   data: () => ({
+    loggingOut: false,
     drawerVisible: false,
     contentPages: [
       {
@@ -158,7 +155,9 @@ export default {
   }),
   methods: {
     logout: async function () {
+      this.loggingOut = true;
       await logout();
+      this.loggingOut = false;
       await this.$emit('update-login');
       await this.$router.push('/');
     }

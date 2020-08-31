@@ -53,13 +53,13 @@
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="name" label="Name" prepend-icon="mdi-account"></v-text-field>
+              <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password"></v-text-field>
+              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password"></v-text-field>
+              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -68,10 +68,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="addUser" color="primary">
+          <v-btn @click="addUser" color="primary" :loading="loading">
             <v-icon left>mdi-account-plus</v-icon>
             Erstellen
           </v-btn>
@@ -86,17 +86,17 @@
         </v-card-title>
 
         <v-card-text>
-          <v-text-field v-model="name" label="Name" prepend-icon="mdi-account"></v-text-field>
+          <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="updateName" color="primary">
+          <v-btn @click="updateName" color="primary" :loading="loading">
             <v-icon left>mdi-account-edit</v-icon>
             Umbenennen
           </v-btn>
@@ -113,10 +113,10 @@
         <v-card-text>
           <v-row>
             <v-col cols="6">
-              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password"></v-text-field>
+              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password"></v-text-field>
+              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -125,10 +125,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="updatePassword" color="primary">
+          <v-btn @click="updatePassword" color="primary" :loading="loading">
             <v-icon left>mdi-content-save</v-icon>
             Speichern
           </v-btn>
@@ -152,10 +152,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="deleteUser" color="primary">
+          <v-btn @click="deleteUser" color="primary" :loading="loading">
             <v-icon left>mdi-delete</v-icon>
             Löschen
           </v-btn>
@@ -175,6 +175,7 @@ export default {
   name: 'UsersView',
   components: {MainContainer},
   data: () => ({
+    loading: false,
     users: [],
     selectedUser: {},
     dialogAdd: false,
@@ -224,14 +225,17 @@ export default {
       }
 
       try {
+        this.loading = true;
         await addUser({ name: this.name, password: this.password});
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         if (e === 409)
           showSnackbar('Name bereits vergeben');
         else
           showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     },
     updateName: async function() {
@@ -242,14 +246,17 @@ export default {
       }
 
       try {
+        this.loading = true;
         await updateUserName({ id: this.selectedUser.id, name: this.name });
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         if (e === 409)
           showSnackbar('Name bereits vergeben');
         else
           showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     },
     updatePassword: async function() {
@@ -265,20 +272,26 @@ export default {
       }
 
       try {
+        this.loading = true;
         await updateUserPassword({ id: this.selectedUser.id, password: this.password });
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     },
     deleteUser: async function() {
       try {
+        this.loading = true;
         await deleteUser({id: this.selectedUser.id});
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     }
   },

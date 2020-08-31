@@ -35,10 +35,10 @@
         <v-card-text>
           <v-row>
             <v-col cols="6">
-              <v-text-field v-model="nameEn" label="Name (englisch)"></v-text-field>
+              <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="nameDe" label="Name (deutsch)"></v-text-field>
+              <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -47,10 +47,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="createChannel" color="primary">
+          <v-btn @click="createChannel" color="primary" :loading="loading">
             <v-icon left>mdi-plus</v-icon>
             Erstellen
           </v-btn>
@@ -67,10 +67,10 @@
         <v-card-text>
           <v-row>
             <v-col cols="6">
-              <v-text-field v-model="nameEn" label="Name (englisch)"></v-text-field>
+              <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
             </v-col>
             <v-col cols="6">
-              <v-text-field v-model="nameDe" label="Name (deutsch)"></v-text-field>
+              <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
             </v-col>
           </v-row>
         </v-card-text>
@@ -79,10 +79,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="renameChannel" color="primary">
+          <v-btn @click="renameChannel" color="primary" :loading="loading">
             <v-icon left>mdi-pencil</v-icon>
             Umbenennen
           </v-btn>
@@ -103,17 +103,17 @@
           <br>
           Schreiben Sie in dem Feld "{{ nameDe }}", um diesen Kanal zu löschen.
           <br><br>
-          <v-text-field v-model="nameCheck" label="Eingabe"></v-text-field>
+          <v-text-field v-model="nameCheck" label="Eingabe" :disabled="loading"></v-text-field>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text>
+          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
             Abbrechen
           </v-btn>
-          <v-btn @click="deleteChannel" color="primary">
+          <v-btn @click="deleteChannel" color="primary" :loading="loading">
             <v-icon left>mdi-delete</v-icon>
             Löschen
           </v-btn>
@@ -134,6 +134,7 @@ export default {
   name: 'ChannelsView',
   components: {ChannelTabItem, MainContainer},
   data: () => ({
+    loading: false,
     channels: {
       post: [],
       event: []
@@ -177,11 +178,14 @@ export default {
       }
 
       try {
+        this.loading = true;
         await createChannel({ type: this.type, name: { en: this.nameEn, de: this.nameDe } });
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     },
     renameChannel: async function() {
@@ -191,11 +195,14 @@ export default {
       }
 
       try {
+        this.loading = true;
         await renameChannel({ id: this.selectedChannel.id, name: { en: this.nameEn, de: this.nameDe } });
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     },
     deleteChannel: async function() {
@@ -206,11 +213,14 @@ export default {
       }
 
       try {
+        this.loading = true;
         await deleteChannel({ id: this.selectedChannel.id });
-        this.resetAndCloseAll();
         await this.fetchData();
+        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
       }
     }
   },
