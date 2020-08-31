@@ -1,5 +1,6 @@
 package de.ovgu.ikus.controller
 
+import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.security.JwtService
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.HttpStatus
@@ -12,10 +13,11 @@ import java.net.URI
 
 @Controller
 class HtmlController (
+        private val propsAdmin: AdminProperties,
         private val jwtService: JwtService
 ) {
 
-    @GetMapping("/", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics", "/logs")
+    @GetMapping("/" , "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics")
     @ResponseBody
     suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
 
@@ -26,7 +28,10 @@ class HtmlController (
             user != null && request.path.pathWithinApplication().value() == "/" -> {
                 // redirect to dashboard if already logged in
                 response.statusCode = HttpStatus.TEMPORARY_REDIRECT
-                response.headers.location = URI.create("/dashboard")
+                response.headers.location = when (user.name) {
+                    propsAdmin.name -> URI.create("/users")
+                    else -> URI.create("/dashboard")
+                }
                 return null
             }
 
