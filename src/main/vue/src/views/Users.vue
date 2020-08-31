@@ -44,124 +44,88 @@
       </tbody>
     </v-simple-table>
 
-    <v-dialog v-model="dialogAdd" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Neuer Nutzer
-        </v-card-title>
+    <GenericDialog v-model="dialogAdd" title="Neuer Nutzer">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
 
-        <v-card-text>
-          <v-row>
-            <v-col cols="12">
-              <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="addUser" color="primary" :loading="loading">
+          <v-icon left>mdi-account-plus</v-icon>
+          Erstellen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
-        <v-divider></v-divider>
+    <GenericDialog v-model="dialogUpdateName" title="Nutzer umbenennen">
+      <template v-slot:content>
+        <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
+      </template>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="addUser" color="primary" :loading="loading">
-            <v-icon left>mdi-account-plus</v-icon>
-            Erstellen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="updateName" color="primary" :loading="loading">
+          <v-icon left>mdi-account-edit</v-icon>
+          Umbenennen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
-    <v-dialog v-model="dialogUpdateName" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Nutzer umbenennen
-        </v-card-title>
+    <GenericDialog v-model="dialogUpdatePassword" :title="'Passwort von ' + selectedUser.name + ' ändern'">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
 
-        <v-card-text>
-          <v-text-field v-model="name" label="Name" prepend-icon="mdi-account" :disabled="loading"></v-text-field>
-        </v-card-text>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="updatePassword" color="primary" :loading="loading">
+          <v-icon left>mdi-content-save</v-icon>
+          Speichern
+        </v-btn>
+      </template>
+    </GenericDialog>
 
-        <v-divider></v-divider>
+    <GenericDialog v-model="dialogDeleteUser" :title="selectedUser.name + ' löschen'">
+      <template v-slot:content>
+        Möchten Sie wirklich {{ selectedUser.name }} löschen?
+        <br>
+        Logdaten, die mit dem Nutzer zusammenhängen werden ebenfalls gelöscht. Öffentliche Inhalte werden <b>nicht</b> gelöscht.
+      </template>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="updateName" color="primary" :loading="loading">
-            <v-icon left>mdi-account-edit</v-icon>
-            Umbenennen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dialogUpdatePassword" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Passwort von {{ selectedUser.name }} ändern
-        </v-card-title>
-
-        <v-card-text>
-          <v-row>
-            <v-col cols="6">
-              <v-text-field v-model="password" label="Passwort" prepend-icon="mdi-key" type="password" :disabled="loading"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="passwordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="updatePassword" color="primary" :loading="loading">
-            <v-icon left>mdi-content-save</v-icon>
-            Speichern
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dialogDeleteUser" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          {{ selectedUser.name }} löschen
-        </v-card-title>
-
-        <v-card-text>
-          Möchten Sie wirklich {{ selectedUser.name }} löschen?
-          <br>
-          Logdaten, die mit dem Nutzer zusammenhängen werden ebenfalls gelöscht. Öffentliche Inhalte werden <b>nicht</b> gelöscht.
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="deleteUser" color="primary" :loading="loading">
-            <v-icon left>mdi-delete</v-icon>
-            Löschen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="deleteUser" color="primary" :loading="loading">
+          <v-icon left>mdi-delete</v-icon>
+          Löschen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
   </MainContainer>
 </template>
@@ -170,10 +134,11 @@
 import {addUser, deleteUser, getUsers, updateUserName, updateUserPassword} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import {showSnackbar} from "@/utils";
+import GenericDialog from "@/components/GenericDialog";
 
 export default {
   name: 'UsersView',
-  components: {MainContainer},
+  components: {GenericDialog, MainContainer},
   data: () => ({
     loading: false,
     users: [],

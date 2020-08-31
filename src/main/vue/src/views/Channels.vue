@@ -26,100 +26,73 @@
       </v-tab-item>
     </v-tabs>
 
-    <v-dialog v-model="dialogCreate" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Neuer Kanal
-        </v-card-title>
+    <GenericDialog v-model="dialogCreate" title="Neuer Kanal">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
 
-        <v-card-text>
-          <v-row>
-            <v-col cols="6">
-              <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="createChannel" color="primary" :loading="loading">
+          <v-icon left>mdi-plus</v-icon>
+          Erstellen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
-        <v-divider></v-divider>
+    <GenericDialog v-model="dialogRename" title="Kanal umbenennen">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="createChannel" color="primary" :loading="loading">
-            <v-icon left>mdi-plus</v-icon>
-            Erstellen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="renameChannel" color="primary" :loading="loading">
+          <v-icon left>mdi-pencil</v-icon>
+          Umbenennen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
-    <v-dialog v-model="dialogRename" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Kanal umbenennen
-        </v-card-title>
+    <GenericDialog v-model="dialogDelete" title="Kanal löschen">
+      <template v-slot:content>
+        Möchten Sie wirklich den Kanal {{ nameDe }} löschen?
+        <br>
+        Bitte beachten Sie, dass <b>alle</b> Beiträge / Events gelöscht werden, die dem Kanal zugeordnet sind.
+        <br>
+        Schreiben Sie in dem Feld "{{ nameDe }}", um diesen Kanal zu löschen.
+        <br><br>
+        <v-text-field v-model="nameCheck" label="Eingabe" :disabled="loading"></v-text-field>
+      </template>
 
-        <v-card-text>
-          <v-row>
-            <v-col cols="6">
-              <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="renameChannel" color="primary" :loading="loading">
-            <v-icon left>mdi-pencil</v-icon>
-            Umbenennen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="dialogDelete" width="500">
-      <v-card>
-        <v-card-title class="headline">
-          Kanal löschen
-        </v-card-title>
-
-        <v-card-text>
-          Möchten Sie wirklich den Kanal {{ nameDe }} löschen?
-          <br>
-          Bitte beachten Sie, dass <b>alle</b> Beiträge / Events gelöscht werden, die dem Kanal zugeordnet sind.
-          <br>
-          Schreiben Sie in dem Feld "{{ nameDe }}", um diesen Kanal zu löschen.
-          <br><br>
-          <v-text-field v-model="nameCheck" label="Eingabe" :disabled="loading"></v-text-field>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
-            Abbrechen
-          </v-btn>
-          <v-btn @click="deleteChannel" color="primary" :loading="loading">
-            <v-icon left>mdi-delete</v-icon>
-            Löschen
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <template v-slot:actions>
+        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="deleteChannel" color="primary" :loading="loading">
+          <v-icon left>mdi-delete</v-icon>
+          Löschen
+        </v-btn>
+      </template>
+    </GenericDialog>
 
   </MainContainer>
 </template>
@@ -129,10 +102,11 @@ import {createChannel, deleteChannel, getChannels, renameChannel} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import ChannelTabItem from "@/components/ChannelTabItem";
 import {showSnackbar} from "@/utils";
+import GenericDialog from "@/components/GenericDialog";
 
 export default {
   name: 'ChannelsView',
-  components: {ChannelTabItem, MainContainer},
+  components: {GenericDialog, ChannelTabItem, MainContainer},
   data: () => ({
     loading: false,
     channels: {
