@@ -35,9 +35,7 @@ class UserService (
         return userRepo.save(User(name = name, password = hashService.hash(password)))
     }
 
-    suspend fun updateName(userId: Int, name: String): User {
-        val user = userRepo.findById(userId) ?: throw ErrorCode(404, "user not found")
-
+    suspend fun updateName(user: User, name: String): User {
         if (user.name != name && userRepo.findByName(name) != null) {
             // name changed
             throw ErrorCode(409, "Name already used")
@@ -47,14 +45,12 @@ class UserService (
         return userRepo.save(user)
     }
 
-    suspend fun updatePassword(userId: Int, password: String): User {
-        val user = userRepo.findById(userId) ?: throw ErrorCode(404, "user not found")
+    suspend fun updatePassword(user: User, password: String): User {
         user.password = hashService.hash(password)
         return userRepo.save(user)
     }
 
-    suspend fun deleteById(userId: Int) {
-        val user = userRepo.findById(userId) ?: throw ErrorCode(404, "user not found")
+    suspend fun delete(user: User) {
         userRepo.delete(user)
     }
 }

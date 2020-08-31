@@ -5,7 +5,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 
 enum class LogType {
-    CREATE_USER, UPDATE_USER, DELETE_USER,
+    CREATE_USER, UPDATE_USER_NAME, UPDATE_USER_PASSWORD, DELETE_USER,
     CREATE_CHANNEL, UPDATE_CHANNEL, DELETE_CHANNEL,
     CREATE_POST, UPDATE_POST, DELETE_POST,
     CREATE_EVENT, UPDATE_EVENT, DELETE_EVENT,
@@ -17,7 +17,7 @@ enum class LogType {
 
 @Table
 data class Log(@Id var id: Int = 0,
-               var user_id: Int = 0,
+               var userId: Int? = null,
                var timestamp: OffsetDateTime = OffsetDateTime.now(),
                var type: LogType = LogType.CREATE_USER,
                var info: String = "")

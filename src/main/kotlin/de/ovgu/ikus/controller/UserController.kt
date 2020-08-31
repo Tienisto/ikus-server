@@ -3,7 +3,10 @@ package de.ovgu.ikus.controller
 import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.dto.UserDto
+import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.isAdmin
+import de.ovgu.ikus.security.toUser
+import de.ovgu.ikus.service.LogService
 import de.ovgu.ikus.service.UserService
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/users")
 class UserController (
+        private val logService: LogService,
         private val userService: UserService
 ) {
 
@@ -28,6 +32,7 @@ class UserController (
             throw ErrorCode(403, "Admin only")
 
         userService.addUser(request.name, request.password)
+        logService.log(LogType.CREATE_USER, authentication.toUser(), request.name)
     }
 
     @PutMapping("/name")
@@ -35,7 +40,10 @@ class UserController (
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        userService.updateName(request.id, request.name)
+        val user = userService.findById(request.id) ?: throw ErrorCode(404, "user not found")
+        val oldName = user.name
+        userService.updateName(user, request.name)
+        logService.log(LogType.UPDATE_USER_NAME, authentication.toUser(), oldName + " -> " + request.name)
     }
 
     @PutMapping("/password")
@@ -43,7 +51,9 @@ class UserController (
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        userService.updatePassword(request.id, request.password)
+        val user = userService.findById(request.id) ?: throw ErrorCode(404, "user not found")
+        userService.updatePassword(user, request.password)
+        logService.log(LogType.UPDATE_USER_PASSWORD, authentication.toUser(), user.name)
     }
 
     @DeleteMapping
@@ -51,6 +61,8 @@ class UserController (
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        userService.deleteById(request.id)
+        val user = userService.findById(request.id) ?: throw ErrorCode(404, "user not found")
+        userService.delete(user)
+        logService.log(LogType.DELETE_USER, authentication.toUser(), user.name)
     }
 }

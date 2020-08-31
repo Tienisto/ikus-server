@@ -79,8 +79,20 @@ CREATE TABLE contact (
 
 CREATE TABLE log (
     id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES ikus_user(id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES ikus_user(id) ON DELETE SET NULL,
     timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
     type TEXT NOT NULL,
     info TEXT NOT NULL
+);
+
+CREATE TABLE app_start (
+    date DATE PRIMARY KEY,
+    android INT NOT NULL,
+    ios INT NOT NULL
+);
+
+CREATE TABLE app_start_cache (
+    device_id TEXT PRIMARY KEY,
+    platform TEXT NOT NULL,
+    last_login TIMESTAMP WITH TIME ZONE NOT NULL
 );
