@@ -19,7 +19,7 @@ class LogService (
         val users = userRepo.findAll().toList()
         return raw.map { r ->
             val user = users
-                    .firstOrNull { user -> r.id == user.id }
+                    .firstOrNull { user -> r.userId == user.id }
                     ?.let { user -> UserDto(user.id, user.name) }
 
             LogDto(user, r.timestamp, r.type, r.info)

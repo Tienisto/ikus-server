@@ -131,3 +131,11 @@ export async function getChannels({ type }) {
         params: { type }
     });
 }
+
+export async function getLogs({ limit }) {
+    return await makeRequest({
+        route: 'logs',
+        method: 'GET',
+        params: { limit }
+    });
+}

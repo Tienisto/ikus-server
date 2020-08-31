@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from './views/Login'
 import Users from './views/Users'
+import Logs from "@/views/Logs";
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ Vue.use(VueRouter)
     path: '/users',
     name: 'Users',
     component: Users
+  },
+  {
+    path: '/logs',
+    name: 'Logs',
+    component: Logs
   }
 ]
 
