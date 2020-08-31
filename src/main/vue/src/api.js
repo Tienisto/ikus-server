@@ -85,6 +85,7 @@ export async function logout() {
 }
 
 // admin
+
 export async function getUsers() {
     return await makeRequest({
         route: 'users',
@@ -121,6 +122,15 @@ export async function deleteUser({ id }) {
         route: 'users',
         method: 'DELETE',
         body: { id }
+    });
+}
+
+// user
+
+export async function getDashboard() {
+    return await makeRequest({
+        route: 'dashboard',
+        method: 'GET'
     });
 }
 

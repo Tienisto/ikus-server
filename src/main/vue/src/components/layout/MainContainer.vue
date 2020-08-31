@@ -1,6 +1,6 @@
 <template>
   <div style="margin-top: 50px; padding: 20px;">
-    <div style="margin: auto; max-width: 1000px">
+    <div style="margin: auto; max-width: 1100px">
 
       <!-- title -->
       <div class="mb-8">
@@ -8,7 +8,7 @@
         <span class="ml-2 primary--text">{{ title }}</span>
       </div>
 
-      <div style="margin: auto; max-width: 1000px; display: flex; align-items: flex-start" class="text-h5">
+      <div style="margin: auto; display: flex; align-items: flex-start" class="text-h5">
 
         <!-- body -->
         <div style="flex: 1">

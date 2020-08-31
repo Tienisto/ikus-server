@@ -1,5 +1,6 @@
 package de.ovgu.ikus.controller
 
+import de.ovgu.ikus.dto.DashboardDto
 import de.ovgu.ikus.dto.LogDto
 import de.ovgu.ikus.dto.MeDto
 import de.ovgu.ikus.security.isAdmin
@@ -27,5 +28,11 @@ class InfoController (
     @GetMapping("/logs")
     suspend fun logs(@RequestParam limit: Int): List<LogDto> {
         return logService.findAll(limit)
+    }
+
+    @GetMapping("/dashboard")
+    suspend fun dashboard(): DashboardDto {
+        val logs = logService.findAll(10)
+        return DashboardDto(logs)
     }
 }

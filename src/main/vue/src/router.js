@@ -4,6 +4,7 @@ import Login from './views/Login'
 import Users from './views/Users'
 import Logs from "@/views/Logs";
 import Channels from "@/views/Channels";
+import Dashboard from "@/views/Dashboard";
 
 Vue.use(VueRouter)
 
@@ -19,15 +20,21 @@ Vue.use(VueRouter)
     component: Users
   },
   {
+    path: '/logs',
+    name: 'Logs',
+    component: Logs
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
+  },
+  {
     path: '/channels',
     name: 'Channels',
     component: Channels
   },
-  {
-    path: '/logs',
-    name: 'Logs',
-    component: Logs
-  }
+
 ]
 
 const router = new VueRouter({
