@@ -17,8 +17,19 @@
       <v-list shaped dense>
 
         <template v-if="!admin">
+
+          <v-list-item class="mb-3" link to="/dashboard">
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Dashboard</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-divider/>
-          <v-subheader class="ml-2 mt-1">Inhalt</v-subheader>
+          <v-subheader class="ml-2">Inhalt</v-subheader>
 
           <v-list-item v-for="p in contentPages" :key="p.route" link :to="p.route">
             <v-list-item-icon>
@@ -31,8 +42,7 @@
           </v-list-item>
 
           <v-divider/>
-
-          <v-subheader class="ml-2 mt-1">Analysis</v-subheader>
+          <v-subheader class="ml-2">Analysis</v-subheader>
 
           <v-list-item v-for="p in analysisPages" :key="p.route" link :to="p.route">
             <v-list-item-icon>
@@ -43,11 +53,11 @@
               <v-list-item-title>{{ p.label }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-divider/>
         </template>
 
         <template v-if="admin">
-          <v-divider/>
-
           <v-list-item v-for="p in adminPages" :key="'a-'+p.route" link :to="p.route">
             <v-list-item-icon>
               <v-icon>{{ p.icon }}</v-icon>
@@ -58,8 +68,6 @@
             </v-list-item-content>
           </v-list-item>
         </template>
-
-        <v-divider/>
 
         <v-list-item link class="mt-4 white" @click="logout" light :disabled="loggingOut">
           <v-list-item-icon>
@@ -87,11 +95,6 @@ export default {
     loggingOut: false,
     drawerVisible: false,
     contentPages: [
-      {
-        route: '/dashboard',
-        label: 'Dashboard',
-        icon: 'mdi-view-dashboard'
-      },
       {
         route: '/posts',
         label: 'Posts',
