@@ -15,8 +15,8 @@ class ChannelService (
         return channelRepo.findById(id)
     }
 
-    suspend fun findByType(type: ChannelType): List<Channel> {
-        return channelRepo.findByType(type).toList()
+    suspend fun findAll(): List<Channel> {
+        return channelRepo.findByOrderByName().toList()
     }
 
     suspend fun save(channel: Channel): Channel {

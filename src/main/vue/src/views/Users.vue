@@ -28,24 +28,15 @@
           <td>{{ u.name }}</td>
           <td>******</td>
           <td>
-            <v-btn
-                elevation="2" color="primary"
-                @click="openUpdateName(u)"
-            >
+            <v-btn @click="openUpdateName(u)" elevation="2" color="primary">
               <v-icon>mdi-account-edit</v-icon>
             </v-btn>
 
-            <v-btn
-                elevation="2" color="primary" class="ml-4"
-                @click="openUpdatePassword(u)"
-            >
+            <v-btn @click="openUpdatePassword(u)" elevation="2" color="primary" class="ml-4">
               <v-icon>mdi-key</v-icon>
             </v-btn>
 
-            <v-btn
-                elevation="2" color="primary" class="ml-4"
-                @click="openDeleteUser(u)"
-            >
+            <v-btn @click="openDeleteUser(u)" elevation="2" color="primary" class="ml-4">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </td>

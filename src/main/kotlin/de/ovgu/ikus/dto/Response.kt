@@ -9,6 +9,7 @@ data class MeDto(val name: String, val admin: Boolean)
 data class UserDto(val id: Int, val name: String)
 
 data class ChannelDto(val id: Int, val name: LocalizedString)
+data class AggregatedChannelDto(val post: List<ChannelDto>, val event: List<ChannelDto>)
 
 data class PostDto(val id: Int, val channel: ChannelDto, val date: LocalDate, val title: LocalizedString, val content: LocalizedString)
 

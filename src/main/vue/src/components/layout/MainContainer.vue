@@ -16,7 +16,7 @@
         </div>
 
         <!-- meta -->
-        <v-card class="ml-12">
+        <v-card class="ml-12" v-if="$slots.meta">
           <v-card-text class="secondary">
             <slot name="meta"></slot>
           </v-card-text>

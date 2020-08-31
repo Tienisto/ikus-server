@@ -124,11 +124,35 @@ export async function deleteUser({ id }) {
     });
 }
 
-export async function getChannels({ type }) {
+export async function getChannels() {
     return await makeRequest({
         route: 'channels',
-        method: 'GET',
-        params: { type }
+        method: 'GET'
+    });
+}
+
+export async function createChannel({ type, name }) {
+    return await makeRequest({
+        route: 'channels',
+        method: 'POST',
+        params: { type },
+        body: { name }
+    });
+}
+
+export async function renameChannel({ id, name }) {
+    return await makeRequest({
+        route: 'channels',
+        method: 'PUT',
+        body: { id, name }
+    });
+}
+
+export async function deleteChannel({ id }) {
+    return await makeRequest({
+        route: 'channels',
+        method: 'DELETE',
+        body: { id }
     });
 }
 

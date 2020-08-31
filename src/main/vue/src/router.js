@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from './views/Login'
 import Users from './views/Users'
 import Logs from "@/views/Logs";
+import Channels from "@/views/Channels";
 
 Vue.use(VueRouter)
 
@@ -16,6 +17,11 @@ Vue.use(VueRouter)
     path: '/users',
     name: 'Users',
     component: Users
+  },
+  {
+    path: '/channels',
+    name: 'Channels',
+    component: Channels
   },
   {
     path: '/logs',
