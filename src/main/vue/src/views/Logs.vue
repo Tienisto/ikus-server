@@ -5,30 +5,34 @@
       <p class="text-h6">Limit</p>
 
       <v-btn
-          :color="limit === l ? 'primary' : 'white'" class="ml-1 mr-1"
+          :class="limit === l ? ['primary'] : ['secondary', 'black--text']" class="ml-1 mr-1"
           @click="updateLimit(l)" v-for="l in limits" :key="'limit-'+l">
         {{ l }}
       </v-btn>
     </template>
 
-    <v-simple-table>
-      <thead>
-        <tr>
-          <th class="text-left">Aktion</th>
-          <th class="text-left">Von</th>
-          <th class="text-left">Info</th>
-          <th class="text-left">Zeitstempel</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(l, index) in logs" :key="'log-'+index">
-          <td>{{ typeString(l.type) }}</td>
-          <td>{{ l.user ? l.user.name : '-' }}</td>
-          <td>{{ l.info }}</td>
-          <td>{{ timestamp(l.timestamp) }}</td>
-        </tr>
-      </tbody>
-    </v-simple-table>
+    <v-card>
+      <v-card-text>
+        <v-simple-table>
+          <thead>
+          <tr>
+            <th class="text-left">Aktion</th>
+            <th class="text-left">Von</th>
+            <th class="text-left">Info</th>
+            <th class="text-left">Zeitstempel</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="(l, index) in logs" :key="'log-'+index">
+            <td>{{ typeString(l.type) }}</td>
+            <td>{{ l.user ? l.user.name : '-' }}</td>
+            <td>{{ l.info }}</td>
+            <td>{{ timestamp(l.timestamp) }}</td>
+          </tr>
+          </tbody>
+        </v-simple-table>
+      </v-card-text>
+    </v-card>
 
   </MainContainer>
 </template>

@@ -10,7 +10,7 @@
     <v-row class="mt-4">
 
       <v-col cols="12" md="6">
-        <v-card color="secondary">
+        <v-card>
           <v-card-title>Letzte Aktivitäten</v-card-title>
           <v-card-text>
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
@@ -31,7 +31,7 @@
           </v-card-actions>
         </v-card>
 
-        <v-card color="secondary" class="mt-6">
+        <v-card class="mt-6">
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
@@ -53,7 +53,7 @@
       </v-col>
 
       <v-col cols="12" md="6">
-        <v-card color="secondary" style="height: 100%">
+        <v-card style="height: 100%">
           <v-card-title>Kalender</v-card-title>
           <v-card-text>
             <div style="display: flex; align-items: center; justify-content: space-between">

@@ -7,24 +7,30 @@
       Hier können Sie diese Kanäle verwalten.
     </div>
 
-    <v-tabs class="mt-10" vertical>
-      <v-tab @change="type = 'POST'">
-        <v-icon left>mdi-newspaper</v-icon>
-        Neuigkeiten
-      </v-tab>
-      <v-tab @change="type = 'EVENT'">
-        <v-icon left>mdi-calendar</v-icon>
-        Kalender
-      </v-tab>
+    <v-card class="mt-10">
+      <v-card-text>
+        <v-tabs vertical>
+          <v-tab @change="type = 'POST'">
+            <v-icon left>mdi-newspaper</v-icon>
+            Neuigkeiten
+            <v-spacer/>
+          </v-tab>
+          <v-tab @change="type = 'EVENT'">
+            <v-icon left>mdi-calendar</v-icon>
+            Kalender
+            <v-spacer/>
+          </v-tab>
 
-      <v-tab-item>
-        <ChannelTabItem :channels="channels.post" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
-      </v-tab-item>
+          <v-tab-item>
+            <ChannelTabItem :channels="channels.post" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+          </v-tab-item>
 
-      <v-tab-item>
-        <ChannelTabItem :channels="channels.event" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
-      </v-tab-item>
-    </v-tabs>
+          <v-tab-item>
+            <ChannelTabItem :channels="channels.event" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+          </v-tab-item>
+        </v-tabs>
+      </v-card-text>
+    </v-card>
 
     <GenericDialog v-model="dialogCreate" title="Neuer Kanal">
       <template v-slot:content>

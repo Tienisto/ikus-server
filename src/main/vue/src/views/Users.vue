@@ -4,45 +4,45 @@
     <template v-slot:meta>
       <p class="text-h6">{{ users.length }} {{ users.length === 1 ? 'Moderator' : 'Moderatoren' }}</p>
 
-      <v-btn
-          color="primary"
-          dark
-          @click="dialogAdd = true"
-      >
+      <v-btn @click="dialogAdd = true" color="primary" dark>
         <v-icon left>mdi-account-plus</v-icon>
         Neuer Nutzer
       </v-btn>
 
     </template>
 
-    <v-simple-table>
-      <thead>
-        <tr>
-          <th class="text-left">Name</th>
-          <th class="text-left">Passwort</th>
-          <th class="text-left">Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="u in users" :key="u.id">
-          <td>{{ u.name }}</td>
-          <td>******</td>
-          <td>
-            <v-btn @click="openUpdateName(u)" elevation="2" color="primary">
-              <v-icon>mdi-account-edit</v-icon>
-            </v-btn>
+    <v-card>
+      <v-card-text>
+        <v-simple-table>
+          <thead>
+          <tr>
+            <th class="text-left">Name</th>
+            <th class="text-left">Passwort</th>
+            <th class="text-left">Aktionen</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr v-for="u in users" :key="u.id">
+            <td>{{ u.name }}</td>
+            <td>******</td>
+            <td>
+              <v-btn @click="openUpdateName(u)" elevation="2" color="primary">
+                <v-icon>mdi-account-edit</v-icon>
+              </v-btn>
 
-            <v-btn @click="openUpdatePassword(u)" elevation="2" color="primary" class="ml-4">
-              <v-icon>mdi-key</v-icon>
-            </v-btn>
+              <v-btn @click="openUpdatePassword(u)" elevation="2" color="primary" class="ml-4">
+                <v-icon>mdi-key</v-icon>
+              </v-btn>
 
-            <v-btn @click="openDeleteUser(u)" elevation="2" color="primary" class="ml-4">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </td>
-        </tr>
-      </tbody>
-    </v-simple-table>
+              <v-btn @click="openDeleteUser(u)" elevation="2" color="primary" class="ml-4">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </td>
+          </tr>
+          </tbody>
+        </v-simple-table>
+      </v-card-text>
+    </v-card>
 
     <GenericDialog v-model="dialogAdd" title="Neuer Nutzer">
       <template v-slot:content>

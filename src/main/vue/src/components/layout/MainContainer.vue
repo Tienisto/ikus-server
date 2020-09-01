@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-top: 50px; padding: 20px;">
+  <div class="secondary" style="padding: 50px 20px 100px 20px; min-height: 100vh">
     <div style="margin: auto; max-width: 1100px">
 
       <!-- title -->
@@ -17,7 +17,7 @@
 
         <!-- meta -->
         <v-card class="ml-12" v-if="$slots.meta">
-          <v-card-text class="secondary">
+          <v-card-text>
             <slot name="meta"></slot>
           </v-card-text>
         </v-card>
