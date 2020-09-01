@@ -14,7 +14,7 @@
           <v-card-title>Letzte Aktivitäten</v-card-title>
           <v-card-text>
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
-              <span><b>{{ l.user.name }}:</b> {{ typeString(l.type) }}, {{ l.info }}</span>
+              <span><b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}</span>
               <span>{{ timeString(l.timestamp) }}</span>
 
             </div>
@@ -35,7 +35,7 @@
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
-              <span><b>{{ l.user.name }}:</b> {{ typeString(l.type) }}</span>
+              <span><b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}</span>
               <span>{{ timeString(l.timestamp) }}</span>
             </div>
           </v-card-text>
