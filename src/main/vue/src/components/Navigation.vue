@@ -7,8 +7,16 @@
       </v-toolbar-title>
     </v-app-bar>
     <v-navigation-drawer v-if="loggedIn" v-model="drawerVisible" class="primary" dark app>
-      <v-container class="white--text" style="text-align: center">
-        <img src="@/assets/logo-512-alpha.png" class="mt-4" style="width: 100px">
+
+      <v-container class="hidden-xl-only white--text pt-6 pl-6 pb-2" style="display: flex; align-content: center;">
+        <img src="@/assets/logo-512-alpha.png" style="width: 70px; height: 70px">
+        <div class="pl-2 pt-2" style="display: flex; flex-direction: column; justify-content: center;">
+          <p class="text-h5 mb-0">IKUS - App</p>
+          <p class="text-subtitle-2">Administration</p>
+        </div>
+      </v-container>
+      <v-container class="hidden-lg-and-down white--text mt-4" style="text-align: center">
+        <img src="@/assets/logo-512-alpha.png" style="width: 100px">
         <br>
         <p class="text-h5 mb-0">IKUS - App</p>
         <p class="text-h7">Administration</p>

@@ -1,5 +1,6 @@
 <template>
-  <div class="secondary" style="padding: 50px 20px 100px 20px; min-height: 100vh">
+  <div class="secondary" style="padding: 20px 20px 100px 20px; min-height: 100vh">
+    <div class="hidden-lg-and-down" style="height: 30px"></div>
     <div style="margin: auto; max-width: 1100px">
 
       <!-- title -->
