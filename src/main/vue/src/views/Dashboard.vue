@@ -34,9 +34,11 @@
         <v-card class="mt-6">
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
-            <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
-              <span><b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}</span>
-              <span>{{ timeString(l.timestamp) }}</span>
+            <div v-for="p in dashboard.posts" :key="'p'+p.id" style="display: flex;">
+              <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                <b>{{ p.channel.name.de }}:</b> {{ p.title.de }}
+              </span>
+              <span>{{ timeString(p.date) }}</span>
             </div>
           </v-card-text>
 
@@ -97,7 +99,8 @@ export default {
   components: {MainContainer},
   data: () => ({
     dashboard: {
-      logs: []
+      logs: [],
+      posts: []
     },
     today: new Date(),
     moment: moment
@@ -105,6 +108,12 @@ export default {
   methods: {
     fetchData: async function() {
       this.dashboard = (await getDashboard()).data;
+      this.dashboard.posts = [
+        {id: 1, channel: {name: { en: '', de: 'AKKA'}}, title: { en: '', de: 'Irgendein Titel' }, date: '2020-09-01'},
+        {id: 2, channel: {name: { en: '', de: 'Wohnheim'}}, title: { en: '', de: 'Einreichung der Immatrikulationsbescheinigung' }, date: '2020-08-26'},
+        {id: 3, channel: {name: { en: '', de: 'IKUS'}}, title: { en: '', de: 'Jeden Donnerstag gibt es einen Spieleabend' }, date: '2020-08-25'},
+        {id: 4, channel: {name: { en: '', de: 'AKKA'}}, title: { en: '', de: 'Irgendein Titel' }, date: '2020-08-04'}
+      ];
     }
   },
   computed: {
