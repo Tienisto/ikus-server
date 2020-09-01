@@ -23,7 +23,7 @@ class ChannelController (
 
         return AggregatedChannelDto(
                 post = channels
-                        .filter { c -> c.type == ChannelType.POST }
+                        .filter { c -> c.type == ChannelType.NEWS }
                         .map { channel -> ChannelDto(channel.id, LocalizedString(en = channel.name, de = channel.nameDe)) },
                 event = channels
                         .filter { c -> c.type == ChannelType.EVENT }
@@ -32,9 +32,9 @@ class ChannelController (
     }
 
     @PostMapping
-    suspend fun addChannel(authentication: Authentication, @RequestParam type: ChannelType, @RequestBody request: Request.CreateChannel) {
+    suspend fun createChannel(authentication: Authentication, @RequestParam type: ChannelType, @RequestBody request: Request.CreateChannel) {
         val channel = channelService.save(Channel(type = type, name = request.name.en.trim(), nameDe = request.name.de.trim()))
-        logService.log(LogType.CREATE_CHANNEL, authentication.toUser(), channel.name + " / " + channel.nameDe)
+        logService.log(LogType.CREATE_CHANNEL, authentication.toUser(), "${channel.name} (${channel.nameDe})")
     }
 
     @PutMapping
@@ -43,13 +43,13 @@ class ChannelController (
         channel.name = request.name.en.trim()
         channel.nameDe = request.name.de.trim()
         channelService.save(channel)
-        logService.log(LogType.UPDATE_CHANNEL, authentication.toUser(), channel.name + " / " + channel.nameDe)
+        logService.log(LogType.UPDATE_CHANNEL, authentication.toUser(), "${channel.name} (${channel.nameDe})")
     }
 
     @DeleteMapping
     suspend fun deleteChannel(authentication: Authentication, @RequestBody request: Request.Id) {
         val channel = channelService.findById(request.id) ?: throw ErrorCode(404, "Channel not found")
         channelService.delete(channel)
-        logService.log(LogType.DELETE_CHANNEL, authentication.toUser(), channel.name + " / " + channel.nameDe)
+        logService.log(LogType.DELETE_CHANNEL, authentication.toUser(), "${channel.name} (${channel.nameDe})")
     }
 }
