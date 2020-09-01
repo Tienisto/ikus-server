@@ -8,7 +8,7 @@
     </v-app-bar>
     <v-navigation-drawer v-if="loggedIn" v-model="drawerVisible" class="primary" dark app>
 
-      <v-container class="hidden-xl-only white--text pt-6 pl-6 pb-2" style="display: flex; align-content: center;">
+      <v-container class="hidden-xl-only white--text pt-6 pl-4 pb-2" style="display: flex; align-content: center;">
         <img src="@/assets/logo-512-alpha.png" style="width: 70px; height: 70px">
         <div class="pl-2 pt-2" style="display: flex; flex-direction: column; justify-content: center;">
           <p class="text-h5 mb-0">IKUS - App</p>
