@@ -1,6 +1,12 @@
 <template>
   <MainContainer title="Moderatoren" icon="mdi-account-multiple">
 
+    <template v-slot:intro>
+      Alle Moderatoren haben (bis jetzt) im System dieselben Rechte.
+      <br>
+      Die Passwörter sind verschlüsselt (gehashed).
+    </template>
+
     <template v-slot:meta>
       <p class="text-h6">{{ users.length }} {{ users.length === 1 ? 'Moderator' : 'Moderatoren' }}</p>
 

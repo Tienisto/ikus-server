@@ -8,6 +8,7 @@ import de.ovgu.ikus.security.isAdmin
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.LogService
 import de.ovgu.ikus.service.UserService
+import de.ovgu.ikus.utils.toDto
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -23,7 +24,7 @@ class UserController (
         if (!authentication.isAdmin())
             throw ErrorCode(403, "Admin only")
 
-        return userService.findAllOrdered().map { user -> UserDto(user.id, user.name) }
+        return userService.findAllOrdered().map { user -> user.toDto() }
     }
 
     @PostMapping

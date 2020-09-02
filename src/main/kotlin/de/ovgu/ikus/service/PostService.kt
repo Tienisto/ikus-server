@@ -1,10 +1,7 @@
 package de.ovgu.ikus.service
 
-import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.model.Channel
-import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.Post
-import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.repository.PostRepo
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
@@ -26,15 +23,11 @@ class PostService (
         return postRepo.save(post)
     }
 
-    suspend fun delete(post: Post) {
-        postRepo.delete(post)
+    suspend fun saveAll(posts: List<Post>): List<Post> {
+        return postRepo.saveAll(posts).toList()
     }
 
-    fun toPostType(channelType: ChannelType): PostType {
-        return when (channelType) {
-            ChannelType.NEWS -> PostType.NEWS
-            ChannelType.FAQ -> PostType.FAQ
-            ChannelType.EVENT -> throw ErrorCode(409, "Channel cannot have type EVENT")
-        }
+    suspend fun delete(post: Post) {
+        postRepo.delete(post)
     }
 }

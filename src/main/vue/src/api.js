@@ -11,7 +11,16 @@ export const CHANNEL_TYPE = {
 
 async function makeRequest({ method, route, body, params, no401Callback, noException }) {
     const url = new URL(API_URL+'/'+route, document.location);
-    url.search = new URLSearchParams(params).toString();
+
+    if (params) {
+        for (let propName in params) {
+            if (params[propName] === null || params[propName] === undefined) {
+                delete params[propName];
+            }
+        }
+
+        url.search = new URLSearchParams(params).toString();
+    }
 
     const response = await fetch(url, {
         method,
@@ -134,10 +143,19 @@ export async function getDashboard() {
     });
 }
 
-export async function getChannels() {
+export async function getPosts({ channelId }) {
+    return await makeRequest({
+        route: 'posts',
+        method: 'GET',
+        params: { channelId }
+    });
+}
+
+export async function getChannels({type}) {
     return await makeRequest({
         route: 'channels',
-        method: 'GET'
+        method: 'GET',
+        params: { type }
     });
 }
 

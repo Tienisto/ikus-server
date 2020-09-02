@@ -7,6 +7,7 @@ import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.ChannelService
 import de.ovgu.ikus.service.LogService
+import de.ovgu.ikus.utils.toDto
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -18,17 +19,21 @@ class ChannelController (
 ) {
 
     @GetMapping
-    suspend fun getAll(): AggregatedChannelDto {
-        val channels = channelService.findAll()
+    suspend fun getAll(@RequestParam(required = false) type: ChannelType?): Any {
+        if (type != null) {
+            return channelService.findByType(type).map { channel -> channel.toDto() }
+        } else {
+            val channels = channelService.findAll()
 
-        return AggregatedChannelDto(
-                post = channels
-                        .filter { c -> c.type == ChannelType.NEWS }
-                        .map { channel -> ChannelDto(channel.id, LocalizedString(en = channel.name, de = channel.nameDe)) },
-                event = channels
-                        .filter { c -> c.type == ChannelType.EVENT }
-                        .map { channel -> ChannelDto(channel.id, LocalizedString(en = channel.name, de = channel.nameDe)) }
-        )
+            return AggregatedChannelDto(
+                    post = channels
+                            .filter { c -> c.type == ChannelType.NEWS }
+                            .map { channel -> channel.toDto() },
+                    event = channels
+                            .filter { c -> c.type == ChannelType.CALENDAR }
+                            .map { channel -> channel.toDto() }
+            )
+        }
     }
 
     @PostMapping

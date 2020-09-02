@@ -11,12 +11,16 @@ class ChannelService (
         private val channelRepo: ChannelRepo
 ) {
 
-    suspend fun findById(id: Int): Channel? {
-        return channelRepo.findById(id)
-    }
-
     suspend fun findAll(): List<Channel> {
         return channelRepo.findByOrderByName().toList()
+    }
+
+    suspend fun findByType(type: ChannelType): List<Channel> {
+        return channelRepo.findByTypeOrderByName(type).toList()
+    }
+
+    suspend fun findById(id: Int): Channel? {
+        return channelRepo.findById(id)
     }
 
     suspend fun save(channel: Channel): Channel {
@@ -25,5 +29,9 @@ class ChannelService (
 
     suspend fun delete(channel: Channel) {
         channelRepo.delete(channel)
+    }
+
+    suspend fun deleteAll() {
+        channelRepo.deleteAll()
     }
 }

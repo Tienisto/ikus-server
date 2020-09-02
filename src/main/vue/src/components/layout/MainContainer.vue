@@ -1,5 +1,5 @@
 <template>
-  <div class="secondary" style="padding: 20px 20px 100px 20px; min-height: 100vh">
+  <div class="secondary" style="padding: 30px 30px 100px 30px; min-height: 100vh">
     <div class="hidden-lg-and-down" style="height: 30px"></div>
     <div style="margin: auto; max-width: 1100px">
 
@@ -9,7 +9,11 @@
         <span class="ml-2 primary--text">{{ title }}</span>
       </div>
 
-      <div style="margin: auto; display: flex; align-items: flex-start" class="text-h5">
+      <div class="subtitle-1 mb-8" v-if="$slots.intro">
+        <slot name="intro"></slot>
+      </div>
+
+      <div style="margin: auto; display: flex; align-items: flex-start">
 
         <!-- body -->
         <div style="flex: 1">

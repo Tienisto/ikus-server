@@ -5,6 +5,7 @@ import Users from './views/Users'
 import Logs from "@/views/Logs";
 import Channels from "@/views/Channels";
 import Dashboard from "@/views/Dashboard";
+import Posts from "@/views/Posts";
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,11 @@ Vue.use(VueRouter)
     path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
+  },
+  {
+    path: '/posts',
+    name: 'Posts',
+    component: Posts
   },
   {
     path: '/channels',

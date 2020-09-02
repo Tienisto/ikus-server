@@ -1,13 +1,13 @@
 <template>
   <MainContainer title="Kanäle" icon="mdi-filter">
 
-    <div class="subtitle-1">
+    <template v-slot:intro>
       Alle Posts und Events sind einem Kanal zugeordnet.
       <br>
       Hier können Sie diese Kanäle verwalten.
-    </div>
+    </template>
 
-    <v-card class="mt-10">
+    <v-card>
       <v-card-text>
         <v-tabs vertical>
           <v-tab @change="type = 'POST'">
@@ -130,7 +130,7 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.channels = (await getChannels()).data;
+      this.channels = (await getChannels({})).data;
     },
     resetAndCloseAll: function() {
       this.nameEn = '';

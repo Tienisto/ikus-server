@@ -7,6 +7,7 @@ import de.ovgu.ikus.repository.UserRepo
 import de.ovgu.ikus.security.HashService
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.toList
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,6 +16,26 @@ class UserService (
         private val hashService: HashService,
         private val userRepo: UserRepo
 ) {
+
+    private val logger = LoggerFactory.getLogger(UserService::class.java)
+
+    /**
+     * ensure that there is an admin user with the correct password
+     */
+    suspend fun adminAccount() {
+        var user = userRepo.findByName(propsAdmin.name)
+        if (user == null) {
+            // no admin found
+            user = User(name = propsAdmin.name, password = hashService.hash(propsAdmin.password))
+            userRepo.save(user)
+            logger.info("Created admin user.")
+        } else if (!hashService.check(propsAdmin.password, user.password)) {
+            // admin exists but wrong password
+            user.password = hashService.hash(propsAdmin.password)
+            userRepo.save(user)
+            logger.info("Updated admin user password.")
+        }
+    }
 
     suspend fun findById(id: Int): User? {
         return userRepo.findById(id)
@@ -52,5 +73,9 @@ class UserService (
 
     suspend fun delete(user: User) {
         userRepo.delete(user)
+    }
+
+    suspend fun deleteAll() {
+        userRepo.deleteAll()
     }
 }

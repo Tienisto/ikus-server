@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
 enum class ChannelType {
-    NEWS, EVENT, FAQ
+    NEWS, CALENDAR, FAQ
 }
 
 @Table

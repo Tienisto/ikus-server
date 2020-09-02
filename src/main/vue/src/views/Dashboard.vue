@@ -1,11 +1,11 @@
 <template>
   <MainContainer title="Dashboard" icon="mdi-view-dashboard">
 
-    <div class="subtitle-1">
+    <template v-slot:intro>
       Willkommen auf Ihrem Dashboard.
       <br>
       Hier sehen Sie den aktuellen Stand auf einem Blick.
-    </div>
+    </template>
 
     <v-row class="mt-4">
 
@@ -13,10 +13,11 @@
         <v-card>
           <v-card-title>Letzte Aktivitäten</v-card-title>
           <v-card-text>
-            <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex; justify-content: space-between">
-              <span><b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}</span>
+            <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex;">
+              <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+                <b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}
+              </span>
               <span>{{ timeString(l.timestamp) }}</span>
-
             </div>
           </v-card-text>
 
