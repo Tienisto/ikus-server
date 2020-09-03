@@ -4,7 +4,7 @@
     <template v-slot:intro>
       Hier können Sie die Neuigkeiten verwalten.
       <br>
-      Alle Posts müssen in englisch und deutsch verfasst werden.
+      Alle Posts sind einem Kanal zugeordnet und müssen beidsprachig verfasst werden.
     </template>
 
     <template v-slot:meta>

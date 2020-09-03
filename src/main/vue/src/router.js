@@ -6,6 +6,12 @@ import Logs from "@/views/Logs";
 import Channels from "@/views/Channels";
 import Dashboard from "@/views/Dashboard";
 import Posts from "@/views/Posts";
+import Calendar from "@/views/Calendar";
+import Links from "@/views/Links";
+import Handbook from "@/views/Handbook";
+import FAQ from "@/views/FAQ";
+import Contact from "@/views/Contact";
+import Statistics from "@/views/Statistics";
 
 Vue.use(VueRouter)
 
@@ -36,11 +42,40 @@ Vue.use(VueRouter)
     component: Posts
   },
   {
+    path: '/calendar',
+    name: 'Calendar',
+    component: Calendar
+  },
+  {
+    path: '/links',
+    name: 'Links',
+    component: Links
+  },
+  {
+    path: '/handbook',
+    name: 'Handbook',
+    component: Handbook
+  },
+  {
+    path: '/faq',
+    name: 'FAQ',
+    component: FAQ
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: Contact
+  },
+  {
     path: '/channels',
     name: 'Channels',
     component: Channels
   },
-
+  {
+    path: '/statistics',
+    name: 'Statistics',
+    component: Statistics
+  },
 ]
 
 const router = new VueRouter({
