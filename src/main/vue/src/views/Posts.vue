@@ -27,32 +27,42 @@
 
       <br>
 
-      <v-btn color="primary" block>
+      <v-btn color="primary" block :disabled="loading || channels.length === 0">
         <v-icon left>mdi-plus</v-icon>
         Neuer Post
       </v-btn>
     </template>
 
-    <v-card v-for="p in posts" :key="'p-'+p.id" class="mb-4">
-      <v-card-text>
-        <div style="display: flex; align-items: center">
-          <div style="flex: 1">
-            <span class="font-weight-bold">{{ title(p.title) }}</span>
-            <br>
-            <span>{{ timeString(p.date) }}</span>
-          </div>
-          <div style="display: flex">
-            <v-btn  elevation="2" color="primary">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
+    <template v-if="!loading">
+      <v-card v-for="p in posts" :key="'p-'+p.id" class="mb-4">
+        <v-card-text>
+          <div style="display: flex; align-items: center">
+            <div style="flex: 1">
+              <span class="font-weight-bold">{{ title(p.title) }}</span>
+              <br>
+              <span>{{ timeString(p.date) }}</span>
+            </div>
+            <div style="display: flex">
+              <v-btn  elevation="2" color="primary">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
 
-            <v-btn elevation="2" color="primary" class="ml-4">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+              <v-btn elevation="2" color="primary" class="ml-4">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </div>
-        </div>
-      </v-card-text>
-    </v-card>
+        </v-card-text>
+      </v-card>
+    </template>
+
+    <v-progress-circular v-if="loading" color="primary" indeterminate />
+
+    <Notice v-if="!loading && channels.length === 0 && posts.length === 0"
+            title="Es gibt noch keine Kanäle" info="Bitte erstellen Sie zuerst Kanäle, bevor Sie Posts verfassen." />
+
+    <Notice v-if="!loading && channels.length !== 0 && posts.length === 0"
+            title="Schön leer hier..." info="Sie können rechts ein neuen Post erstellen" />
 
   </MainContainer>
 </template>
@@ -61,11 +71,13 @@
 import moment from "moment"
 import {getChannels, getPosts} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
+import Notice from "@/components/Notice";
 
 export default {
   name: 'PostsView',
-  components: {MainContainer},
+  components: {Notice, MainContainer},
   data: () => ({
+    loading: true,
     channels: [],
     channel: {},
     posts: [],
@@ -74,14 +86,17 @@ export default {
   }),
   methods: {
     fetchData: async function() {
+      this.loading = true;
       this.channels = (await getChannels({ type: 'NEWS' })).data;
       if (!this.channel.id && this.channels.length !== 0) {
         this.channel = this.channels[0];
       }
 
-      if (this.channel) {
+      if (this.channel.id) {
         this.posts = (await getPosts({ channelId: this.channel.id })).data;
       }
+
+      this.loading = false;
     },
     updateChannel: async function() {
       await this.fetchData();

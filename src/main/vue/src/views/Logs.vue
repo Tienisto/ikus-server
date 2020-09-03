@@ -17,24 +17,36 @@
 
     <v-card>
       <v-card-text>
-        <v-simple-table>
-          <thead>
-          <tr>
-            <th class="text-left">Aktion</th>
-            <th class="text-left">Von</th>
-            <th class="text-left">Info</th>
-            <th class="text-left">Zeitstempel</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(l, index) in logs" :key="'log-'+index">
-            <td>{{ typeString(l.type) }}</td>
-            <td>{{ l.user ? l.user.name : '-' }}</td>
-            <td>{{ l.info }}</td>
-            <td>{{ timestamp(l.timestamp) }}</td>
-          </tr>
-          </tbody>
-        </v-simple-table>
+        <v-data-table
+            :loading="loading"
+            :headers="[
+                { text: 'Aktion', value: 'type' },
+                { text: 'Von', value: 'user' },
+                { text: 'Info', value: 'info' },
+                { text: 'Zeitstempel', value: 'timestamp' }
+            ]"
+            :items="logs"
+            loading-text="Lade Daten..."
+            no-data-text="Es ist noch nichts passiert"
+            hide-default-footer
+        >
+
+          <template v-slot:item.type="props">
+            {{ typeString(props.item.type) }}
+          </template>
+
+          <template v-slot:item.user="props">
+            {{ props.item.user ? props.item.user.name : '-' }}
+          </template>
+
+          <template v-slot:item.info="props">
+            {{ props.item.info }}
+          </template>
+
+          <template v-slot:item.timestamp="props">
+            {{ timeString(props.item.timestamp) }}
+          </template>
+        </v-data-table>
       </v-card-text>
     </v-card>
 
@@ -51,13 +63,16 @@ export default {
   name: 'LogsView',
   components: {MainContainer},
   data: () => ({
+    loading: true,
     logs: [],
     limit: 50,
     limits: [50, 100, 500]
   }),
   methods: {
     fetchData: async function() {
+      this.loading = true;
       this.logs = (await getLogs({ limit: this.limit })).data;
+      this.loading = false;
     },
     updateLimit: async function(newLimit) {
       this.limit = newLimit;
@@ -68,7 +83,7 @@ export default {
     typeString: function() {
       return logTypeString;
     },
-    timestamp: function() {
+    timeString: function() {
       return (time) => moment(time).format('DD.MM.YYYY, HH:mm');
     }
   },

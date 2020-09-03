@@ -10,23 +10,23 @@
     <v-card>
       <v-card-text>
         <v-tabs vertical>
-          <v-tab @change="type = 'POST'">
+          <v-tab @change="type = 'NEWS'">
             <v-icon left>mdi-newspaper</v-icon>
             Neuigkeiten
             <v-spacer/>
           </v-tab>
-          <v-tab @change="type = 'EVENT'">
+          <v-tab @change="type = 'CALENDAR'">
             <v-icon left>mdi-calendar</v-icon>
             Kalender
             <v-spacer/>
           </v-tab>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.post" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.post" :loading="loading" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
           </v-tab-item>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.event" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.event" :loading="loading" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
           </v-tab-item>
         </v-tabs>
       </v-card-text>
@@ -114,13 +114,13 @@ export default {
   name: 'ChannelsView',
   components: {GenericDialog, ChannelTabItem, MainContainer},
   data: () => ({
-    loading: false,
+    loading: true,
     channels: {
       post: [],
       event: []
     },
     selectedChannel: {},
-    type: 'POST',
+    type: 'NEWS',
     dialogCreate: false,
     dialogRename: false,
     dialogDelete: false,
@@ -130,7 +130,9 @@ export default {
   }),
   methods: {
     fetchData: async function() {
+      this.loading = true;
       this.channels = (await getChannels({})).data;
+      this.loading = false;
     },
     resetAndCloseAll: function() {
       this.nameEn = '';

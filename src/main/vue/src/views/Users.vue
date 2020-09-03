@@ -4,7 +4,7 @@
     <template v-slot:intro>
       Alle Moderatoren haben (bis jetzt) im System dieselben Rechte.
       <br>
-      Die Passwörter sind verschlüsselt (gehashed).
+      Die Passwörter sind verschlüsselt (hashed).
     </template>
 
     <template v-slot:meta>
@@ -19,34 +19,35 @@
 
     <v-card>
       <v-card-text>
-        <v-simple-table>
-          <thead>
-          <tr>
-            <th class="text-left">Name</th>
-            <th class="text-left">Passwort</th>
-            <th class="text-left">Aktionen</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="u in users" :key="u.id">
-            <td>{{ u.name }}</td>
-            <td>******</td>
-            <td>
-              <v-btn @click="openUpdateName(u)" elevation="2" color="primary">
-                <v-icon>mdi-account-edit</v-icon>
-              </v-btn>
+        <v-data-table
+            :loading="loading"
+            :headers="[
+                { text: 'Name', value: 'name' },
+                { text: 'Passwort', value: 'password' },
+                { text: 'Aktionen', value: 'actions' }
+            ]"
+            :items="users"
+            loading-text="Lade Daten..."
+            no-data-text="Keine Moderatoren vorhanden"
+            hide-default-footer
+        >
+          <template v-slot:item.password="">
+            ******
+          </template>
+          <template v-slot:item.actions="props">
+            <v-btn @click="openUpdateName(props.item)" elevation="2" color="primary">
+              <v-icon>mdi-account-edit</v-icon>
+            </v-btn>
 
-              <v-btn @click="openUpdatePassword(u)" elevation="2" color="primary" class="ml-4">
-                <v-icon>mdi-key</v-icon>
-              </v-btn>
+            <v-btn @click="openUpdatePassword(props.item)" elevation="2" color="primary" class="ml-4">
+              <v-icon>mdi-key</v-icon>
+            </v-btn>
 
-              <v-btn @click="openDeleteUser(u)" elevation="2" color="primary" class="ml-4">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </td>
-          </tr>
-          </tbody>
-        </v-simple-table>
+            <v-btn @click="openDeleteUser(props.item)" elevation="2" color="primary" class="ml-4">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-card-text>
     </v-card>
 
@@ -146,7 +147,7 @@ export default {
   name: 'UsersView',
   components: {GenericDialog, MainContainer},
   data: () => ({
-    loading: false,
+    loading: true,
     users: [],
     selectedUser: {},
     dialogAdd: false,
@@ -159,7 +160,9 @@ export default {
   }),
   methods: {
     fetchData: async function() {
+      this.loading = true;
       this.users = (await getUsers()).data;
+      this.loading = false;
     },
     resetAndCloseAll: function() {
       this.name = '';
@@ -198,8 +201,8 @@ export default {
       try {
         this.loading = true;
         await addUser({ name: this.name, password: this.password});
-        await this.fetchData();
         this.resetAndCloseAll();
+        await this.fetchData();
       } catch (e) {
         if (e === 409)
           showSnackbar('Name bereits vergeben');
@@ -219,8 +222,8 @@ export default {
       try {
         this.loading = true;
         await updateUserName({ id: this.selectedUser.id, name: this.name });
-        await this.fetchData();
         this.resetAndCloseAll();
+        await this.fetchData();
       } catch (e) {
         if (e === 409)
           showSnackbar('Name bereits vergeben');
@@ -245,8 +248,8 @@ export default {
       try {
         this.loading = true;
         await updateUserPassword({ id: this.selectedUser.id, password: this.password });
-        await this.fetchData();
         this.resetAndCloseAll();
+        await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
@@ -257,8 +260,8 @@ export default {
       try {
         this.loading = true;
         await deleteUser({id: this.selectedUser.id});
-        await this.fetchData();
         this.resetAndCloseAll();
+        await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
