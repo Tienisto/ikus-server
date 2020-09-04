@@ -151,6 +151,30 @@ export async function getPosts({ channelId }) {
     });
 }
 
+export async function createPost({ channelId, title, content }) {
+    return await makeRequest({
+        route: 'posts',
+        method: 'POST',
+        body: { channelId, title, content }
+    });
+}
+
+export async function updatePost({ id, channelId, title, content }) {
+    return await makeRequest({
+        route: 'posts',
+        method: 'PUT',
+        body: { id, channelId, title, content }
+    });
+}
+
+export async function deletePost({ id }) {
+    return await makeRequest({
+        route: 'posts',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
 export async function getChannels({type}) {
     return await makeRequest({
         route: 'channels',

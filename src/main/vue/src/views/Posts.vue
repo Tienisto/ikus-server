@@ -16,18 +16,11 @@
           return-object
       ></v-select>
 
-      <div style="display: flex; align-items: center; justify-content: space-between">
-        <span>Sprache: </span>
-        <v-btn-toggle v-model="locale" color="primary" mandatory dense>
-          <v-btn :value="l" v-for="l in locales" :key="l" text>
-            {{ l }}
-          </v-btn>
-        </v-btn-toggle>
-      </div>
+      <LocaleSelector v-model="locale" :locales="locales"/>
 
       <br>
 
-      <v-btn color="primary" block :disabled="loading || channels.length === 0">
+      <v-btn @click="showCreateDialog" color="primary" block :disabled="loading || channels.length === 0">
         <v-icon left>mdi-plus</v-icon>
         Neuer Post
       </v-btn>
@@ -43,11 +36,11 @@
               <span>{{ timeString(p.date) }}</span>
             </div>
             <div style="display: flex">
-              <v-btn  elevation="2" color="primary">
+              <v-btn @click="showUpdateDialog(p)" elevation="2" color="primary">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
 
-              <v-btn elevation="2" color="primary" class="ml-4">
+              <v-btn @click="showDeleteDialog(p)" elevation="2" color="primary" class="ml-4">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </div>
@@ -64,25 +57,104 @@
     <Notice v-if="!loading && channels.length !== 0 && posts.length === 0"
             title="Schön leer hier..." info="Sie können rechts ein neuen Post erstellen" />
 
+    <GenericDialog v-model="dialogCreateUpdate" :title="dialogUpdating ? 'Post bearbeiten' : 'Neuer Post'" :width="700">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="4">
+            <v-select
+                label="Kanal"
+                v-model="postChannel"
+                :items="channels" item-text="name.en" item-value="id"
+                return-object
+            ></v-select>
+          </v-col>
+          <v-col cols="8" style="display: flex; align-items: center">
+            <div style="flex: 1"></div>
+            <LocaleSelector v-model="postLocale" :locales="locales" />
+          </v-col>
+        </v-row>
+
+        <v-card>
+          <v-card-text style="padding: 0">
+            <RichEditor v-show="postLocale === 'EN'" :title="titleEn" :content="contentEn"
+                        @change-title="titleEn = $event" @change-content="contentEn = $event"
+                        title-placeholder="Enter title here" content-placeholder="Write here your content"
+            />
+            <RichEditor v-show="postLocale === 'DE'" :title="titleDe" :content="contentDe"
+                        @change-title="titleDe = $event" @change-content="contentDe = $event"
+                        title-placeholder="Hier Titel eingeben" content-placeholder="Schreiben Sie hier den Inhalt"
+            />
+          </v-card-text>
+        </v-card>
+
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="dialogCreateUpdate = false" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="dialogUpdating ? update() : create()" color="primary" :loading="loading">
+          <v-icon left>{{ dialogUpdating ? 'mdi-content-save' : 'mdi-plus' }}</v-icon>
+          {{ dialogUpdating ? 'Speichern' : 'Erstellen' }}
+        </v-btn>
+      </template>
+    </GenericDialog>
+
+    <GenericDialog v-model="dialogDelete" title="Post löschen">
+      <template v-slot:content>
+        Folgender Beitrag wird gelöscht:
+        <br>
+        <b>{{ titleEn }}</b>
+        <br><br>
+        Möchten Sie wirklich diesen Beitrag löschen?
+        <br>
+        Dieser Vorgang ist nicht widerrufbar.
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="dialogDelete = false" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="deletePost" color="primary" :loading="loading">
+          <v-icon left>mdi-delete</v-icon>
+          Löschen
+        </v-btn>
+      </template>
+    </GenericDialog>
+
   </MainContainer>
 </template>
 
 <script>
 import moment from "moment"
-import {getChannels, getPosts} from "@/api";
+import {createPost, deletePost, getChannels, getPosts, updatePost} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
+import GenericDialog from "@/components/GenericDialog";
+import LocaleSelector from "@/components/LocaleSelector";
+import RichEditor from "@/components/RichEditor";
+import {showSnackbar} from "@/utils";
 
 export default {
   name: 'PostsView',
-  components: {Notice, MainContainer},
+  components: {RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     loading: true,
     channels: [],
     channel: {},
     posts: [],
     locales: ['EN', 'DE'],
-    locale: 'EN'
+    locale: 'EN',
+    dialogCreateUpdate: false,
+    dialogUpdating: false, // true if dialog is used for updating a post
+    dialogDelete: false,
+    selectedPost: {},
+    postLocale: 'EN',
+    postChannel: {},
+    titleEn: '',
+    titleDe: '',
+    contentEn: '',
+    contentDe: ''
   }),
   methods: {
     fetchData: async function() {
@@ -90,6 +162,7 @@ export default {
       this.channels = (await getChannels({ type: 'NEWS' })).data;
       if (!this.channel.id && this.channels.length !== 0) {
         this.channel = this.channels[0];
+        this.postChannel = this.channels[0];
       }
 
       if (this.channel.id) {
@@ -100,6 +173,98 @@ export default {
     },
     updateChannel: async function() {
       await this.fetchData();
+    },
+    resetDialogData: function() {
+      this.titleEn = '';
+      this.titleDe = '';
+      this.contentEn = '';
+      this.contentDe = '';
+
+      // apply global channel and locale
+      this.postChannel = this.channel;
+      this.postLocale = this.locale;
+    },
+    showCreateDialog: function() {
+      this.resetDialogData();
+      this.dialogCreateUpdate = true;
+      this.dialogUpdating = false;
+    },
+    showUpdateDialog: function(post) {
+      this.resetDialogData();
+      // apply post
+      this.selectedPost = post;
+      this.titleEn = post.title.en;
+      this.titleDe = post.title.de;
+      this.contentEn = post.content.en;
+      this.contentDe = post.content.de;
+      // open
+      this.dialogCreateUpdate = true;
+      this.dialogUpdating = true;
+    },
+    showDeleteDialog: function(post) {
+      this.resetDialogData();
+      this.selectedPost = post;
+      this.titleEn = post.title.en;
+      this.dialogDelete = true;
+    },
+    validateDialog: function() {
+      if (!this.titleEn || !this.titleDe) {
+        showSnackbar('Bitte alle Felder ausfüllen');
+        return false;
+      }
+      return true;
+    },
+    create: async function() {
+
+      if(!this.validateDialog())
+        return;
+
+      try {
+        this.loading = true;
+        await createPost({
+          channelId: this.channel.id,
+          title: { en: this.titleEn, de: this.titleDe },
+          content: { en: this.contentEn, de: this.contentDe }
+        });
+        this.dialogCreateUpdate = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    update: async function() {
+      if(!this.validateDialog())
+        return;
+
+      try {
+        this.loading = true;
+        await updatePost({
+          id: this.selectedPost.id,
+          channelId: this.channel.id,
+          title: { en: this.titleEn, de: this.titleDe },
+          content: { en: this.contentEn, de: this.contentDe }
+        });
+        this.dialogCreateUpdate = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    deletePost: async function() {
+      try {
+        this.loading = true;
+        await deletePost({ id: this.selectedPost.id });
+        this.dialogDelete = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
     }
   },
   computed: {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input="$emit('input', $event)" width="500">
+  <v-dialog :value="value" @input="$emit('input', $event)" :width="width">
     <v-card>
       <v-card-title class="headline">
         {{ title }}
@@ -22,6 +22,19 @@
 <script>
 export default {
   name: 'GenericDialog',
-  props: ['value', 'title']
+  props: {
+    value: {
+      type: Boolean,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    width: {
+      type: Number,
+      default: 500
+    }
+  }
 }
 </script>
