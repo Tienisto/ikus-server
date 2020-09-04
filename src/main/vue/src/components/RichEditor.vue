@@ -50,7 +50,7 @@
       </div>
     </editor-menu-bar>
     <div class="pa-4">
-      <input type="text" name="title" :placeholder="titlePlaceholder" :value="title" @input="$emit('change-title', $event.target.value)"
+      <input type="text" name="osqloi4faVMosL" :placeholder="titlePlaceholder" :value="title" @input="$emit('change-title', $event.target.value)"
              autocomplete="false"
              class="grey--text text--darken-1 text-h5 mb-2" style="border: none; width: 100%; outline: none">
       <editor-content :editor="editor"/>
