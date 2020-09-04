@@ -8,14 +8,14 @@
     </v-app-bar>
     <v-navigation-drawer v-if="loggedIn" v-model="drawerVisible" class="primary" dark app>
 
-      <v-container class="hidden-xl-only white--text pt-6 pl-4 pb-2" style="display: flex; align-content: center;">
+      <v-container id="nav-logo-small" class="white--text pt-6 pl-4 pb-2" style="display: flex; align-content: center;">
         <img src="@/assets/logo-512-alpha.png" style="width: 70px; height: 70px">
         <div class="pl-2 pt-2" style="display: flex; flex-direction: column; justify-content: center;">
           <p class="text-h5 mb-0">IKUS - App</p>
           <p class="text-subtitle-2">Administration</p>
         </div>
       </v-container>
-      <v-container class="hidden-lg-and-down white--text mt-4" style="text-align: center">
+      <v-container id="nav-logo-big" class="white--text mt-4" style="display: none; text-align: center">
         <img src="@/assets/logo-512-alpha.png" style="width: 100px">
         <br>
         <p class="text-h5 mb-0">IKUS - App</p>
@@ -189,3 +189,14 @@ export default {
   }
 }
 </script>
+
+<style>
+@media screen and (min-width: 1500px) {
+  #nav-logo-small {
+    display: none !important;
+  }
+  #nav-logo-big {
+    display: block !important;
+  }
+}
+</style>

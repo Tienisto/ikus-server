@@ -1,6 +1,6 @@
 <template>
   <div class="secondary" style="padding: 30px 30px 100px 30px; min-height: 100vh">
-    <div class="hidden-lg-and-down" style="height: 30px"></div>
+    <div id="main-container-top-spacer" style="display: none; height: 30px"></div>
     <div style="margin: auto; max-width: 1100px">
 
       <!-- title -->
@@ -38,3 +38,11 @@ export default {
   props: ['title', 'icon']
 }
 </script>
+
+<style>
+@media screen and (min-width: 1500px) {
+  #main-container-top-spacer {
+    display: block !important;
+  }
+}
+</style>
