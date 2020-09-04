@@ -222,7 +222,7 @@ export default {
       try {
         this.loading = true;
         await createPost({
-          channelId: this.channel.id,
+          channelId: this.postChannel.id,
           title: { en: this.titleEn, de: this.titleDe },
           content: { en: this.contentEn, de: this.contentDe }
         });
@@ -242,7 +242,7 @@ export default {
         this.loading = true;
         await updatePost({
           id: this.selectedPost.id,
-          channelId: this.channel.id,
+          channelId: this.postChannel.id,
           title: { en: this.titleEn, de: this.titleDe },
           content: { en: this.contentEn, de: this.contentDe }
         });
