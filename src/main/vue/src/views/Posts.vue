@@ -76,11 +76,11 @@
 
         <v-card>
           <v-card-text style="padding: 0">
-            <RichEditor v-show="postLocale === 'EN'" :title="titleEn" :content="contentEn"
+            <RichEditor ref="editorEn" v-show="postLocale === 'EN'" :title="titleEn"
                         @change-title="titleEn = $event" @change-content="contentEn = $event"
                         title-placeholder="Enter title here" content-placeholder="Write here your content"
             />
-            <RichEditor v-show="postLocale === 'DE'" :title="titleDe" :content="contentDe"
+            <RichEditor ref="editorDe" v-show="postLocale === 'DE'" :title="titleDe"
                         @change-title="titleDe = $event" @change-content="contentDe = $event"
                         title-placeholder="Hier Titel eingeben" content-placeholder="Schreiben Sie hier den Inhalt"
             />
@@ -188,6 +188,10 @@ export default {
       this.resetDialogData();
       this.dialogCreateUpdate = true;
       this.dialogUpdating = false;
+      setTimeout(() => {
+        this.$refs.editorEn.loadContent('');
+        this.$refs.editorDe.loadContent('');
+      }, 0);
     },
     showUpdateDialog: function(post) {
       this.resetDialogData();
@@ -200,6 +204,11 @@ export default {
       // open
       this.dialogCreateUpdate = true;
       this.dialogUpdating = true;
+      // load editor content
+      setTimeout(() => {
+        this.$refs.editorEn.loadContent(post.content.en);
+        this.$refs.editorDe.loadContent(post.content.de);
+      }, 0);
     },
     showDeleteDialog: function(post) {
       this.resetDialogData();

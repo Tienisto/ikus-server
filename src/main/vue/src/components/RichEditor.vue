@@ -70,7 +70,6 @@ export default {
   props: {
     title: String,
     titlePlaceholder: String,
-    content: String,
     contentPlaceholder: String
   },
   data: () => ({
@@ -93,18 +92,15 @@ export default {
       command({ href: this.link });
       this.link = '';
       this.dialogLink = false;
-    }
-  },
-  watch: {
-    content(newVal) {
-      if(this.editor) {
-        this.editor.setContent(newVal);
-      }
+    },
+    // setContent is ignoring whitespaces, so watching is not possible
+    // workaround: use ref
+    loadContent(content) {
+      this.editor.setContent(content);
     }
   },
   mounted() {
     this.editor = new Editor({
-      content: this.content,
       extensions: [
         new History(),
         new Bold(),
@@ -119,9 +115,7 @@ export default {
           showOnlyCurrent: false,
         })
       ],
-      // onUpdate not working in combination with watch -> setContent
-      // https://stackoverflow.com/questions/61752404/spaces-are-not-recognized-correctly-in-the-tiptap-editor
-      onBlur: () => {
+      onUpdate: () => {
         this.$emit('change-content', this.editor.getHTML());
       },
     })
