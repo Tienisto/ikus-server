@@ -5,7 +5,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 
 data class MeDto(val name: String, val admin: Boolean)
-data class DashboardDto(val logs: List<LogDto>)
+data class DashboardDto(val logs: List<LogDto>, val posts: List<PostDto>)
 
 data class UserDto(val id: Int, val name: String)
 

@@ -11,6 +11,10 @@ class PostService (
         private val postRepo: PostRepo
 ) {
 
+    suspend fun findAllOrdered(limit: Int): List<Post> {
+        return postRepo.findByOrderByDateDesc(limit).toList()
+    }
+
     suspend fun findByChannelOrdered(channel: Channel): List<Post> {
         return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
     }

@@ -36,6 +36,7 @@
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
             <v-progress-circular v-if="loading" color="primary" indeterminate />
+            <Notice v-if="!loading && dashboard.posts.length === 0" title="Noch keine Posts veröffentlicht."/>
             <div v-for="p in dashboard.posts" :key="'p'+p.id" style="display: flex;">
               <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ p.channel.name.de }}:</b> {{ p.title.de }}
@@ -95,10 +96,11 @@ import {getDashboard} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import {logTypeString} from "@/utils";
 import moment from "moment";
+import Notice from "@/components/Notice";
 
 export default {
   name: 'DahboardView',
-  components: {MainContainer},
+  components: {Notice, MainContainer},
   data: () => ({
     loading: true,
     dashboard: {
@@ -112,12 +114,6 @@ export default {
     fetchData: async function() {
       this.loading = true;
       this.dashboard = (await getDashboard()).data;
-      this.dashboard.posts = [
-        {id: 1, channel: {name: { en: '', de: 'AKKA'}}, title: { en: '', de: 'Irgendein Titel' }, date: '2020-09-01'},
-        {id: 2, channel: {name: { en: '', de: 'Wohnheim'}}, title: { en: '', de: 'Einreichung der Immatrikulationsbescheinigung' }, date: '2020-08-26'},
-        {id: 3, channel: {name: { en: '', de: 'IKUS'}}, title: { en: '', de: 'Jeden Donnerstag gibt es einen Spieleabend' }, date: '2020-08-25'},
-        {id: 4, channel: {name: { en: '', de: 'AKKA'}}, title: { en: '', de: 'Irgendein Titel' }, date: '2020-08-04'}
-      ];
       this.loading = false;
     }
   },

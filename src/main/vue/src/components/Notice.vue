@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex; align-items: center">
-    <v-icon color="grey" :size="info ? 50 : 30">{{ icon }}</v-icon>
-    <div class="ml-2 grey--text">
+    <v-icon color="grey lighten-1" :size="info ? 50 : 30">{{ icon }}</v-icon>
+    <div class="ml-2 grey--text text--lighten-1">
       <div class="text-h5">{{ title }}</div>
       <div class="text-subtitle-1">{{ info }}</div>
     </div>
