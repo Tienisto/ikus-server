@@ -102,7 +102,7 @@ export async function getUsers() {
     });
 }
 
-export async function addUser({ name, password }) {
+export async function createUser({ name, password }) {
     return await makeRequest({
         route: 'users',
         method: 'POST',

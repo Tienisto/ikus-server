@@ -10,7 +10,7 @@
     <template v-slot:meta>
       <p class="text-h6">{{ users.length }} {{ users.length === 1 ? 'Moderator' : 'Moderatoren' }}</p>
 
-      <v-btn @click="dialogAdd = true" color="primary" dark>
+      <v-btn @click="showCreateDialog" color="primary" dark>
         <v-icon left>mdi-account-plus</v-icon>
         Neuer Nutzer
       </v-btn>
@@ -35,15 +35,15 @@
             ******
           </template>
           <template v-slot:item.actions="props">
-            <v-btn @click="openUpdateName(props.item)" elevation="2" color="primary">
+            <v-btn @click="showUpdateNameDialog(props.item)" elevation="2" color="primary">
               <v-icon>mdi-account-edit</v-icon>
             </v-btn>
 
-            <v-btn @click="openUpdatePassword(props.item)" elevation="2" color="primary" class="ml-4">
+            <v-btn @click="showUpdatePasswordDialog(props.item)" elevation="2" color="primary" class="ml-4">
               <v-icon>mdi-key</v-icon>
             </v-btn>
 
-            <v-btn @click="openDeleteUser(props.item)" elevation="2" color="primary" class="ml-4">
+            <v-btn @click="showDeleteUserDialog(props.item)" elevation="2" color="primary" class="ml-4">
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </template>
@@ -51,7 +51,7 @@
       </v-card-text>
     </v-card>
 
-    <GenericDialog v-model="dialogAdd" title="Neuer Nutzer">
+    <GenericDialog v-model="dialogCreateUser" title="Neuer Nutzer">
       <template v-slot:content>
         <v-row>
           <v-col cols="12">
@@ -67,10 +67,10 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogCreateUser = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
-        <v-btn @click="addUser" color="primary" :loading="loading">
+        <v-btn @click="createUser" color="primary" :loading="loading">
           <v-icon left>mdi-account-plus</v-icon>
           Erstellen
         </v-btn>
@@ -83,7 +83,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogUpdateName = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="updateName" color="primary" :loading="loading">
@@ -106,7 +106,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogUpdatePassword = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="updatePassword" color="primary" :loading="loading">
@@ -124,7 +124,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogDeleteUser = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="deleteUser" color="primary" :loading="loading">
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import {addUser, deleteUser, getUsers, updateUserName, updateUserPassword} from "@/api";
+import {createUser, deleteUser, getUsers, updateUserName, updateUserPassword} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/GenericDialog";
@@ -151,7 +151,7 @@ export default {
     loading: false,
     users: [],
     selectedUser: {},
-    dialogAdd: false,
+    dialogCreateUser: false,
     dialogUpdateName: false,
     dialogUpdatePassword: false,
     dialogDeleteUser: false,
@@ -165,29 +165,32 @@ export default {
       this.users = (await getUsers()).data;
       this.fetching = false;
     },
-    resetAndCloseAll: function() {
+    resetDialogData: function() {
       this.name = '';
       this.password = '';
       this.passwordRepeat = '';
-      this.dialogAdd = false;
-      this.dialogUpdateName = false;
-      this.dialogUpdatePassword = false;
-      this.dialogDeleteUser = false;
     },
-    openUpdateName: function(user) {
+    showCreateDialog() {
+      this.resetDialogData();
+      this.dialogCreateUser = true;
+    },
+    showUpdateNameDialog: function(user) {
+      this.resetDialogData();
       this.selectedUser = user;
       this.dialogUpdateName = true;
       this.name = user.name;
     },
-    openUpdatePassword: function(user) {
+    showUpdatePasswordDialog: function(user) {
+      this.resetDialogData();
       this.selectedUser = user;
       this.dialogUpdatePassword = true;
     },
-    openDeleteUser: function(user) {
+    showDeleteUserDialog: function(user) {
+      this.resetDialogData();
       this.selectedUser = user;
       this.dialogDeleteUser = true;
     },
-    addUser: async function() {
+    createUser: async function() {
 
       if (!this.name || !this.password || !this.passwordRepeat) {
         showSnackbar('Bitte alle Felder ausfüllen');
@@ -201,8 +204,8 @@ export default {
 
       try {
         this.loading = true;
-        await addUser({ name: this.name, password: this.password});
-        this.resetAndCloseAll();
+        await createUser({ name: this.name, password: this.password});
+        this.dialogCreateUser = false;
         await this.fetchData();
       } catch (e) {
         if (e === 409)
@@ -223,7 +226,7 @@ export default {
       try {
         this.loading = true;
         await updateUserName({ id: this.selectedUser.id, name: this.name });
-        this.resetAndCloseAll();
+        this.dialogUpdateName = false;
         await this.fetchData();
       } catch (e) {
         if (e === 409)
@@ -249,7 +252,7 @@ export default {
       try {
         this.loading = true;
         await updateUserPassword({ id: this.selectedUser.id, password: this.password });
-        this.resetAndCloseAll();
+        this.dialogUpdatePassword = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
@@ -261,7 +264,7 @@ export default {
       try {
         this.loading = true;
         await deleteUser({id: this.selectedUser.id});
-        this.resetAndCloseAll();
+        this.dialogDeleteUser = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
