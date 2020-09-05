@@ -3,7 +3,6 @@ package de.ovgu.ikus.service
 import de.ovgu.ikus.properties.StorageProperties
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
@@ -19,22 +18,20 @@ class FileService (
     private val logger = LoggerFactory.getLogger(FileService::class.java)
 
     fun hasReadAccess(): Boolean {
-        val path = getAndValidateMainPath() ?: return false
-        Files.createDirectories(path)
-        return Files.isReadable(File(propsStorage.path).toPath())
+        return checkAccess { path -> Files.isReadable(path) }
     }
 
     fun hasWriteAccess(): Boolean {
-        val path = getAndValidateMainPath() ?: return false
-        Files.createDirectories(path)
-        return Files.isWritable(File(propsStorage.path).toPath())
+        return checkAccess { path -> Files.isWritable(path) }
     }
 
-    private fun getAndValidateMainPath(): Path? {
+    private fun checkAccess(func: (path: Path) -> Boolean): Boolean {
         try {
-            return Paths.get(propsStorage.path)
+            val path = Paths.get(propsStorage.path)
+            Files.createDirectories(path)
+            return func(path)
         } catch (e: Exception) {
-            return null
+            return false
         }
     }
 
