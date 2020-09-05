@@ -1,5 +1,6 @@
 package de.ovgu.ikus.security
 
+import de.ovgu.ikus.BuildInfo
 import de.ovgu.ikus.model.User
 import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.properties.JwtProperties
@@ -17,6 +18,10 @@ import javax.crypto.spec.SecretKeySpec
 
 data class AuthContext(val user: User, val isAdmin: Boolean)
 
+enum class JwtStatus {
+    OK, DEFAULT, TOO_SHORT
+}
+
 @Service
 class JwtService (
         private val propsAdmin: AdminProperties,
@@ -32,6 +37,14 @@ class JwtService (
         val jwtKeyBytes = propsJwt.key.toByteArray()
         jwtKey = SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.size, "HmacSHA256")
         jwtParser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
+    }
+
+    fun getStatus(): JwtStatus {
+        return when {
+            propsJwt.key == BuildInfo.DEFAULT_PROPS["security.jwt.key"] -> JwtStatus.DEFAULT
+            jwtKey.encoded.size * 8 < 256 -> JwtStatus.TOO_SHORT
+            else -> JwtStatus.OK
+        }
     }
 
     fun createToken(user: User): String {

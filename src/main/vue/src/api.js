@@ -50,6 +50,10 @@ export function initAPI({ handle401: h401 }) {
     console.log("API initialized.");
 }
 
+export function isInitialized() {
+    return !!handle401;
+}
+
 export function getUserInfo() {
     return me;
 }
@@ -57,7 +61,9 @@ export function getUserInfo() {
 export async function initAccountInfo() {
     const response = await makeRequest({
         route: "me",
-        method: "GET"
+        method: "GET",
+        no401Callback: true,
+        noException: true
     });
 
     if (response.status === 200) {
@@ -90,6 +96,20 @@ export async function logout() {
         method: 'POST',
         no401Callback: true,
         noException: true
+    });
+}
+
+export async function getVersion() {
+    return await makeRequest({
+        route: 'version',
+        method: 'GET'
+    });
+}
+
+export async function getStatus() {
+    return await makeRequest({
+        route: 'status',
+        method: 'GET'
     });
 }
 

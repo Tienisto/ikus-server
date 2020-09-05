@@ -19,7 +19,7 @@ class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : We
                 .httpBasic().disable()
                 .formLogin().disable()
                 .authorizeExchange()
-                .pathMatchers("/api/login", "/api/aggregations/**").permitAll()
+                .pathMatchers("/api/login", "/api/version", "/api/status", "/api/aggregations/**").permitAll()
                 .pathMatchers("/api/**").authenticated()
                 .pathMatchers("/**").permitAll()
                 .and()

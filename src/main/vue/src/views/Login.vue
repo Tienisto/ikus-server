@@ -18,11 +18,18 @@
         </v-card-actions>
       </v-card>
     </div>
+    <div class="white--text text-body-1" style="position: absolute; right: 10px; bottom: 10px; text-align: right">
+      Version {{ version }}
+      <br>
+      <router-link to="/status" v-slot="{ href, navigate }">
+        <a @click="navigate" :href="href" class="white--text text-decoration-underline">Status</a>
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import {getUserInfo, login} from '@/api'
+import {getUserInfo, getVersion, login} from '@/api'
 import {showSnackbar} from "@/utils";
 
 export default {
@@ -30,7 +37,8 @@ export default {
   data: () => ({
     fetching: false,
     name: null,
-    password: null
+    password: null,
+    version: null
   }),
   methods: {
     login: async function() {
@@ -50,6 +58,9 @@ export default {
         this.fetching = false;
       }
     }
+  },
+  mounted: async function() {
+    this.version = (await getVersion()).data.version;
   }
 }
 </script>

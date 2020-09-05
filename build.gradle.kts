@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 plugins {
 	id("org.springframework.boot") version "2.4.0-M2"
@@ -8,7 +10,7 @@ plugins {
 }
 
 group = "de.ovgu"
-version = "0.0.1-SNAPSHOT"
+version = "0.9.0"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -64,4 +66,14 @@ task<Copy>("updateVue") {
 
 tasks.withType<ProcessResources> {
 	dependsOn("updateVue")
+}
+
+// add build.properties, so the backend can read its version at runtime
+tasks.withType<ProcessResources> {
+	doLast {
+		File("$buildDir/resources/main/build.properties").writeText("""
+            version=${project.version}
+            date=${LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}
+        """.trimIndent())
+	}
 }

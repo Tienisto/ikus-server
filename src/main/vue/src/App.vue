@@ -49,8 +49,8 @@ export default {
   },
   mounted: async function() {
     initSnackbar(this.showSnackbar);
-    initAPI({ handle401: this.handle401 });
     await initAccountInfo();
+    initAPI({ handle401: this.handle401 });
     this.user = getUserInfo();
   }
 };

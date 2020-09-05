@@ -161,6 +161,11 @@ export default {
         route: '/logs',
         label: 'Logs',
         icon: 'mdi-text-subject'
+      },
+      {
+        route: '/status',
+        label: 'Status',
+        icon: 'mdi-information'
       }
     ]
   }),

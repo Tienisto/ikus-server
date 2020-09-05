@@ -1,8 +1,12 @@
 package de.ovgu.ikus.dto
 
 import de.ovgu.ikus.model.LogType
+import de.ovgu.ikus.security.JwtStatus
 import java.time.LocalDate
 import java.time.OffsetDateTime
+
+data class VersionDto(val version: String)
+data class StatusDto(val version: String, val date: String, val runTime: Long, val database: Boolean, val storageRead: Boolean, val storageWrite: Boolean, val adminPassword: Boolean, val jwt: JwtStatus)
 
 data class MeDto(val name: String, val admin: Boolean)
 data class DashboardDto(val logs: List<LogDto>, val posts: List<PostDto>)

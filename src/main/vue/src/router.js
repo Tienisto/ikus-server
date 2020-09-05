@@ -12,6 +12,7 @@ import Handbook from "@/views/Handbook";
 import FAQ from "@/views/FAQ";
 import Contact from "@/views/Contact";
 import Statistics from "@/views/Statistics";
+import Status from "@/views/Status";
 
 Vue.use(VueRouter)
 
@@ -20,6 +21,11 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: Login
+  },
+  {
+    path: '/status',
+    name: 'Status',
+    component: Status
   },
   {
     path: '/users',
