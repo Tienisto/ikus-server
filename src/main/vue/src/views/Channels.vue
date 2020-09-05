@@ -22,11 +22,11 @@
           </v-tab>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.post" :loading="fetching" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.post" :loading="fetching" @create="showCreateDialog" @update="showRenameDialog" @delete="showDeleteDialog" />
           </v-tab-item>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.event" :loading="fetching" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.event" :loading="fetching" @create="showCreateDialog" @update="showRenameDialog" @delete="showDeleteDialog" />
           </v-tab-item>
         </v-tabs>
       </v-card-text>
@@ -45,7 +45,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogCreate = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="createChannel" color="primary" :loading="loading">
@@ -68,7 +68,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogRename = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="renameChannel" color="primary" :loading="loading">
@@ -90,7 +90,7 @@
       </template>
 
       <template v-slot:actions>
-        <v-btn @click="resetAndCloseAll" color="black" text :disabled="loading">
+        <v-btn @click="dialogDelete = false" color="black" text :disabled="loading">
           Abbrechen
         </v-btn>
         <v-btn @click="deleteChannel" color="primary" :loading="loading">
@@ -135,21 +135,24 @@ export default {
       this.channels = (await getChannels({})).data;
       this.fetching = false;
     },
-    resetAndCloseAll: function() {
+    resetDialogData: function() {
       this.nameEn = '';
       this.nameDe = '';
       this.nameCheck = '';
-      this.dialogCreate = false;
-      this.dialogRename = false;
-      this.dialogDelete = false;
     },
-    openRenameChannel: function(channel) {
+    showCreateDialog: function() {
+      this.resetDialogData();
+      this.dialogCreate = true;
+    },
+    showRenameDialog: function(channel) {
+      this.resetDialogData();
       this.nameEn = channel.name.en;
       this.nameDe = channel.name.de;
       this.selectedChannel = channel;
       this.dialogRename = true;
     },
-    openDeleteChannel: function(channel) {
+    showDeleteDialog: function(channel) {
+      this.resetDialogData();
       this.nameDe = channel.name.de;
       this.selectedChannel = channel;
       this.dialogDelete = true;
@@ -163,8 +166,8 @@ export default {
       try {
         this.loading = true;
         await createChannel({ type: this.type, name: { en: this.nameEn, de: this.nameDe } });
+        this.dialogCreate = false;
         await this.fetchData();
-        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
@@ -180,8 +183,8 @@ export default {
       try {
         this.loading = true;
         await renameChannel({ id: this.selectedChannel.id, name: { en: this.nameEn, de: this.nameDe } });
+        this.dialogRename = false;
         await this.fetchData();
-        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
@@ -198,8 +201,8 @@ export default {
       try {
         this.loading = true;
         await deleteChannel({ id: this.selectedChannel.id });
+        this.dialogDelete = false;
         await this.fetchData();
-        this.resetAndCloseAll();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
