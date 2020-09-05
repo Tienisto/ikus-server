@@ -18,7 +18,7 @@
     <v-card>
       <v-card-text>
         <v-data-table
-            :loading="loading"
+            :loading="fetching"
             :headers="[
                 { text: 'Aktion', value: 'type' },
                 { text: 'Von', value: 'user' },
@@ -63,16 +63,16 @@ export default {
   name: 'LogsView',
   components: {MainContainer},
   data: () => ({
-    loading: true,
+    fetching: true,
     logs: [],
     limit: 50,
     limits: [50, 100, 500]
   }),
   methods: {
     fetchData: async function() {
-      this.loading = true;
+      this.fetching = true;
       this.logs = (await getLogs({ limit: this.limit })).data;
-      this.loading = false;
+      this.fetching = false;
     },
     updateLimit: async function(newLimit) {
       this.limit = newLimit;

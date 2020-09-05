@@ -30,7 +30,7 @@ class FlywayConfig (
                     override fun handle(event: Event, context: Context) {
                         runBlocking {
                             // ensure that there is an admin user
-                            userService.adminAccount()
+                            userService.repairAdminAccount()
                         }
                     }
                 })

@@ -12,7 +12,7 @@
         <v-card>
           <v-card-title>Letzte Aktivitäten</v-card-title>
           <v-card-text>
-            <v-progress-circular v-if="loading" color="primary" indeterminate />
+            <v-progress-circular v-if="fetching" color="primary" indeterminate />
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex;">
               <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}
@@ -35,8 +35,8 @@
         <v-card class="mt-6">
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
-            <v-progress-circular v-if="loading" color="primary" indeterminate />
-            <Notice v-if="!loading && dashboard.posts.length === 0" title="Noch keine Posts veröffentlicht."/>
+            <v-progress-circular v-if="fetching" color="primary" indeterminate />
+            <Notice v-if="!fetching && dashboard.posts.length === 0" title="Noch keine Posts veröffentlicht."/>
             <div v-for="p in dashboard.posts" :key="'p'+p.id" style="display: flex;">
               <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ p.channel.name.de }}:</b> {{ p.title.de }}
@@ -102,7 +102,7 @@ export default {
   name: 'DahboardView',
   components: {Notice, MainContainer},
   data: () => ({
-    loading: true,
+    fetching: true,
     dashboard: {
       logs: [],
       posts: []
@@ -112,9 +112,9 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.loading = true;
+      this.fetching = true;
       this.dashboard = (await getDashboard()).data;
-      this.loading = false;
+      this.fetching = false;
     }
   },
   computed: {

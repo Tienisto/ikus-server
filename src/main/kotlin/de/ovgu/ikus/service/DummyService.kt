@@ -17,7 +17,7 @@ class DummyService (
         logService.deleteAll()
         channelService.deleteAll()
         userService.deleteAll()
-        userService.adminAccount() // create admin account
+        userService.repairAdminAccount() // create admin account
     }
 
     suspend fun create() {

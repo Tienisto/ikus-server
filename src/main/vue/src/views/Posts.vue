@@ -26,7 +26,7 @@
       </v-btn>
     </template>
 
-    <template v-if="!loading">
+    <template v-if="!fetching">
       <v-card v-for="p in posts" :key="'p-'+p.id" class="mb-4">
         <v-card-text>
           <div style="display: flex; align-items: center">
@@ -49,12 +49,12 @@
       </v-card>
     </template>
 
-    <v-progress-circular v-if="loading" color="primary" indeterminate />
+    <v-progress-circular v-if="fetching" color="primary" indeterminate />
 
-    <Notice v-if="!loading && channels.length === 0 && posts.length === 0"
+    <Notice v-if="!fetching && channels.length === 0 && posts.length === 0"
             title="Es gibt noch keine Kanäle" info="Bitte erstellen Sie zuerst Kanäle, bevor Sie Posts verfassen." />
 
-    <Notice v-if="!loading && channels.length !== 0 && posts.length === 0"
+    <Notice v-if="!fetching && channels.length !== 0 && posts.length === 0"
             title="Schön leer hier..." info="Sie können rechts ein neuen Post erstellen" />
 
     <GenericDialog v-model="dialogCreateUpdate" :title="dialogUpdating ? 'Post bearbeiten' : 'Neuer Post'" :width="700">
@@ -139,7 +139,8 @@ export default {
   name: 'PostsView',
   components: {RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
-    loading: true,
+    fetching: true,
+    loading: false,
     channels: [],
     channel: {},
     posts: [],
@@ -158,7 +159,7 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.loading = true;
+      this.fetching = true;
       this.channels = (await getChannels({ type: 'NEWS' })).data;
       if (!this.channel.id && this.channels.length !== 0) {
         this.channel = this.channels[0];
@@ -169,7 +170,7 @@ export default {
         this.posts = (await getPosts({ channelId: this.channel.id })).data;
       }
 
-      this.loading = false;
+      this.fetching = false;
     },
     updateChannel: async function() {
       await this.fetchData();

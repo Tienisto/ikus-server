@@ -22,7 +22,7 @@ class UserService (
     /**
      * ensure that there is an admin user with the correct password
      */
-    suspend fun adminAccount() {
+    suspend fun repairAdminAccount() {
         var user = userRepo.findByName(propsAdmin.name)
         if (user == null) {
             // no admin found

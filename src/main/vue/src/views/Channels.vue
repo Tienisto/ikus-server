@@ -22,11 +22,11 @@
           </v-tab>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.post" :loading="loading" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.post" :loading="fetching" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
           </v-tab-item>
 
           <v-tab-item>
-            <ChannelTabItem :channels="channels.event" :loading="loading" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
+            <ChannelTabItem :channels="channels.event" :loading="fetching" @create="dialogCreate = true" @update="openRenameChannel" @delete="openDeleteChannel" />
           </v-tab-item>
         </v-tabs>
       </v-card-text>
@@ -114,7 +114,8 @@ export default {
   name: 'ChannelsView',
   components: {GenericDialog, ChannelTabItem, MainContainer},
   data: () => ({
-    loading: true,
+    fetching: true,
+    loading: false,
     channels: {
       post: [],
       event: []
@@ -130,9 +131,9 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.loading = true;
+      this.fetching = true;
       this.channels = (await getChannels({})).data;
-      this.loading = false;
+      this.fetching = false;
     },
     resetAndCloseAll: function() {
       this.nameEn = '';

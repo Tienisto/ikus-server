@@ -20,7 +20,7 @@
     <v-card>
       <v-card-text>
         <v-data-table
-            :loading="loading"
+            :loading="fetching"
             :headers="[
                 { text: 'Name', value: 'name' },
                 { text: 'Passwort', value: 'password' },
@@ -147,7 +147,8 @@ export default {
   name: 'UsersView',
   components: {GenericDialog, MainContainer},
   data: () => ({
-    loading: true,
+    fetching: true,
+    loading: false,
     users: [],
     selectedUser: {},
     dialogAdd: false,
@@ -160,9 +161,9 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.loading = true;
+      this.fetching = true;
       this.users = (await getUsers()).data;
-      this.loading = false;
+      this.fetching = false;
     },
     resetAndCloseAll: function() {
       this.name = '';
