@@ -48,8 +48,10 @@ class CacheService {
     /**
      * the next call of [getOrUpdate] will call the update function
      */
-    fun triggerUpdateFlag(key: CacheKey, locale: IkusLocale) {
-        map[Pair(key, locale)]!!.needUpdate = true
+    fun triggerUpdateFlag(key: CacheKey) {
+        IkusLocale.values().forEach { locale ->
+            map[Pair(key, locale)]!!.needUpdate = true
+        }
     }
 
 }

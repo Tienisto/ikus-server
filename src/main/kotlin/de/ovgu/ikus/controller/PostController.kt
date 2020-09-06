@@ -3,9 +3,7 @@ package de.ovgu.ikus.controller
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.toUser
-import de.ovgu.ikus.service.ChannelService
-import de.ovgu.ikus.service.LogService
-import de.ovgu.ikus.service.PostService
+import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPostType
 import org.springframework.security.core.Authentication
@@ -17,6 +15,7 @@ import java.time.LocalDate
 @RequestMapping("/api/posts")
 class PostController (
         private val logService: LogService,
+        private val cacheService: CacheService,
         private val channelService: ChannelService,
         private val postService: PostService
 ) {
@@ -42,6 +41,11 @@ class PostController (
         )
         postService.save(post)
         logService.log(LogType.CREATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+
+        when (post.type) {
+            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
+            PostType.FAQ -> {}
+        }
     }
 
     @PutMapping
@@ -58,6 +62,11 @@ class PostController (
         post.contentDe = request.content.de.trim()
         postService.save(post)
         logService.log(LogType.UPDATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+
+        when (post.type) {
+            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
+            PostType.FAQ -> {}
+        }
     }
 
     @DeleteMapping
@@ -65,6 +74,11 @@ class PostController (
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
         postService.delete(post)
         logService.log(LogType.DELETE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+
+        when (post.type) {
+            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
+            PostType.FAQ -> {}
+        }
     }
 
     @PostMapping("/upload")
