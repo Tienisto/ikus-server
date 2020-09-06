@@ -25,6 +25,10 @@ class PostService (
         return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
     }
 
+    suspend fun findByChannelOrdered(channel: Channel, limit: Int): List<Post> {
+        return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
+    }
+
     suspend fun findById(id: Int): Post? {
         return postRepo.findById(id)
     }

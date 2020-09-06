@@ -23,6 +23,20 @@ fun Channel.toDto(): ChannelDto {
     return ChannelDto(id, LocalizedString(en = name, de = nameDe))
 }
 
+fun Channel.toLocalizedDto(locale: IkusLocale): LocalizedChannelDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedChannelDto(id, name)
+        IkusLocale.DE -> LocalizedChannelDto(id, nameDe)
+    }
+}
+
 fun Post.toDto(channel: ChannelDto): PostDto {
-    return PostDto(id, channel, date, LocalizedString(en = title, de = titleDe), LocalizedString(en = content, de = contentDe))
+    return PostDto(id, channel, date.toString(), LocalizedString(en = title, de = titleDe), LocalizedString(en = content, de = contentDe))
+}
+
+fun Post.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedPostDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedPostDto(id, channel, date.toString(), title, content)
+        IkusLocale.DE -> LocalizedPostDto(id, channel, date.toString(), titleDe, contentDe)
+    }
 }

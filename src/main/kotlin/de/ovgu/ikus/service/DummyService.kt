@@ -26,7 +26,7 @@ class DummyService (
         createLogs(users)
         createChannels()
 
-        val channels = channelService.findByType(ChannelType.NEWS)
+        val channels = channelService.findByTypeOrdered(ChannelType.NEWS)
         createPosts(channels)
     }
 

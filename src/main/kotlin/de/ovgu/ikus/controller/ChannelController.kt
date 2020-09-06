@@ -21,11 +21,11 @@ class ChannelController (
     @GetMapping
     suspend fun getAll(@RequestParam(required = false) type: ChannelType?): Any {
         if (type != null) {
-            return channelService.findByType(type).map { channel -> channel.toDto() }
+            return channelService.findByTypeOrdered(type).map { channel -> channel.toDto() }
         } else {
             val channels = channelService.findAll()
 
-            return AggregatedChannelDto(
+            return AllChannelDto(
                     post = channels
                             .filter { c -> c.type == ChannelType.NEWS }
                             .map { channel -> channel.toDto() },
