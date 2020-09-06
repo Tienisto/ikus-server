@@ -52,7 +52,7 @@ class DummyService (
 
     suspend fun createPosts(channels: List<Channel>) {
         val posts = List(Constants.postCount) {
-            val date = LocalDate.now().plusDays(Random.nextInt(30).toLong())
+            val date = LocalDate.now().minusDays(Random.nextInt(30).toLong() + 1)
             val title = Constants.titles.random()
             Post(type = PostType.NEWS, channelId = channels.random().id, date = date,
                     title = title.first, titleDe = title.second,
