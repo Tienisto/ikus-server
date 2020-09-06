@@ -22,5 +22,5 @@ data class LogDto(val user: UserDto?, val timestamp: OffsetDateTime, val type: L
 
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)
-data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val content: String)
+data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String)
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)

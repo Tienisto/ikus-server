@@ -2,6 +2,7 @@ package de.ovgu.ikus.utils
 
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
+import org.jsoup.Jsoup
 
 fun ChannelType.toPostType(): PostType? {
     return when (this) {
@@ -36,7 +37,7 @@ fun Post.toDto(channel: ChannelDto): PostDto {
 
 fun Post.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedPostDto {
     return when (locale) {
-        IkusLocale.EN -> LocalizedPostDto(id, channel, date.toString(), title, content)
-        IkusLocale.DE -> LocalizedPostDto(id, channel, date.toString(), titleDe, contentDe)
+        IkusLocale.EN -> LocalizedPostDto(id, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content)
+        IkusLocale.DE -> LocalizedPostDto(id, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe)
     }
 }
