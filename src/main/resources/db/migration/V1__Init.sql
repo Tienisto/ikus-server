@@ -24,10 +24,11 @@ CREATE TABLE post (
 
 CREATE TABLE post_file (
     id SERIAL PRIMARY KEY,
-    post_id INT NOT NULL REFERENCES post(id) ON DELETE CASCADE,
+    post_id INT REFERENCES post(id) ON DELETE SET NULL,
     file_name TEXT NOT NULL,
     mime TEXT NOT NULL,
-    size BIGINT NOT NULL
+    size BIGINT NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE event (

@@ -10,6 +10,7 @@ import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPostType
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @RestController
@@ -64,5 +65,10 @@ class PostController (
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
         postService.delete(post)
         logService.log(LogType.DELETE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+    }
+
+    @PostMapping("/upload")
+    suspend fun upload(@RequestParam("file") file: MultipartFile) {
+        postService.uploadFile(file)
     }
 }
