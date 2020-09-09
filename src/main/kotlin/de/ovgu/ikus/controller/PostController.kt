@@ -6,9 +6,12 @@ import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPostType
+import kotlinx.coroutines.reactive.awaitFirst
+import org.springframework.http.MediaType
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
+import reactor.core.publisher.Mono
 import java.time.LocalDate
 
 @RestController
@@ -81,8 +84,8 @@ class PostController (
         }
     }
 
-    @PostMapping("/upload")
-    suspend fun upload(@RequestParam("file") file: MultipartFile) {
-        postService.uploadFile(file)
+    @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    suspend fun upload(@RequestPart("file") file: Mono<FilePart>) {
+        postService.uploadFile(file.awaitFirst())
     }
 }

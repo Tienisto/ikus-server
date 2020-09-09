@@ -87,6 +87,14 @@
           </v-card-text>
         </v-card>
 
+        <p class="text-h6 mt-4">Bilder</p>
+
+        <FileUpload v-slot:default="{ upload }" @start="upload">
+          <v-btn @click="upload">
+            Upload
+          </v-btn>
+        </FileUpload>
+
       </template>
 
       <template v-slot:actions>
@@ -127,17 +135,18 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, getChannels, getPosts, updatePost} from "@/api";
+import {createPost, deletePost, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
 import GenericDialog from "@/components/GenericDialog";
 import LocaleSelector from "@/components/LocaleSelector";
 import RichEditor from "@/components/RichEditor";
 import {showSnackbar} from "@/utils";
+import FileUpload from "@/components/FileUpload";
 
 export default {
   name: 'PostsView',
-  components: {RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
+  components: {FileUpload, RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -274,6 +283,15 @@ export default {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
         this.loading = false;
+      }
+    },
+    upload: async function(files) {
+      for (const file of files) {
+        try {
+          await uploadPostFile({ file });
+        } catch (e) {
+          showSnackbar('Ein Fehler ist aufgetreten');
+        }
       }
     }
   },

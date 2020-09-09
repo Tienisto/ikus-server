@@ -9,10 +9,11 @@ export const CHANNEL_TYPE = {
     FAQ: 'FAQ'
 };
 
-async function makeRequest({ method, route, body, params, no401Callback, noException }) {
+async function makeRequest({ method, route, body, params, no401Callback, noException, useJSON = true }) {
     const url = new URL(API_URL+'/'+route, document.location);
 
     if (params) {
+        // add query params
         for (let propName in params) {
             if (params[propName] === null || params[propName] === undefined) {
                 delete params[propName];
@@ -22,23 +23,37 @@ async function makeRequest({ method, route, body, params, no401Callback, noExcep
         url.search = new URLSearchParams(params).toString();
     }
 
+    // build body
+    if (useJSON) {
+        body = JSON.stringify(body); // as json
+    } else {
+        const original = body;
+        console.log(body);
+        body = new FormData(); // as form data, e.g. file upload
+        for(const key in original) {
+            body.append(key, original[key]);
+        }
+    }
+
     const response = await fetch(url, {
         method,
-        body: JSON.stringify(body),
-        headers: { "Content-Type": "application/json" },
-
+        body,
+        headers: useJSON ? { "Content-Type": "application/json" } : {},
     });
 
+    // handle 401
     if(!no401Callback && response.status === 401) {
         me = null;
         await handle401();
         return {};
     }
 
+    // handle errors
     if(!noException && response.status >= 400) {
         throw response.status;
     }
 
+    // return the result
     return {
         status: response.status,
         data: JSON.parse((await response.text()) || "{}")
@@ -192,6 +207,16 @@ export async function deletePost({ id }) {
         route: 'posts',
         method: 'DELETE',
         body: { id }
+    });
+}
+
+export async function uploadPostFile({ file }) {
+    console.log('upload: '+ file);
+    return await makeRequest({
+        route: 'posts/upload',
+        method: 'POST',
+        body: { file },
+        useJSON: false
     });
 }
 

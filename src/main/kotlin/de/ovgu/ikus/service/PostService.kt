@@ -7,8 +7,8 @@ import de.ovgu.ikus.model.PostFile
 import de.ovgu.ikus.repository.PostFileRepo
 import de.ovgu.ikus.repository.PostRepo
 import kotlinx.coroutines.flow.toList
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 
 @Service
 class PostService (
@@ -45,18 +45,17 @@ class PostService (
         postRepo.delete(post)
     }
 
-    suspend fun uploadFile(file: MultipartFile) {
-        val originalFileName = file.originalFilename ?: throw ErrorCode(400, "missing file name")
+    suspend fun uploadFile(file: FilePart) {
+        val originalFileName = file.filename()
         val extension = checkAndGetExtension(originalFileName)
-        val contentType = file.contentType ?: throw ErrorCode(400, "missing content type")
-        val size = file.size
+        val contentType = getMime(extension)
 
         // save and get id
-        val savedFile = postFileRepo.save(PostFile(null, null, originalFileName, contentType, size))
+        val savedFile = postFileRepo.save(PostFile(null, null, originalFileName, contentType, 0))
 
         // apply id to save to hard drive
         savedFile.fileName = "temp/${savedFile.id}.${extension}"
-        fileService.storeFile(file.inputStream, savedFile.fileName)
+        fileService.storeFilePart(file, savedFile.fileName)
         postFileRepo.save(savedFile) // update file name
     }
 
@@ -65,6 +64,14 @@ class PostService (
         return when {
             lowerCase.endsWith(".jpg") || lowerCase.endsWith(".jpeg") -> "jpg"
             lowerCase.endsWith(".png") -> "png"
+            else -> throw ErrorCode(409, "file type not allowed")
+        }
+    }
+
+    private fun getMime(extension: String): String {
+        return when (extension.toLowerCase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png" -> "image/png"
             else -> throw ErrorCode(409, "file type not allowed")
         }
     }

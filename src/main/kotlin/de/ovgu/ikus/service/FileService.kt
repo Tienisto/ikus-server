@@ -1,14 +1,14 @@
 package de.ovgu.ikus.service
 
 import de.ovgu.ikus.properties.StorageProperties
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.io.IOException
-import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 @Service
 class FileService (
@@ -35,16 +35,16 @@ class FileService (
         }
     }
 
-    fun storeFile(inputStream: InputStream, path: String, absolute: Boolean = false) {
+    suspend fun storeFilePart(file: FilePart, path: String, absolute: Boolean = false) {
         try {
-            // Copy file to the target location (Replacing existing file with the same name)
+            // Copy file to the target location
             val targetLocation = when (absolute) {
                 true -> Paths.get(normalize(path))
                 else -> Paths.get(propsStorage.path + "/" + normalize(path))
             }
 
             Files.createDirectories(targetLocation.parent)
-            Files.copy(inputStream, targetLocation, StandardCopyOption.REPLACE_EXISTING)
+            file.transferTo(targetLocation).awaitFirstOrNull()
         } catch (ex: IOException) {
             logger.error("Storing file failed",ex)
         }
