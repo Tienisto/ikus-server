@@ -45,7 +45,7 @@
     <router-link v-if="!loggedIn" to="/" v-slot="{ href, navigate }" class="mt-4">
       <v-btn @click="navigate" :href="href" color="black" text>
         <v-icon left>mdi-arrow-left</v-icon>
-        Zurück
+        Startseite
       </v-btn>
     </router-link>
 
