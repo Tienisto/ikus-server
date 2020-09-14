@@ -87,10 +87,9 @@
           </v-card-text>
         </v-card>
 
-        <v-card class="mt-8 mb-8">
+        <v-card class="mt-8 mb-8 secondary">
+          <v-card-title>Bilder</v-card-title>
           <v-card-text>
-            <p class="text-h6">Bilder</p>
-
             <ImageList :files="files" @upload="uploadFiles" @delete="deleteFile" />
           </v-card-text>
         </v-card>
@@ -136,7 +135,7 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, deletePostFile, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
+import {createPost, deletePost, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
 import GenericDialog from "@/components/GenericDialog";
@@ -191,6 +190,7 @@ export default {
       this.titleDe = '';
       this.contentEn = '';
       this.contentDe = '';
+      this.files = [];
 
       // apply global channel and locale
       this.postChannel = this.channel;
@@ -213,9 +213,10 @@ export default {
       this.titleDe = post.title.de;
       this.contentEn = post.content.en;
       this.contentDe = post.content.de;
+      this.files = [ ...post.files ];
       // open
-      this.dialogCreateUpdate = true;
       this.dialogUpdating = true;
+      this.dialogCreateUpdate = true;
       // load editor content
       setTimeout(() => {
         this.$refs.editorEn.loadContent(post.content.en);
@@ -245,7 +246,8 @@ export default {
         await createPost({
           channelId: this.postChannel.id,
           title: { en: this.titleEn, de: this.titleDe },
-          content: { en: this.contentEn, de: this.contentDe }
+          content: { en: this.contentEn, de: this.contentDe },
+          files: this.files.map((f) => f.id)
         });
         this.dialogCreateUpdate = false;
         await this.fetchData();
@@ -265,7 +267,8 @@ export default {
           id: this.selectedPost.id,
           channelId: this.postChannel.id,
           title: { en: this.titleEn, de: this.titleDe },
-          content: { en: this.contentEn, de: this.contentDe }
+          content: { en: this.contentEn, de: this.contentDe },
+          files: this.files.map((f) => f.id)
         });
         this.dialogCreateUpdate = false;
         await this.fetchData();
@@ -298,12 +301,7 @@ export default {
       }
     },
     deleteFile: async function(file) {
-      try {
-        await deletePostFile({ fileId: file.id });
-        this.files = this.files.filter((f) => f.id !== file.id);
-      } catch (e) {
-        showSnackbar('Ein Fehler ist aufgetreten');
-      }
+      this.files = this.files.filter((f) => f.id !== file.id);
     }
   },
   computed: {

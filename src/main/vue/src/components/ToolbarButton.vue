@@ -2,7 +2,7 @@
   <v-tooltip top>
     <template v-slot:activator="{ on, attrs }">
       <v-btn @click="$emit('click')" v-bind="attrs" v-on="on"
-             depressed tile small :color="active ? 'primary' : null">
+             depressed tile small :class="active ? ['primary', 'white--text'] : ['secondary', 'black--text']">
         <slot></slot>
       </v-btn>
     </template>

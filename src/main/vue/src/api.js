@@ -177,19 +177,19 @@ export async function getPosts({ channelId }) {
     });
 }
 
-export async function createPost({ channelId, title, content }) {
+export async function createPost({ channelId, title, content, files }) {
     return await makeRequest({
         route: 'posts',
         method: 'POST',
-        body: { channelId, title, content }
+        body: { channelId, title, content, files }
     });
 }
 
-export async function updatePost({ id, channelId, title, content }) {
+export async function updatePost({ id, channelId, title, content, files }) {
     return await makeRequest({
         route: 'posts',
         method: 'PUT',
-        body: { id, channelId, title, content }
+        body: { id, channelId, title, content, files }
     });
 }
 
@@ -207,14 +207,6 @@ export async function uploadPostFile({ file }) {
         method: 'POST',
         body: { file },
         useJSON: false
-    });
-}
-
-export async function deletePostFile({ fileId }) {
-    return await makeRequest({
-        route: 'posts/file',
-        method: 'DELETE',
-        body: { id: fileId }
     });
 }
 

@@ -1,11 +1,15 @@
 package de.ovgu.ikus.service
 
 import de.ovgu.ikus.dto.ErrorCode
+import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostFile
 import de.ovgu.ikus.repository.PostFileRepo
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
+import java.time.Duration
+import java.time.OffsetDateTime
 
 @Service
 class PostFileService (
@@ -21,6 +25,18 @@ class PostFileService (
         return postFileRepo.findByIdIn(ids).toList()
     }
 
+    suspend fun findByPostIn(posts: List<Post>): List<PostFile> {
+        return postFileRepo.findByPostIdIn(posts.map { post -> post.id!! }).toList()
+    }
+
+    suspend fun findByPost(post: Post): List<PostFile> {
+        return postFileRepo.findByPostId(post.id!!).toList()
+    }
+
+    suspend fun saveAll(files: List<PostFile>) {
+        postFileRepo.saveAll(files).collect()
+    }
+
     suspend fun uploadFile(file: FilePart): PostFile {
         val originalFileName = file.filename()
         val extension = checkAndGetExtension(originalFileName)
@@ -34,9 +50,19 @@ class PostFileService (
         return postFileRepo.save(savedFile) // update file name
     }
 
-    suspend fun deleteFile(file: PostFile) {
-        postFileRepo.delete(file)
-        fileService.deleteFile(file.fileName)
+    /**
+     * delete unused files
+     */
+    suspend fun cleanup() {
+        val now = OffsetDateTime.now()
+        postFileRepo
+                .findUnusedFiles()
+                .toList()
+                .filter { file -> Duration.between(file.timestamp, now) > Duration.ofHours(3) }
+                .forEach { file ->
+                    postFileRepo.delete(file)
+                    fileService.deleteFile(file.fileName)
+                }
     }
 
     private fun checkAndGetExtension(fileName: String): String {

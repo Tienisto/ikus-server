@@ -7,10 +7,7 @@ import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.security.isAdmin
 import de.ovgu.ikus.security.toUser
-import de.ovgu.ikus.service.ChannelService
-import de.ovgu.ikus.service.FileService
-import de.ovgu.ikus.service.LogService
-import de.ovgu.ikus.service.PostService
+import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
@@ -25,6 +22,7 @@ class InfoController (
         private val propsAdmin: AdminProperties,
         private val logService: LogService,
         private val postService: PostService,
+        private val postFileService: PostFileService,
         private val channelService: ChannelService,
         private val fileService: FileService,
         private val jwtService: JwtService
@@ -76,7 +74,11 @@ class InfoController (
             val channel = channels
                     .first { c -> c.id == post.channelId }
                     .toDto()
-            post.toDto(channel)
+
+            val files = postFileService
+                    .findByPost(post)
+                    .map { file -> file.toDto() }
+            post.toDto(channel, files)
         }
         return DashboardDto(logs, posts)
     }
