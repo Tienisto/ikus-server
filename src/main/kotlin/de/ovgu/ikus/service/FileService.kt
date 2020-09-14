@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ServerWebExchange
 import java.io.IOException
+import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -52,10 +54,12 @@ class FileService (
         }
     }
 
-    fun loadFile(path: String): FileSystemResource {
+    fun loadFile(path: String, webExchange: ServerWebExchange): FileSystemResource {
         val resource = FileSystemResource(propsStorage.path + "/" + normalize(path))
         if (!resource.exists())
             throw ErrorCode(404, "File not found")
+
+        webExchange.response.headers["Content-Type"] = URLConnection.guessContentTypeFromName(path) ?: "application/octet-stream"
         return resource
     }
 

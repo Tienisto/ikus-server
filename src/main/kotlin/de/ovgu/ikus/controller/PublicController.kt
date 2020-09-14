@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ServerWebExchange
 
 @RestController
 @RequestMapping("/api/public")
@@ -37,7 +38,7 @@ class PublicController(
     }
 
     @GetMapping("/news/file")
-    fun getImage(@RequestParam name: String): FileSystemResource {
-        return fileService.loadFile("posts/$name")
+    fun getImage(@RequestParam name: String, webExchange: ServerWebExchange): FileSystemResource {
+        return fileService.loadFile("posts/$name", webExchange)
     }
 }
