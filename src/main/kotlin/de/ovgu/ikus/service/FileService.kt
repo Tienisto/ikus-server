@@ -3,6 +3,7 @@ package de.ovgu.ikus.service
 import de.ovgu.ikus.properties.StorageProperties
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.io.IOException
@@ -48,6 +49,10 @@ class FileService (
         } catch (ex: IOException) {
             logger.error("Storing file failed",ex)
         }
+    }
+
+    fun loadFile(path: String): FileSystemResource {
+        return FileSystemResource(propsStorage.path + "/" + normalize(path))
     }
 
     fun normalize(path: String): String {

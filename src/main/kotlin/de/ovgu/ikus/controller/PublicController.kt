@@ -4,22 +4,23 @@ import de.ovgu.ikus.dto.PublicPostDto
 import de.ovgu.ikus.dto.LocalizedChannelDto
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
-import de.ovgu.ikus.service.CacheKey
-import de.ovgu.ikus.service.CacheService
-import de.ovgu.ikus.service.ChannelService
-import de.ovgu.ikus.service.PostService
+import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toLocalizedDto
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ServerWebExchange
 
 @RestController
 @RequestMapping("/api/public")
 class PublicController (
         private val cacheService: CacheService,
         private val postService: PostService,
-        private val channelService: ChannelService
+        private val channelService: ChannelService,
+        private val fileService: FileService
 ) {
 
     @GetMapping("/news")
@@ -35,5 +36,10 @@ class PublicController (
 
             PublicPostDto(channelsDtoMap.values.toList(), posts)
         }
+    }
+
+    @GetMapping("/news/file", produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
+    fun getImage(@RequestParam name: String, webExchange: ServerWebExchange): FileSystemResource {
+        return fileService.loadFile("posts/$name")
     }
 }

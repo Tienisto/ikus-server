@@ -54,7 +54,7 @@ class PostService (
         val savedFile = postFileRepo.save(PostFile(null, null, originalFileName, contentType, 0))
 
         // apply id to save to hard drive
-        savedFile.fileName = "temp/${savedFile.id}.${extension}"
+        savedFile.fileName = "posts/${savedFile.id}.${extension}"
         fileService.storeFilePart(file, savedFile.fileName)
         postFileRepo.save(savedFile) // update file name
     }
