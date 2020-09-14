@@ -12,6 +12,6 @@ object Request {
     data class CreateChannel(val name: LocalizedString)
     data class RenameChannel(val id: Int, val name: LocalizedString)
 
-    data class CreatePost(val channelId: Int, val title: LocalizedString, val content: LocalizedString)
-    data class UpdatePost(val id: Int, val channelId: Int, val title: LocalizedString, val content: LocalizedString)
+    data class CreatePost(val channelId: Int, val title: LocalizedString, val content: LocalizedString, val files: List<Int>)
+    data class UpdatePost(val id: Int, val channelId: Int, val title: LocalizedString, val content: LocalizedString, val files: List<Int>)
 }

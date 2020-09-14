@@ -2,6 +2,7 @@ package de.ovgu.ikus.service
 
 import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.properties.StorageProperties
+import de.ovgu.ikus.utils.getMime
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.FileSystemResource
@@ -9,7 +10,6 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebExchange
 import java.io.IOException
-import java.net.URLConnection
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -59,7 +59,7 @@ class FileService (
         if (!resource.exists())
             throw ErrorCode(404, "File not found")
 
-        webExchange.response.headers["Content-Type"] = URLConnection.guessContentTypeFromName(path) ?: "application/octet-stream"
+        webExchange.response.headers["Content-Type"] = getMime(path)
         return resource
     }
 

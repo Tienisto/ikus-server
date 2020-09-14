@@ -20,7 +20,8 @@ class PostController (
         private val logService: LogService,
         private val cacheService: CacheService,
         private val channelService: ChannelService,
-        private val postService: PostService
+        private val postService: PostService,
+        private val postFileService: PostFileService
 ) {
 
     @GetMapping
@@ -42,7 +43,10 @@ class PostController (
                 title = request.title.en.trim(), titleDe = request.title.de.trim(),
                 content = request.content.en.trim(), contentDe = request.content.de.trim()
         )
-        postService.save(post)
+
+        val files = postFileService.findByIdIn(request.files)
+
+        postService.save(post, files)
         logService.log(LogType.CREATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
 
         when (post.type) {
@@ -63,7 +67,10 @@ class PostController (
         post.titleDe = request.title.de.trim()
         post.content = request.content.en.trim()
         post.contentDe = request.content.de.trim()
-        postService.save(post)
+
+        val files = postFileService.findByIdIn(request.files)
+
+        postService.save(post, files)
         logService.log(LogType.UPDATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
 
         when (post.type) {
@@ -85,7 +92,7 @@ class PostController (
     }
 
     @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    suspend fun upload(@RequestPart("file") file: Mono<FilePart>) {
-        postService.uploadFile(file.awaitFirst())
+    suspend fun upload(@RequestPart("file") file: Mono<FilePart>): PostFile {
+        return postFileService.uploadFile(file.awaitFirst())
     }
 }

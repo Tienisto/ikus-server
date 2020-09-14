@@ -32,12 +32,12 @@ fun Channel.toLocalizedDto(locale: IkusLocale): LocalizedChannelDto {
 }
 
 fun Post.toDto(channel: ChannelDto): PostDto {
-    return PostDto(id, channel, date.toString(), LocalizedString(en = title, de = titleDe), LocalizedString(en = content, de = contentDe))
+    return PostDto(id!!, channel, date.toString(), LocalizedString(en = title, de = titleDe), LocalizedString(en = content, de = contentDe))
 }
 
 fun Post.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedPostDto {
     return when (locale) {
-        IkusLocale.EN -> LocalizedPostDto(id, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content)
-        IkusLocale.DE -> LocalizedPostDto(id, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe)
+        IkusLocale.EN -> LocalizedPostDto(id!!, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content)
+        IkusLocale.DE -> LocalizedPostDto(id!!, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe)
     }
 }

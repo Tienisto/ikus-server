@@ -9,6 +9,4 @@ import java.time.OffsetDateTime
 data class PostFile(@Id var id: Int? = null,
                     var postId: Int? = null,
                     var fileName: String = "",
-                    var mime: String = "",
-                    var size: Long = 0,
                     var timestamp: OffsetDateTime = OffsetDateTime.now())
