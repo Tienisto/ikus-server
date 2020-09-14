@@ -95,4 +95,10 @@ class PostController (
     suspend fun upload(@RequestPart("file") file: Mono<FilePart>): PostFile {
         return postFileService.uploadFile(file.awaitFirst())
     }
+
+    @DeleteMapping("/file")
+    suspend fun deleteFile(@RequestBody request: Request.Id) {
+        val file = postFileService.findById(request.id) ?: throw ErrorCode(404, "File not found")
+        postFileService.deleteFile(file)
+    }
 }

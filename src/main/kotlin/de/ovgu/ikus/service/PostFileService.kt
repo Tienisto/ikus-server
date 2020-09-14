@@ -13,6 +13,10 @@ class PostFileService (
         private val fileService: FileService
 ) {
 
+    suspend fun findById(id: Int): PostFile? {
+        return postFileRepo.findById(id)
+    }
+
     suspend fun findByIdIn(ids: List<Int>): List<PostFile> {
         return postFileRepo.findByIdIn(ids).toList()
     }
@@ -28,6 +32,11 @@ class PostFileService (
         savedFile.fileName = "posts/${savedFile.id}.${extension}"
         fileService.storeFilePart(file, savedFile.fileName)
         return postFileRepo.save(savedFile) // update file name
+    }
+
+    suspend fun deleteFile(file: PostFile) {
+        postFileRepo.delete(file)
+        fileService.deleteFile(file.fileName)
     }
 
     private fun checkAndGetExtension(fileName: String): String {

@@ -63,6 +63,11 @@ class FileService (
         return resource
     }
 
+    fun deleteFile(path: String) {
+        val pathObj = Paths.get(propsStorage.path + "/" + normalize(path))
+        Files.delete(pathObj)
+    }
+
     fun normalize(path: String): String {
         return path.replace("\\", "/")
     }

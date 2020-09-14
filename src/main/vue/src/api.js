@@ -28,7 +28,6 @@ async function makeRequest({ method, route, body, params, no401Callback, noExcep
         body = JSON.stringify(body); // as json
     } else {
         const original = body;
-        console.log(body);
         body = new FormData(); // as form data, e.g. file upload
         for(const key in original) {
             body.append(key, original[key]);
@@ -209,6 +208,18 @@ export async function uploadPostFile({ file }) {
         body: { file },
         useJSON: false
     });
+}
+
+export async function deletePostFile({ fileId }) {
+    return await makeRequest({
+        route: 'posts/file',
+        method: 'DELETE',
+        body: { id: fileId }
+    });
+}
+
+export function getFileUrl({ name }) {
+    return API_URL + '/public/file/' + name;
 }
 
 export async function getChannels({type}) {

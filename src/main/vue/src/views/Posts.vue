@@ -87,13 +87,14 @@
           </v-card-text>
         </v-card>
 
-        <p class="text-h6 mt-4">Bilder</p>
+        <v-card class="mt-8 mb-8">
+          <v-card-text>
+            <p class="text-h6">Bilder</p>
 
-        <FileUpload v-slot:default="{ upload }" @start="upload">
-          <v-btn @click="upload">
-            Upload
-          </v-btn>
-        </FileUpload>
+            <ImageList :files="files" @upload="uploadFiles" @delete="deleteFile" />
+          </v-card-text>
+        </v-card>
+
 
       </template>
 
@@ -135,18 +136,18 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
+import {createPost, deletePost, deletePostFile, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
 import GenericDialog from "@/components/GenericDialog";
 import LocaleSelector from "@/components/LocaleSelector";
 import RichEditor from "@/components/RichEditor";
 import {showSnackbar} from "@/utils";
-import FileUpload from "@/components/FileUpload";
+import ImageList from "@/components/ImageList";
 
 export default {
   name: 'PostsView',
-  components: {FileUpload, RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
+  components: {ImageList, RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -164,7 +165,8 @@ export default {
     titleEn: '',
     titleDe: '',
     contentEn: '',
-    contentDe: ''
+    contentDe: '',
+    files: []
   }),
   methods: {
     fetchData: async function() {
@@ -285,13 +287,22 @@ export default {
         this.loading = false;
       }
     },
-    upload: async function(files) {
+    uploadFiles: async function(files) {
       for (const file of files) {
         try {
-          await uploadPostFile({ file });
+          const uploaded = await uploadPostFile({ file });
+          this.files.push(uploaded);
         } catch (e) {
           showSnackbar('Ein Fehler ist aufgetreten');
         }
+      }
+    },
+    deleteFile: async function(file) {
+      try {
+        await deletePostFile({ fileId: file.id });
+        this.files = this.files.filter((f) => f.id !== file.id);
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
       }
     }
   },
@@ -301,7 +312,7 @@ export default {
     },
     timeString: function() {
       return (time) => moment(time).format('ddd, DD.MM.YYYY');
-    }
+    },
   },
   mounted: async function() {
     await this.fetchData();
