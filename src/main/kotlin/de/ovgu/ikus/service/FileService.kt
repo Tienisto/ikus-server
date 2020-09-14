@@ -1,5 +1,6 @@
 package de.ovgu.ikus.service
 
+import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.properties.StorageProperties
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
@@ -52,7 +53,10 @@ class FileService (
     }
 
     fun loadFile(path: String): FileSystemResource {
-        return FileSystemResource(propsStorage.path + "/" + normalize(path))
+        val resource = FileSystemResource(propsStorage.path + "/" + normalize(path))
+        if (!resource.exists())
+            throw ErrorCode(404, "File not found")
+        return resource
     }
 
     fun normalize(path: String): String {
