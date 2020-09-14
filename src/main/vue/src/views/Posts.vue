@@ -169,14 +169,14 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.channels = (await getChannels({ type: 'NEWS' })).data;
+      this.channels = await getChannels({ type: 'NEWS' });
       if (!this.channel.id && this.channels.length !== 0) {
         this.channel = this.channels[0];
         this.postChannel = this.channels[0];
       }
 
       if (this.channel.id) {
-        this.posts = (await getPosts({ channelId: this.channel.id })).data;
+        this.posts = await getPosts({ channelId: this.channel.id });
       }
 
       this.fetching = false;

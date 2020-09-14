@@ -162,7 +162,7 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.users = (await getUsers()).data;
+      this.users = await getUsers();
       this.fetching = false;
     },
     resetDialogData: function() {

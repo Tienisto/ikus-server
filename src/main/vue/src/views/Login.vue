@@ -60,7 +60,7 @@ export default {
     }
   },
   mounted: async function() {
-    this.version = (await getVersion()).data.version;
+    this.version = (await getVersion()).version;
   }
 }
 </script>

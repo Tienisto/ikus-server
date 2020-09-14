@@ -54,10 +54,7 @@ async function makeRequest({ method, route, body, params, no401Callback, noExcep
     }
 
     // return the result
-    return {
-        status: response.status,
-        data: JSON.parse((await response.text()) || "{}")
-    };
+    return JSON.parse((await response.text()) || "{}");
 }
 
 export function initAPI({ handle401: h401 }) {
@@ -74,17 +71,14 @@ export function getUserInfo() {
 }
 
 export async function initAccountInfo() {
-    const response = await makeRequest({
-        route: "me",
-        method: "GET",
-        no401Callback: true,
-        noException: true
-    });
-
-    if (response.status === 200) {
-        me = response.data;
+    try {
+        me = await makeRequest({
+            route: "me",
+            method: "GET",
+            no401Callback: true
+        });
         console.log("Already logged in.");
-    } else {
+    } catch (e) {
         console.log("Not logged in.");
     }
 }
@@ -96,10 +90,8 @@ export async function login({ name, password }) {
         body: { name, password },
     });
 
-    if(response.status === 200) {
-        me = response.data;
-        console.log('saved jwt');
-    }
+    me = response;
+    console.log('saved jwt');
 
     return response;
 }
@@ -211,7 +203,6 @@ export async function deletePost({ id }) {
 }
 
 export async function uploadPostFile({ file }) {
-    console.log('upload: '+ file);
     return await makeRequest({
         route: 'posts/upload',
         method: 'POST',

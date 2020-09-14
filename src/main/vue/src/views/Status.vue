@@ -93,7 +93,7 @@ export default {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
     this.loggedIn = !!getUserInfo();
-    this.status = (await getStatus()).data;
+    this.status = await getStatus();
     this.fetching = false;
 
     this.runTime = this.status.runTime;

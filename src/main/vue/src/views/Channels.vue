@@ -132,7 +132,7 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.channels = (await getChannels({})).data;
+      this.channels = await getChannels({});
       this.fetching = false;
     },
     resetDialogData: function() {

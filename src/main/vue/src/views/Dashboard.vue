@@ -113,7 +113,7 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.dashboard = (await getDashboard()).data;
+      this.dashboard = await getDashboard();
       this.fetching = false;
     }
   },

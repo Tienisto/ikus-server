@@ -71,7 +71,7 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.logs = (await getLogs({ limit: this.limit })).data;
+      this.logs = await getLogs({ limit: this.limit });
       this.fetching = false;
     },
     updateLimit: async function(newLimit) {
