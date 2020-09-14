@@ -7,10 +7,7 @@ import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toLocalizedDto
 import org.springframework.core.io.FileSystemResource
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ServerWebExchange
 
 @RestController
@@ -37,8 +34,8 @@ class PublicController(
         }
     }
 
-    @GetMapping("/news/file")
-    fun getImage(@RequestParam name: String, webExchange: ServerWebExchange): FileSystemResource {
-        return fileService.loadFile("posts/$name", webExchange)
+    @GetMapping("/file/{folder}/{name}")
+    fun getImage(@PathVariable folder: String, @PathVariable name: String, webExchange: ServerWebExchange): FileSystemResource {
+        return fileService.loadFile("$folder/$name", webExchange)
     }
 }
