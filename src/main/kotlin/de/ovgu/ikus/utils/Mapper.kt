@@ -12,6 +12,13 @@ fun ChannelType.toPostType(): PostType? {
     }
 }
 
+fun PostType.toChannelType(): ChannelType {
+    return when (this) {
+        PostType.NEWS -> ChannelType.NEWS
+        PostType.FAQ -> ChannelType.FAQ
+    }
+}
+
 fun User.toDto(): UserDto {
     return UserDto(id, name)
 }

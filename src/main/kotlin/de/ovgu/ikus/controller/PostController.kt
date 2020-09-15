@@ -4,6 +4,7 @@ import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
+import de.ovgu.ikus.utils.toChannelType
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPostType
 import kotlinx.coroutines.reactive.awaitFirst
@@ -37,6 +38,26 @@ class PostController (
                             .map { file -> file.toDto() }
                     post.toDto(channelDto, files)
                 }
+    }
+
+    @GetMapping("/grouped")
+    suspend fun getByType(@RequestParam type: PostType): List<PostGroupDto> {
+        val posts = postService.findByTypeOrderedTitle(type)
+        val channels = channelService.findByTypeOrdered(type.toChannelType())
+        val files = postFileService.findByPostIn(posts)
+
+        return channels.map { channel ->
+            val channelDto = channel.toDto()
+            val postsDto = posts
+                    .filter { post -> post.channelId == channel.id }
+                    .map { post ->
+                        val currFiles = files
+                                .filter { file -> file.postId == post.id }
+                                .map { file -> file.toDto() }
+                        post.toDto(channelDto, currFiles)
+                    }
+            PostGroupDto(channelDto, postsDto)
+        }
     }
 
     @PostMapping

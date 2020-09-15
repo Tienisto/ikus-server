@@ -3,6 +3,7 @@ package de.ovgu.ikus.service
 import de.ovgu.ikus.model.Channel
 import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostFile
+import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.repository.PostRepo
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
@@ -19,6 +20,10 @@ class PostService (
 
     suspend fun findByChannelOrdered(channel: Channel): List<Post> {
         return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
+    }
+
+    suspend fun findByTypeOrderedTitle(type: PostType): List<Post> {
+        return postRepo.findByTypeOrderByTitle(type).toList()
     }
 
     suspend fun findByChannelOrdered(channel: Channel, limit: Int): List<Post> {
