@@ -50,7 +50,8 @@ class InfoController (
                 storageRead = fileService.hasReadAccess(),
                 storageWrite = fileService.hasWriteAccess(),
                 adminPassword = propsAdmin.password != BuildInfo.DEFAULT_PROPS["admin.password"],
-                jwt = jwtService.getStatus()
+                jwtWebsite = jwtService.getStatusWebsite(),
+                jwtApp = jwtService.getStatusApp()
         )
     }
 

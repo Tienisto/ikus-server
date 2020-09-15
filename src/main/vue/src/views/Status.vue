@@ -15,15 +15,19 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="6" md="4">
-        <v-card style="height: 100%">
+        <v-card>
           <v-card-title>
             Sicherheit
           </v-card-title>
           <v-card-text>
             <StatusRow key-text="Admin-Passwort:" :value-ok="status.adminPassword" :value-error="!fetching && !status.adminPassword" error-text="Standard (!)"/>
-            <StatusRow key-text="JWT:"
-                       :value-ok="status.jwt === 'OK'" :value-error="!fetching && status.jwt !== 'OK'"
-                       :error-text="status.jwt === 'DEFAULT' ? 'Standard (!)' : 'zu kurz (min. 32)'"
+            <StatusRow key-text="JWT (Webseite):"
+                       :value-ok="status.jwtWebsite === 'OK'" :value-error="!fetching && status.jwtWebsite !== 'OK'"
+                       :error-text="status.jwtWebsite === 'DEFAULT' ? 'Standard (!)' : 'zu kurz (min. 32)'"
+            />
+            <StatusRow key-text="JWT (App):"
+                       :value-ok="status.jwtApp === 'OK'" :value-error="!fetching && status.jwtApp !== 'OK'"
+                       :error-text="status.jwtApp === 'DEFAULT' ? 'Standard (!)' : 'zu kurz (min. 32)'"
             />
           </v-card-text>
         </v-card>

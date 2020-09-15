@@ -1,6 +1,6 @@
 package de.ovgu.ikus.security
 
-import de.ovgu.ikus.properties.SecurityProperties
+import de.ovgu.ikus.properties.HashingProperties
 import org.springframework.security.crypto.bcrypt.BCrypt
 import org.springframework.stereotype.Service
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
  */
 
 @Service
-class HashService (private val properties: SecurityProperties) {
+class HashService (private val properties: HashingProperties) {
 
     /**
      * checks whether or not the string matches the hash

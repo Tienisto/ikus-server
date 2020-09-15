@@ -34,14 +34,24 @@ class JwtService (
 
     @PostConstruct
     protected fun init() {
-        val jwtKeyBytes = propsJwt.key.toByteArray()
+        val jwtKeyBytes = propsJwt.website.toByteArray()
         jwtKey = SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.size, "HmacSHA256")
         jwtParser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
     }
 
-    fun getStatus(): JwtStatus {
+    fun getStatusWebsite(): JwtStatus {
         return when {
-            propsJwt.key == BuildInfo.DEFAULT_PROPS["security.jwt.key"] -> JwtStatus.DEFAULT
+            propsJwt.website == BuildInfo.DEFAULT_PROPS["jwt.website"] -> JwtStatus.DEFAULT
+            jwtKey.encoded.size * 8 < 256 -> JwtStatus.TOO_SHORT
+            else -> JwtStatus.OK
+        }
+    }
+
+    fun getStatusApp(): JwtStatus {
+        val jwtKeyBytes = propsJwt.app.toByteArray()
+        val jwtKey = SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.size, "HmacSHA256")
+        return when {
+            propsJwt.app == BuildInfo.DEFAULT_PROPS["jwt.app"] -> JwtStatus.DEFAULT
             jwtKey.encoded.size * 8 < 256 -> JwtStatus.TOO_SHORT
             else -> JwtStatus.OK
         }
