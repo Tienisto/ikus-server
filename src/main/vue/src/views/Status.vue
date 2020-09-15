@@ -46,12 +46,7 @@
       </v-col>
     </v-row>
 
-    <router-link v-if="!loggedIn" to="/" v-slot="{ href, navigate }" class="mt-4">
-      <v-btn @click="navigate" :href="href" color="black" text>
-        <v-icon left>mdi-arrow-left</v-icon>
-        Startseite
-      </v-btn>
-    </router-link>
+    <ToHomePageButton />
 
   </MainContainer>
 </template>
@@ -59,15 +54,15 @@
 <script>
 import moment from "moment"
 import MainContainer from "@/components/layout/MainContainer";
-import {getStatus, getUserInfo, isInitialized} from "@/api";
 import StatusRow from "@/components/StatusRow";
+import ToHomePageButton from "@/components/ToHomePageButton";
+import {getStatus} from "@/api";
 
 export default {
   name: 'StatusView',
-  components: {StatusRow, MainContainer},
+  components: {ToHomePageButton, StatusRow, MainContainer},
   data: () => ({
     fetching: true,
-    loggedIn: true,
     status: {},
     runTime: null
   }),
@@ -93,10 +88,6 @@ export default {
     }
   },
   mounted: async function() {
-    while(!isInitialized()) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-    this.loggedIn = !!getUserInfo();
     this.status = await getStatus();
     this.fetching = false;
 

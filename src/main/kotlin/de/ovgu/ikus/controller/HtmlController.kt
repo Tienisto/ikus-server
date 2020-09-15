@@ -17,7 +17,7 @@ class HtmlController (
         private val jwtService: JwtService
 ) {
 
-    @GetMapping("/" , "/status", "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics")
+    @GetMapping("/" , "/privacy", "/status", "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics")
     @ResponseBody
     suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
 
@@ -36,7 +36,7 @@ class HtmlController (
                 return null
             }
 
-            user == null && path != "/" && path != "/status" -> {
+            user == null && path != "/" && path != "/privacy" && path != "/status" -> {
                 // redirect to login if not logged in
                 response.statusCode = HttpStatus.TEMPORARY_REDIRECT
                 response.headers.location = URI.create("/")

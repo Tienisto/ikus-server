@@ -13,6 +13,7 @@ import FAQ from "@/views/FAQ";
 import Contact from "@/views/Contact";
 import Statistics from "@/views/Statistics";
 import Status from "@/views/Status";
+import Privacy from "@/views/Privacy";
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,11 @@ Vue.use(VueRouter)
     path: '/status',
     name: 'Status',
     component: Status
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: Privacy
   },
   {
     path: '/users',

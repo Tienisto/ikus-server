@@ -19,10 +19,13 @@
       </v-card>
     </div>
     <div class="white--text text-body-1" style="position: absolute; right: 10px; bottom: 10px; text-align: right">
-      Version {{ version }}
+      <span>Version {{ version }}</span>
       <br>
+      <router-link to="/privacy" v-slot="{ href, navigate }">
+        <a @click="navigate" :href="href" class="white--text text-decoration-underline">Datenschutz</a>
+      </router-link>
       <router-link to="/status" v-slot="{ href, navigate }">
-        <a @click="navigate" :href="href" class="white--text text-decoration-underline">Status</a>
+        <a @click="navigate" :href="href" class="white--text text-decoration-underline ml-2">Status</a>
       </router-link>
     </div>
   </div>
