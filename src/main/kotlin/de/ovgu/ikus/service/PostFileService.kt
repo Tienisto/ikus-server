@@ -4,17 +4,20 @@ import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostFile
 import de.ovgu.ikus.repository.PostFileRepo
+import de.ovgu.ikus.utils.toBytes
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
+import java.io.ByteArrayInputStream
 import java.time.Duration
 import java.time.OffsetDateTime
 
 @Service
-class PostFileService (
+class PostFileService(
         private val postFileRepo: PostFileRepo,
-        private val fileService: FileService
+        private val fileService: FileService,
+        private val imageService: ImageService
 ) {
 
     suspend fun findById(id: Int): PostFile? {
@@ -22,11 +25,17 @@ class PostFileService (
     }
 
     suspend fun findByIdIn(ids: List<Int>): List<PostFile> {
-        return postFileRepo.findByIdIn(ids).toList()
+        return when (ids.isNotEmpty()) {
+            true -> postFileRepo.findByIdIn(ids).toList()
+            false -> emptyList()
+        }
     }
 
     suspend fun findByPostIn(posts: List<Post>): List<PostFile> {
-        return postFileRepo.findByPostIdIn(posts.map { post -> post.id!! }).toList()
+        return when (posts.isNotEmpty()) {
+            true -> postFileRepo.findByPostIdIn(posts.map { post -> post.id!! }).toList()
+            false -> emptyList()
+        }
     }
 
     suspend fun findByPost(post: Post): List<PostFile> {
@@ -39,14 +48,23 @@ class PostFileService (
 
     suspend fun uploadFile(file: FilePart): PostFile {
         val originalFileName = file.filename()
-        val extension = checkAndGetExtension(originalFileName)
+        checkExtension(originalFileName)
 
         // save and get id
         val savedFile = postFileRepo.save(PostFile(null, null, originalFileName))
 
         // apply id to save to hard drive
-        savedFile.fileName = "posts/${savedFile.id}.${extension}"
-        fileService.storeFilePart(file, savedFile.fileName)
+        savedFile.fileName = "posts/${savedFile.id}.jpg"
+
+        val bytesOriginal = file.toBytes()
+
+        val scaled = when (val rotated = imageService.digestImageRotation(bytesOriginal)) {
+            null -> imageService.reduceSizeOfFile(ByteArrayInputStream(bytesOriginal))
+            else -> imageService.reduceSizeOfFile(ByteArrayInputStream(rotated.toByteArray()))
+        }
+
+        fileService.storeFileInputStream(ByteArrayInputStream(scaled.toByteArray()), savedFile.fileName)
+
         return postFileRepo.save(savedFile) // update file name
     }
 
@@ -65,7 +83,7 @@ class PostFileService (
                 }
     }
 
-    private fun checkAndGetExtension(fileName: String): String {
+    private fun checkExtension(fileName: String): String {
         val lowerCase = fileName.toLowerCase()
         return when {
             lowerCase.endsWith(".jpg") || lowerCase.endsWith(".jpeg") -> "jpg"

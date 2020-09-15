@@ -10,9 +10,11 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebExchange
 import java.io.IOException
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 @Service
 class FileService (
@@ -36,6 +38,21 @@ class FileService (
             return func(path)
         } catch (e: Exception) {
             return false
+        }
+    }
+
+    fun storeFileInputStream(input: InputStream, path: String, absolute: Boolean = false) {
+        try {
+            // Copy file to the target location
+            val targetLocation = when (absolute) {
+                true -> Paths.get(normalize(path))
+                else -> Paths.get(propsStorage.path + "/" + normalize(path))
+            }
+
+            Files.createDirectories(targetLocation.parent)
+            Files.copy(input, targetLocation, StandardCopyOption.REPLACE_EXISTING)
+        } catch (ex: IOException) {
+            logger.error("Storing file failed",ex)
         }
     }
 

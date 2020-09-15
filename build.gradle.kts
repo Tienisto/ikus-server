@@ -11,7 +11,7 @@ plugins {
 
 group = "de.ovgu"
 version = "0.9.0"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()
@@ -37,6 +37,7 @@ dependencies {
 
 	// tools
 	implementation("org.jsoup:jsoup:1.13.1") // parse html
+	implementation("com.drewnoakes:metadata-extractor:2.14.0") // get image orientation
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -58,7 +59,7 @@ tasks.withType<Test> {
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "1.8"
+		jvmTarget = "11"
 	}
 }
 
