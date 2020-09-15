@@ -41,7 +41,7 @@ async function makeRequest({ method, route, body, params, no401Callback, noExcep
     });
 
     // handle 401
-    if(!no401Callback && response.status === 401) {
+    if(!no401Callback && response.status === 401 && handle401) {
         me = null;
         await handle401();
         return {};
