@@ -2,6 +2,7 @@ package de.ovgu.ikus.service
 
 import de.ovgu.ikus.model.*
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -10,12 +11,14 @@ class DummyService (
         private val userService: UserService,
         private val logService: LogService,
         private val channelService: ChannelService,
-        private val postService: PostService
+        private val postService: PostService,
+        private val postFileService: PostFileService
 ) {
 
     suspend fun clear() {
         logService.deleteAll()
         channelService.deleteAll()
+        postFileService.cleanup(Duration.ZERO) // delete files
         userService.deleteAll()
         userService.repairAdminAccount() // create admin account
     }

@@ -69,14 +69,17 @@ class PostFileService(
     }
 
     /**
-     * delete unused files
+     * Delete unused files.
+     * In a normal case, max age may be greater than zero to allow users to upload temporary files.
+     * This happens when the user creates a new post.
+     * @param maxAge the time passed since this file has been uploaded
      */
-    suspend fun cleanup() {
+    suspend fun cleanup(maxAge: Duration = Duration.ofHours(3)) {
         val now = OffsetDateTime.now()
         postFileRepo
                 .findUnusedFiles()
                 .toList()
-                .filter { file -> Duration.between(file.timestamp, now) > Duration.ofHours(3) }
+                .filter { file -> Duration.between(file.timestamp, now) > maxAge }
                 .forEach { file ->
                     postFileRepo.delete(file)
                     fileService.deleteFile(file.fileName)
