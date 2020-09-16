@@ -29,10 +29,10 @@
             <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
               <span>
                 {{ localized(g.channel.name) }}
-                <v-btn @click="showUpdateChannel(g.channel)" text small>
+                <v-btn @click="showUpdateChannel(g.channel)" class="black--text ml-2" icon small>
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
-                <v-btn @click="showDeleteChannel(g.channel)" text small>
+                <v-btn @click="showDeleteChannel(g.channel)" class="black--text ml-2" icon small>
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </span>
@@ -50,24 +50,22 @@
                     <Notice title="Noch keine Fragen." />
                   </div>
 
-                  <template v-for="p in g.posts">
-                    <div :key="'p'+p.id" class="ml-2 mt-2 mb-2" style="display: flex; align-items: center">
+                  <div v-for="p in g.posts" :key="p.id" @mouseover="mouseOverPost = p.id" @mouseleave="mouseOverPost = -1">
+                    <div class="ml-2 mt-2 mb-2" style="display: flex; align-items: center">
                       <div style="flex: 1">
                         <span class="">{{ localized(p.title) }}</span>
                       </div>
-                      <div style="display: flex" class="pl-1 pr-1">
-                        <v-btn @click="showUpdatePost(p)" text small>
+                      <div style="display: flex" class="pl-1 pr-1" :style="mouseOverPost === p.id ? {} : { 'visibility': 'hidden' }">
+                        <v-btn @click="showUpdatePost(p)" icon small>
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-
-                        <v-btn @click="showDeletePost(p)" text small>
+                        <v-btn @click="showDeletePost(p)" class="ml-2" icon small>
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </div>
                     </div>
-
-                    <v-divider :key="'d'+p.id" />
-                  </template>
+                    <v-divider />
+                  </div>
                 </div>
               </v-card-text>
             </v-card>
@@ -151,7 +149,8 @@ export default {
     dialogChannel: false,
     dialogDeleteChannel: false,
     selectedPost: {},
-    selectedChannel: {}
+    selectedChannel: {},
+    mouseOverPost: -1
   }),
   methods: {
     fetchData: async function() {
