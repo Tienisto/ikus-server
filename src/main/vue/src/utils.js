@@ -37,3 +37,7 @@ export function logTypeString(type) {
         default: return 'unbekannt';
     }
 }
+
+export function localizedString(obj, locale) {
+    return locale === 'EN' ? obj.en : obj.de;
+}

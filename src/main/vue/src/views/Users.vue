@@ -141,7 +141,7 @@
 import {createUser, deleteUser, getUsers, updateUserName, updateUserPassword} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import {showSnackbar} from "@/utils";
-import GenericDialog from "@/components/GenericDialog";
+import GenericDialog from "@/components/dialog/GenericDialog";
 
 export default {
   name: 'UsersView',

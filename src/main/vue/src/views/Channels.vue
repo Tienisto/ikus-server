@@ -32,87 +32,32 @@
       </v-card-text>
     </v-card>
 
-    <GenericDialog v-model="dialogCreate" title="Neuer Kanal">
-      <template v-slot:content>
-        <v-row>
-          <v-col cols="6">
-            <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
-          </v-col>
-        </v-row>
-      </template>
+    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :channel-type="type" :updating="dialogUpdating" :loading="loading"
+                  @submit="createOrRename"/>
 
-      <template v-slot:actions>
-        <v-btn @click="dialogCreate = false" color="black" text :disabled="loading">
-          Abbrechen
-        </v-btn>
-        <v-btn @click="createChannel" color="primary" :loading="loading">
-          <v-icon left>mdi-plus</v-icon>
-          Erstellen
-        </v-btn>
-      </template>
-    </GenericDialog>
-
-    <GenericDialog v-model="dialogRename" title="Kanal umbenennen">
-      <template v-slot:content>
-        <v-row>
-          <v-col cols="6">
-            <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
-          </v-col>
-          <v-col cols="6">
-            <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
-          </v-col>
-        </v-row>
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="dialogRename = false" color="black" text :disabled="loading">
-          Abbrechen
-        </v-btn>
-        <v-btn @click="renameChannel" color="primary" :loading="loading">
-          <v-icon left>mdi-pencil</v-icon>
-          Umbenennen
-        </v-btn>
-      </template>
-    </GenericDialog>
-
-    <GenericDialog v-model="dialogDelete" title="Kanal löschen">
-      <template v-slot:content>
-        Möchten Sie wirklich den Kanal {{ nameDe }} löschen?
-        <br>
-        Bitte beachten Sie, dass <b>alle</b> Beiträge / Events gelöscht werden, die dem Kanal zugeordnet sind.
-        <br>
-        Schreiben Sie in dem Feld "{{ nameDe }}", um diesen Kanal zu löschen.
-        <br><br>
-        <v-text-field v-model="nameCheck" label="Eingabe" :disabled="loading"></v-text-field>
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="dialogDelete = false" color="black" text :disabled="loading">
-          Abbrechen
-        </v-btn>
-        <v-btn @click="deleteChannel" color="primary" :loading="loading">
-          <v-icon left>mdi-delete</v-icon>
-          Löschen
-        </v-btn>
-      </template>
-    </GenericDialog>
+    <ConfirmTextDialog ref="deleteDialog" v-model="dialogDelete" :confirm-text="confirmText" :loading="loading" title="Kanal löschen"
+                        @submit="deleteChannel">
+      Möchten Sie wirklich den Kanal {{ confirmText }} löschen?
+      <br>
+      Bitte beachten Sie, dass <b>alle</b> Beiträge / Events gelöscht werden, die dem Kanal zugeordnet sind.
+      <br>
+      Schreiben Sie in dem Feld "{{ confirmText }}", um diesen Kanal zu löschen.
+    </ConfirmTextDialog>
 
   </MainContainer>
 </template>
 
 <script>
 import {createChannel, deleteChannel, getChannels, renameChannel} from "@/api";
+import {showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import ChannelTabItem from "@/components/ChannelTabItem";
-import {showSnackbar} from "@/utils";
-import GenericDialog from "@/components/GenericDialog";
+import ChannelDialog from "@/components/dialog/ChannelDialog";
+import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
 
 export default {
   name: 'ChannelsView',
-  components: {GenericDialog, ChannelTabItem, MainContainer},
+  components: {ConfirmTextDialog, ChannelDialog, ChannelTabItem, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -120,14 +65,11 @@ export default {
       post: [],
       event: []
     },
-    selectedChannel: {},
     type: 'NEWS',
-    dialogCreate: false,
-    dialogRename: false,
+    dialogChannel: false,
+    dialogUpdating: false,
     dialogDelete: false,
-    nameEn: '',
-    nameDe: '',
-    nameCheck: ''
+    selectedChannel: {}
   }),
   methods: {
     fetchData: async function() {
@@ -135,38 +77,38 @@ export default {
       this.channels = await getChannels({});
       this.fetching = false;
     },
-    resetDialogData: function() {
-      this.nameEn = '';
-      this.nameDe = '';
-      this.nameCheck = '';
-    },
     showCreateDialog: function() {
-      this.resetDialogData();
-      this.dialogCreate = true;
+      this.$refs.channelDialog.reset();
+      this.dialogUpdating = false;
+      this.dialogChannel = true;
     },
     showRenameDialog: function(channel) {
-      this.resetDialogData();
-      this.nameEn = channel.name.en;
-      this.nameDe = channel.name.de;
+      this.$refs.channelDialog.load(channel.name.en, channel.name.de);
       this.selectedChannel = channel;
-      this.dialogRename = true;
+      this.dialogUpdating = true;
+      this.dialogChannel = true;
     },
     showDeleteDialog: function(channel) {
-      this.resetDialogData();
-      this.nameDe = channel.name.de;
+      this.$refs.deleteDialog.reset();
       this.selectedChannel = channel;
       this.dialogDelete = true;
     },
-    createChannel: async function() {
-      if (!this.nameEn || !this.nameDe) {
+    createOrRename: async function(channel) {
+      if (this.dialogUpdating)
+        await this.renameChannel(channel);
+      else
+        await this.createChannel(channel);
+    },
+    createChannel: async function(channel) {
+      if (!channel.name.en || !channel.name.de) {
         showSnackbar('Bitte alle Felder ausfüllen');
         return;
       }
 
       try {
         this.loading = true;
-        await createChannel({ type: this.type, name: { en: this.nameEn, de: this.nameDe } });
-        this.dialogCreate = false;
+        await createChannel({ type: this.type, ...channel });
+        this.dialogChannel = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
@@ -174,16 +116,16 @@ export default {
         this.loading = false;
       }
     },
-    renameChannel: async function() {
-      if (!this.nameEn || !this.nameDe) {
+    renameChannel: async function(channel) {
+      if (!channel.name.en || !channel.name.de) {
         showSnackbar('Bitte alle Felder ausfüllen');
         return;
       }
 
       try {
         this.loading = true;
-        await renameChannel({ id: this.selectedChannel.id, name: { en: this.nameEn, de: this.nameDe } });
-        this.dialogRename = false;
+        await renameChannel({ id: this.selectedChannel.id, ...channel });
+        this.dialogChannel = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
@@ -192,12 +134,6 @@ export default {
       }
     },
     deleteChannel: async function() {
-
-      if (this.nameDe !== this.nameCheck) {
-        showSnackbar('Name stimmt nicht überein');
-        return;
-      }
-
       try {
         this.loading = true;
         await deleteChannel({ id: this.selectedChannel.id });
@@ -208,6 +144,11 @@ export default {
       } finally {
         this.loading = false;
       }
+    }
+  },
+  computed: {
+    confirmText: function() {
+      return this.selectedChannel.name ? this.selectedChannel.name.de : '';
     }
   },
   mounted: async function() {

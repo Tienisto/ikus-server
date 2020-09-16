@@ -61,7 +61,7 @@
 <script>
 import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { History, Bold, Italic, Underline, Heading, Link, Placeholder } from 'tiptap-extensions'
-import GenericDialog from "@/components/GenericDialog";
+import GenericDialog from "@/components/dialog/GenericDialog";
 import ToolbarButton from "@/components/ToolbarButton";
 
 export default {

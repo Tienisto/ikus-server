@@ -31,16 +31,16 @@
         <v-card-text>
           <div style="display: flex; align-items: center">
             <div style="flex: 1">
-              <span class="font-weight-bold">{{ title(p.title) }}</span>
+              <span class="font-weight-bold">{{ localized(p.title) }}</span>
               <br>
               <span>{{ timeString(p.date) }}</span>
             </div>
             <div style="display: flex">
-              <v-btn @click="showUpdateDialog(p)" elevation="2" color="primary">
+              <v-btn @click="showUpdateDialog(p)" color="primary">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
 
-              <v-btn @click="showDeleteDialog(p)" elevation="2" color="primary" class="ml-4">
+              <v-btn @click="showDeleteDialog(p)" color="primary" class="ml-4">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </div>
@@ -49,7 +49,7 @@
       </v-card>
     </template>
 
-    <v-progress-circular v-if="fetching" color="primary" indeterminate />
+    <LoadingIndicator v-if="fetching" />
 
     <Notice v-if="!fetching && channels.length === 0 && posts.length === 0"
             title="Es gibt noch keine Kanäle" info="Bitte erstellen Sie zuerst Kanäle, bevor Sie Posts verfassen." />
@@ -57,62 +57,15 @@
     <Notice v-if="!fetching && channels.length !== 0 && posts.length === 0"
             title="Schön leer hier..." info="Sie können rechts ein neuen Post erstellen" />
 
-    <GenericDialog v-model="dialogCreateUpdate" :title="dialogUpdating ? 'Post bearbeiten' : 'Neuer Post'" :width="700">
-      <template v-slot:content>
-        <v-row>
-          <v-col cols="4">
-            <v-select
-                label="Kanal"
-                v-model="postChannel"
-                :items="channels" item-text="name.en" item-value="id"
-                return-object
-            ></v-select>
-          </v-col>
-          <v-col cols="8" style="display: flex; align-items: center">
-            <div style="flex: 1"></div>
-            <LocaleSelector v-model="postLocale" :locales="locales" />
-          </v-col>
-        </v-row>
-
-        <v-card>
-          <v-card-text style="padding: 0">
-            <RichEditor ref="editorEn" v-show="postLocale === 'EN'" :title="titleEn"
-                        @change-title="titleEn = $event" @change-content="contentEn = $event"
-                        title-placeholder="Enter title here" content-placeholder="Write here your content"
-            />
-            <RichEditor ref="editorDe" v-show="postLocale === 'DE'" :title="titleDe"
-                        @change-title="titleDe = $event" @change-content="contentDe = $event"
-                        title-placeholder="Hier Titel eingeben" content-placeholder="Schreiben Sie hier den Inhalt"
-            />
-          </v-card-text>
-        </v-card>
-
-        <v-card class="mt-8 mb-8 secondary">
-          <v-card-title>Bilder</v-card-title>
-          <v-card-text>
-            <ImageList :files="files" @upload="uploadFiles" @delete="deleteFile" />
-          </v-card-text>
-        </v-card>
-
-
-      </template>
-
-      <template v-slot:actions>
-        <v-btn @click="dialogCreateUpdate = false" color="black" text :disabled="loading">
-          Abbrechen
-        </v-btn>
-        <v-btn @click="dialogUpdating ? update() : create()" color="primary" :loading="loading">
-          <v-icon left>{{ dialogUpdating ? 'mdi-content-save' : 'mdi-plus' }}</v-icon>
-          {{ dialogUpdating ? 'Speichern' : 'Erstellen' }}
-        </v-btn>
-      </template>
-    </GenericDialog>
+    <PostDialog ref="postDialog" v-model="dialogPost" post-type="NEWS" :channels="channels" :locales="locales"
+                :updating="dialogUpdating" :loading="loading"
+                @submit="createOrUpdate"/>
 
     <GenericDialog v-model="dialogDelete" title="Post löschen">
       <template v-slot:content>
         Folgender Beitrag wird gelöscht:
         <br>
-        <b>{{ titleEn }}</b>
+        <b>{{ selectedPost.title ? selectedPost.title.en : '' }}</b>
         <br><br>
         Möchten Sie wirklich diesen Beitrag löschen?
         <br>
@@ -135,18 +88,18 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, getChannels, getPosts, updatePost, uploadPostFile} from "@/api";
+import {createPost, deletePost, getChannels, getPosts, updatePost} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
-import GenericDialog from "@/components/GenericDialog";
+import GenericDialog from "@/components/dialog/GenericDialog";
 import LocaleSelector from "@/components/LocaleSelector";
-import RichEditor from "@/components/RichEditor";
-import {showSnackbar} from "@/utils";
-import ImageList from "@/components/ImageList";
+import {localizedString, showSnackbar} from "@/utils";
+import PostDialog from "@/components/dialog/PostDialog";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default {
   name: 'PostsView',
-  components: {ImageList, RichEditor, LocaleSelector, GenericDialog, Notice, MainContainer},
+  components: {LoadingIndicator, PostDialog, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -155,17 +108,10 @@ export default {
     posts: [],
     locales: ['EN', 'DE'],
     locale: 'EN',
-    dialogCreateUpdate: false,
+    dialogPost: false,
     dialogUpdating: false, // true if dialog is used for updating a post
     dialogDelete: false,
-    selectedPost: {},
-    postLocale: 'EN',
-    postChannel: {},
-    titleEn: '',
-    titleDe: '',
-    contentEn: '',
-    contentDe: '',
-    files: []
+    selectedPost: {}
   }),
   methods: {
     fetchData: async function() {
@@ -173,7 +119,6 @@ export default {
       this.channels = await getChannels({ type: 'NEWS' });
       if (!this.channel.id && this.channels.length !== 0) {
         this.channel = this.channels[0];
-        this.postChannel = this.channels[0];
       }
 
       if (this.channel.id) {
@@ -185,71 +130,45 @@ export default {
     updateChannel: async function() {
       await this.fetchData();
     },
-    resetDialogData: function() {
-      this.titleEn = '';
-      this.titleDe = '';
-      this.contentEn = '';
-      this.contentDe = '';
-      this.files = [];
-
-      // apply global channel and locale
-      this.postChannel = this.channel;
-      this.postLocale = this.locale;
-    },
     showCreateDialog: function() {
-      this.resetDialogData();
-      this.dialogCreateUpdate = true;
+      this.$refs.postDialog.reset(this.channel, this.locale);
+      this.dialogPost = true;
       this.dialogUpdating = false;
-      setTimeout(() => {
-        this.$refs.editorEn.loadContent('');
-        this.$refs.editorDe.loadContent('');
-      }, 0);
     },
     showUpdateDialog: function(post) {
-      this.resetDialogData();
       // apply post
       this.selectedPost = post;
-      this.titleEn = post.title.en;
-      this.titleDe = post.title.de;
-      this.contentEn = post.content.en;
-      this.contentDe = post.content.de;
-      this.files = [ ...post.files ];
-      // open
+      this.$refs.postDialog.reset(this.channel, this.locale);
+      this.$refs.postDialog.load(post);
       this.dialogUpdating = true;
-      this.dialogCreateUpdate = true;
-      // load editor content
-      setTimeout(() => {
-        this.$refs.editorEn.loadContent(post.content.en);
-        this.$refs.editorDe.loadContent(post.content.de);
-      }, 0);
+      this.dialogPost = true;
     },
     showDeleteDialog: function(post) {
-      this.resetDialogData();
       this.selectedPost = post;
-      this.titleEn = post.title.en;
       this.dialogDelete = true;
     },
-    validateDialog: function() {
-      if (!this.titleEn || !this.titleDe) {
+    validateDialog: function(post) {
+      if (!post.title.en || !post.title.de) {
         showSnackbar('Bitte alle Felder ausfüllen');
         return false;
       }
       return true;
     },
-    create: async function() {
+    createOrUpdate: async function(post) {
+      if (this.dialogUpdating)
+        await this.update(post);
+      else
+        await this.create(post);
+    },
+    create: async function(post) {
 
-      if(!this.validateDialog())
+      if(!this.validateDialog(post))
         return;
 
       try {
         this.loading = true;
-        await createPost({
-          channelId: this.postChannel.id,
-          title: { en: this.titleEn, de: this.titleDe },
-          content: { en: this.contentEn, de: this.contentDe },
-          files: this.files.map((f) => f.id)
-        });
-        this.dialogCreateUpdate = false;
+        await createPost(post);
+        this.dialogPost = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
@@ -257,20 +176,17 @@ export default {
         this.loading = false;
       }
     },
-    update: async function() {
-      if(!this.validateDialog())
+    update: async function(post) {
+      if(!this.validateDialog(post))
         return;
 
       try {
         this.loading = true;
         await updatePost({
           id: this.selectedPost.id,
-          channelId: this.postChannel.id,
-          title: { en: this.titleEn, de: this.titleDe },
-          content: { en: this.contentEn, de: this.contentDe },
-          files: this.files.map((f) => f.id)
+          ...post
         });
-        this.dialogCreateUpdate = false;
+        this.dialogPost = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
@@ -290,23 +206,10 @@ export default {
         this.loading = false;
       }
     },
-    uploadFiles: async function(files) {
-      for (const file of files) {
-        try {
-          const uploaded = await uploadPostFile({ file });
-          this.files.push(uploaded);
-        } catch (e) {
-          showSnackbar('Ein Fehler ist aufgetreten');
-        }
-      }
-    },
-    deleteFile: async function(file) {
-      this.files = this.files.filter((f) => f.id !== file.id);
-    }
   },
   computed: {
-    title: function() {
-      return (title) => this.locale === 'EN' ? title.en : title.de;
+    localized: function() {
+      return (obj) => localizedString(obj, this.locale);
     },
     timeString: function() {
       return (time) => moment(time).format('ddd, DD.MM.YYYY');
