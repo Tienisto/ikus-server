@@ -1,7 +1,7 @@
 <template>
   <div class="secondary" style="padding: 30px 30px 100px 30px; min-height: 100vh">
     <div id="main-container-top-spacer" style="display: none; height: 30px"></div>
-    <div style="margin: auto; max-width: 1100px">
+    <div style="margin: auto; max-width: 1200px">
 
       <!-- title -->
       <div class="mb-8">
