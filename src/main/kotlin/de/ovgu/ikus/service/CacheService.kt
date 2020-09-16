@@ -10,19 +10,20 @@ enum class CacheKey {
     NEWS,
     CALENDAR
 }
-private val lifeTime = Duration.ofMinutes(1).toMillis()
+private val lifeTime = Duration.ofMinutes(5).toMillis()
 data class CachedData(var json: String?, var needUpdate: Boolean, var expires: Long)
 
 @Service
 class CacheService {
 
+    // all cached json are stored in this map
     private val map: Map<Pair<CacheKey, IkusLocale>, CachedData> = CacheKey
             .values()
-            .map { key -> IkusLocale.values().map { locale -> Pair(key, locale) to CachedData(null, true, System.currentTimeMillis() + lifeTime) } }
+            .map { key -> IkusLocale.values().map { locale -> Pair(key, locale) to CachedData(null, true, 0) } }
             .flatten()
             .toMap()
 
-    suspend fun getOrUpdate(key: CacheKey, locale: IkusLocale, updateFunc: suspend () -> Any): String {
+    suspend fun getCacheOrUpdate(key: CacheKey, locale: IkusLocale, updateFunc: suspend () -> Any): String {
         val cached = map[Pair(key, locale)]!!
 
         return when {
@@ -46,7 +47,7 @@ class CacheService {
     }
 
     /**
-     * the next call of [getOrUpdate] will call the update function
+     * the next call of [getCacheOrUpdate] will call the update function
      */
     fun triggerUpdateFlag(key: CacheKey) {
         IkusLocale.values().forEach { locale ->

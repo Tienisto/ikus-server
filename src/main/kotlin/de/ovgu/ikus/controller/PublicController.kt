@@ -23,7 +23,7 @@ class PublicController(
 
     @GetMapping("/news")
     suspend fun getPosts(@RequestParam locale: IkusLocale): String {
-        return cacheService.getOrUpdate(CacheKey.NEWS, locale) {
+        return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
             val channels = channelService.findByTypeOrdered(ChannelType.NEWS)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val postsUnsorted = channels
