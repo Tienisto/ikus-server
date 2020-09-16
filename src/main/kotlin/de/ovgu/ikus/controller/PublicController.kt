@@ -1,9 +1,11 @@
 package de.ovgu.ikus.controller
 
 import de.ovgu.ikus.dto.LocalizedChannelDto
+import de.ovgu.ikus.dto.PublicFAQDto
 import de.ovgu.ikus.dto.PublicPostDto
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
+import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toLocalizedDto
@@ -21,10 +23,15 @@ class PublicController(
         private val fileService: FileService
 ) {
 
+    @GetMapping("/file/{folder}/{name}")
+    fun getImage(@PathVariable folder: String, @PathVariable name: String, webExchange: ServerWebExchange): FileSystemResource {
+        return fileService.loadFile("$folder/$name", webExchange)
+    }
+
     @GetMapping("/news")
     suspend fun getPosts(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
-            val channels = channelService.findByTypeOrdered(ChannelType.NEWS)
+            val channels = channelService.findByType(ChannelType.NEWS)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val postsUnsorted = channels
                     .map { channel -> postService.findByChannelOrdered(channel, 10) }
@@ -43,8 +50,24 @@ class PublicController(
         }
     }
 
-    @GetMapping("/file/{folder}/{name}")
-    fun getImage(@PathVariable folder: String, @PathVariable name: String, webExchange: ServerWebExchange): FileSystemResource {
-        return fileService.loadFile("$folder/$name", webExchange)
+    @GetMapping("/faq")
+    suspend fun getFAQ(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.FAQ, locale) {
+            val channels = channelService.findByTypeOrdered(ChannelType.FAQ, locale)
+            val posts = postService.findByTypeOrderByTitle(PostType.FAQ)
+            val files = postFileService.findByPostIn(posts)
+            channels.map { channel ->
+                val channelDto = channel.toLocalizedDto(locale)
+                val postsDto = posts
+                        .filter { post -> post.channelId == channel.id}
+                        .map { post ->
+                            val currFiles = files
+                                    .filter { file -> file.postId == post.id }
+                                    .map { file -> file.toDto() }
+                            post.toLocalizedDto(locale, channelDto, currFiles)
+                        }
+                PublicFAQDto(channelDto, postsDto)
+            }
+        }
     }
 }

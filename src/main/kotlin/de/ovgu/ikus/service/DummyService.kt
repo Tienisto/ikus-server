@@ -31,10 +31,10 @@ class DummyService (
         createLogs(users)
         createChannels()
 
-        val channelsNews = channelService.findByTypeOrdered(ChannelType.NEWS)
+        val channelsNews = channelService.findByType(ChannelType.NEWS)
         createPosts(channelsNews, Constants.postTitles)
 
-        val channelsFAQ = channelService.findByTypeOrdered(ChannelType.FAQ)
+        val channelsFAQ = channelService.findByType(ChannelType.FAQ)
         createPosts(channelsFAQ, Constants.faqTitles)
     }
 

@@ -25,3 +25,4 @@ data class LogDto(val user: UserDto?, val timestamp: OffsetDateTime, val type: L
 data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
+data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array

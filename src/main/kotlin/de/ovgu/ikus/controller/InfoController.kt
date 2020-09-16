@@ -71,7 +71,7 @@ class InfoController (
     @GetMapping("/dashboard")
     suspend fun dashboard(): DashboardDto {
         val logs = logService.findAll(5)
-        val channels = channelService.findByTypeOrdered(ChannelType.NEWS)
+        val channels = channelService.findByType(ChannelType.NEWS)
         val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 5).map { post ->
             val channel = channels
                     .first { c -> c.id == post.channelId }

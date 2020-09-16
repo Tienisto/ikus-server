@@ -3,6 +3,7 @@ package de.ovgu.ikus.controller
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.Channel
 import de.ovgu.ikus.model.ChannelType
+import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.CacheKey
@@ -24,7 +25,7 @@ class ChannelController (
     @GetMapping
     suspend fun getAll(@RequestParam(required = false) type: ChannelType?): Any {
         if (type != null) {
-            return channelService.findByTypeOrdered(type).map { channel -> channel.toDto() }
+            return channelService.findByTypeOrdered(type, IkusLocale.EN).map { channel -> channel.toDto() }
         } else {
             val channels = channelService.findAll()
 

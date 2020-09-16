@@ -43,7 +43,7 @@ class PostController (
     @GetMapping("/grouped")
     suspend fun getByType(@RequestParam type: PostType): List<PostGroupDto> {
         val posts = postService.findByTypeOrderByTitle(type)
-        val channels = channelService.findByTypeOrdered(type.toChannelType())
+        val channels = channelService.findByTypeOrdered(type.toChannelType(), IkusLocale.EN)
         val files = postFileService.findByPostIn(posts)
 
         return channels.map { channel ->
