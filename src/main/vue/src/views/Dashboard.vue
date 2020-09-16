@@ -12,7 +12,7 @@
         <v-card>
           <v-card-title>Letzte Aktivitäten</v-card-title>
           <v-card-text>
-            <v-progress-circular v-if="fetching" color="primary" indeterminate />
+            <LoadingIndicator v-if="fetching" />
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex;">
               <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}
@@ -35,7 +35,7 @@
         <v-card class="mt-6">
           <v-card-title>Neuste Posts</v-card-title>
           <v-card-text>
-            <v-progress-circular v-if="fetching" color="primary" indeterminate />
+            <LoadingIndicator v-if="fetching" />
             <Notice v-if="!fetching && dashboard.posts.length === 0" title="Noch keine Posts veröffentlicht."/>
             <div v-for="p in dashboard.posts" :key="'p'+p.id" style="display: flex;">
               <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
@@ -97,10 +97,11 @@ import MainContainer from "@/components/layout/MainContainer";
 import {logTypeString} from "@/utils";
 import moment from "moment";
 import Notice from "@/components/Notice";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default {
   name: 'DahboardView',
-  components: {Notice, MainContainer},
+  components: {LoadingIndicator, Notice, MainContainer},
   data: () => ({
     fetching: true,
     dashboard: {
