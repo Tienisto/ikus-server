@@ -36,12 +36,26 @@ class PostService (
 
     suspend fun save(post: Post, files: List<PostFile>): Post {
         val saved = postRepo.save(post)
-        files.forEach { file -> file.postId = saved.id }
-        postFileService.saveAll(files)
+
+        // break or add connection to the post
+        val allFiles = postFileService
+                .findByPost(post)
+                .plus(files)
+                .distinctBy { file -> file.id }
+
+        allFiles.forEach { file ->
+            file.postId = when (files.any { f -> f.id == file.id }) {
+                true -> saved.id
+                false -> null
+            }
+        }
+
+        postFileService.saveAll(allFiles)
         postFileService.cleanup()
         return saved
     }
 
+    // dummy only
     suspend fun saveAll(posts: List<Post>): List<Post> {
         return postRepo.saveAll(posts).toList()
     }
