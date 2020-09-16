@@ -19,6 +19,9 @@
 
     <LoadingIndicator v-if="fetching" />
 
+    <Notice v-if="!fetching && groups.length === 0"
+            title="Es existieren noch keine Gruppen" info="Sie können rechts eine neue Gruppe erstellen" />
+
     <v-row v-if="!fetching">
       <v-col cols="6" v-for="g in groups" :key="g.channel.id" class="pt-0 pb-6">
         <v-card>
@@ -40,22 +43,31 @@
           </v-card-title>
           <v-card-text class="mt-2">
             <v-card outlined>
-              <v-card-text>
+              <v-card-text class="pa-0">
                 <div style="height: 250px; overflow-y: scroll" >
-                  <div class="mb-4" style="display: flex; align-items: center" v-for="p in g.posts" :key="p.id">
-                    <div style="flex: 1">
-                      <span class="">{{ localized(p.title) }}</span>
-                    </div>
-                    <div style="display: flex" class="pl-1 pr-1">
-                      <v-btn @click="showUpdatePost(p)" text small>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
 
-                      <v-btn @click="showDeletePost(p)" text small>
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </div>
+                  <div v-if="!fetching && g.posts.length === 0" class="pl-2 pt-2">
+                    <Notice title="Noch keine Fragen." />
                   </div>
+
+                  <template v-for="p in g.posts">
+                    <div :key="'p'+p.id" class="ml-2 mt-2 mb-2" style="display: flex; align-items: center">
+                      <div style="flex: 1">
+                        <span class="">{{ localized(p.title) }}</span>
+                      </div>
+                      <div style="display: flex" class="pl-1 pr-1">
+                        <v-btn @click="showUpdatePost(p)" text small>
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+
+                        <v-btn @click="showDeletePost(p)" text small>
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </div>
+                    </div>
+
+                    <v-divider :key="'d'+p.id" />
+                  </template>
                 </div>
               </v-card-text>
             </v-card>
@@ -118,10 +130,12 @@ import PostDialog from "@/components/dialog/PostDialog";
 import GenericDialog from "@/components/dialog/GenericDialog";
 import ChannelDialog from "@/components/dialog/ChannelDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
+import Notice from "@/components/Notice";
 
 export default {
   name: 'FAQView',
   components: {
+    Notice,
     ConfirmTextDialog,
     ChannelDialog, GenericDialog, PostDialog, LoadingIndicator, LocaleSelector, MainContainer},
   data: () => ({
