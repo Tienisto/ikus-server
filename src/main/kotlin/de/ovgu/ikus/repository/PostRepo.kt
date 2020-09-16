@@ -9,8 +9,8 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface PostRepo : CoroutineCrudRepository<Post, Int> {
 
-    @Query("SELECT * FROM post ORDER BY date DESC LIMIT :limit")
-    fun findByOrderByDateDesc(limit: Int): Flow<Post>
+    @Query("SELECT * FROM post WHERE type = :type ORDER BY date DESC LIMIT :limit")
+    fun findByOrderByDateDesc(type: String, limit: Int): Flow<Post>
 
     fun findByChannelIdOrderByDateDesc(channel: Channel): Flow<Post>
     fun findByTypeOrderByTitle(type: PostType): Flow<Post>

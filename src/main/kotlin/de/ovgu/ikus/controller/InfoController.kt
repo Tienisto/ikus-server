@@ -3,6 +3,7 @@ package de.ovgu.ikus.controller
 import de.ovgu.ikus.BuildInfo
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
+import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.security.isAdmin
@@ -71,7 +72,7 @@ class InfoController (
     suspend fun dashboard(): DashboardDto {
         val logs = logService.findAll(5)
         val channels = channelService.findByTypeOrdered(ChannelType.NEWS)
-        val posts = postService.findAllOrdered(5).map { post ->
+        val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 5).map { post ->
             val channel = channels
                     .first { c -> c.id == post.channelId }
                     .toDto()

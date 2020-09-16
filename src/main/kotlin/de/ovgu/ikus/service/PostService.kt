@@ -14,16 +14,16 @@ class PostService (
         private val postFileService: PostFileService
 ) {
 
-    suspend fun findAllOrdered(limit: Int): List<Post> {
-        return postRepo.findByOrderByDateDesc(limit).toList()
+    suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
+        return postRepo.findByOrderByDateDesc(type.name, limit).toList()
+    }
+
+    suspend fun findByTypeOrderByTitle(type: PostType): List<Post> {
+        return postRepo.findByTypeOrderByTitle(type).toList()
     }
 
     suspend fun findByChannelOrdered(channel: Channel): List<Post> {
         return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
-    }
-
-    suspend fun findByTypeOrderedTitle(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByTitle(type).toList()
     }
 
     suspend fun findByChannelOrdered(channel: Channel, limit: Int): List<Post> {

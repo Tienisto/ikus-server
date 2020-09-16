@@ -14,7 +14,7 @@
           v-model="channel" @change="updateChannel"
           :items="channels" item-text="name.en" item-value="id"
           return-object
-      ></v-select>
+      />
 
       <LocaleSelector v-model="locale" :locales="locales"/>
 

@@ -177,6 +177,14 @@ export async function getPosts({ channelId }) {
     });
 }
 
+export async function getPostsGrouped({ type }) {
+    return await makeRequest({
+        route: 'posts/grouped',
+        method: 'GET',
+        params: { type }
+    });
+}
+
 export async function createPost({ channelId, title, content, files }) {
     return await makeRequest({
         route: 'posts',
