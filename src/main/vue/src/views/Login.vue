@@ -2,7 +2,7 @@
   <div class="primary" style="height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center">
     <div style="text-align: center">
       <img src="@/assets/logo-512-alpha.png" style="width: 200px">
-      <p class="white--text text-h4">IKUS - App</p>
+      <p class="white--text text-h4">Welcome at OVGU</p>
       <p class="white--text text-h5">Administration</p>
       <v-card class="mt-10">
         <v-card-text>
