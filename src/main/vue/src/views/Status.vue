@@ -55,9 +55,9 @@
         <br>
         Es wird nur ein Ausschnitt Ihnen angezeigt. <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html" target="_blank">Vollständige Liste</a>
         <br>
-        Als Argument beim Starten: java -jar server.jar --storage.path="Ihr Pfad"
+        Als Argument: <span style="font-family: Consolas, monospace">java -jar server.jar --storage.path="/ihr pfad/hier"</span>
         <br>
-        Oder als Umgebungsvariable: storage.path -> STORAGE_PATH=Ihr Pfad
+        Als Umgebungsvariable: <span style="font-family: Consolas, monospace">STORAGE_PATH=/ihr pfad/hier</span>
         <br><br>
 
 
