@@ -46,6 +46,39 @@
       </v-col>
     </v-row>
 
+    <v-card v-if="status.env" class="mt-4">
+      <v-card-title>
+        Systemvariablen
+      </v-card-title>
+      <v-card-text>
+        Diese Informationen sind nur für Sie sichtbar.
+        <br>
+        Es wird nur ein Ausschnitt Ihnen angezeigt. <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html" target="_blank">Vollständige Liste</a>
+        <br>
+        Als Argument beim Starten: java -jar server.jar --storage.path="Ihr Pfad"
+        <br>
+        Oder als Umgebungsvariable: storage.path -> STORAGE_PATH=Ihr Pfad
+        <br><br>
+
+
+        <v-data-table
+            v-if="status.env"
+            :loading="fetching"
+            :headers="[
+                { text: 'Variable', value: 'key' },
+                { text: 'Beschreibung', value: 'description' },
+                { text: 'Standard', value: 'default' },
+                { text: 'Aktiv', value: 'value' }
+            ]"
+            :items="status.env"
+            loading-text="Lade Daten..."
+            no-data-text="Keine Moderatoren vorhanden"
+            hide-default-footer
+        >
+        </v-data-table>
+      </v-card-text>
+    </v-card>
+
     <ToHomePageButton />
 
   </MainContainer>
