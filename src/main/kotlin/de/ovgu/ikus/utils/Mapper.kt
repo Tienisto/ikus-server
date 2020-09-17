@@ -3,6 +3,7 @@ package de.ovgu.ikus.utils
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
 import org.jsoup.Jsoup
+import org.springframework.data.geo.Point
 
 fun ChannelType.toPostType(): PostType? {
     return when (this) {
@@ -19,6 +20,8 @@ fun PostType.toChannelType(): ChannelType {
     }
 }
 
+// Model <-> Dto
+
 fun User.toDto(): UserDto {
     return UserDto(id, name)
 }
@@ -28,7 +31,7 @@ fun Log.toDto(user: UserDto?): LogDto {
 }
 
 fun Channel.toDto(): ChannelDto {
-    return ChannelDto(id, LocalizedString(en = name, de = nameDe))
+    return ChannelDto(id, MultiLocaleString(en = name, de = nameDe))
 }
 
 fun Channel.toLocalizedDto(locale: IkusLocale): LocalizedChannelDto {
@@ -39,7 +42,7 @@ fun Channel.toLocalizedDto(locale: IkusLocale): LocalizedChannelDto {
 }
 
 fun Post.toDto(channel: ChannelDto, files: List<PostFileDto>): PostDto {
-    return PostDto(id!!, channel, date.toString(), LocalizedString(en = title, de = titleDe), LocalizedString(en = content, de = contentDe), files)
+    return PostDto(id!!, channel, date.toString(), MultiLocaleString(en = title, de = titleDe), MultiLocaleString(en = content, de = contentDe), files)
 }
 
 fun PostFile.toDto(): PostFileDto {
@@ -51,4 +54,24 @@ fun Post.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto, files:
         IkusLocale.EN -> LocalizedPostDto(id!!, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content, files)
         IkusLocale.DE -> LocalizedPostDto(id!!, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe, files)
     }
+}
+
+fun Event.toDto(channel: ChannelDto): EventDto {
+    val coordsDto = when (val temp = coords) {
+        null -> null
+        else -> CoordsDto(temp.x, temp.y)
+    }
+    val tempInfoEn = info
+    val tempInfoDe = infoDe
+    val infoMultiLocale = when {
+        tempInfoEn != null && tempInfoDe != null -> MultiLocaleString(en = tempInfoEn, de = tempInfoDe)
+        else -> null
+    }
+    return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale)
+}
+
+// other
+
+fun CoordsDto.toPoint(): Point {
+    return Point(x, y)
 }

@@ -10,17 +10,21 @@ data class StatusDto(val version: String, val date: String, val runTime: Long, v
 
 data class MeDto(val name: String, val admin: Boolean)
 data class DashboardDto(val logs: List<LogDto>, val posts: List<PostDto>)
-
+data class LogDto(val user: UserDto?, val timestamp: OffsetDateTime, val type: LogType, val info: String)
 data class UserDto(val id: Int, val name: String)
 
-data class ChannelDto(val id: Int, val name: LocalizedString)
+// channel
+data class ChannelDto(val id: Int, val name: MultiLocaleString)
 data class AllChannelDto(val post: List<ChannelDto>, val event: List<ChannelDto>)
 
+// post
 data class PostFileDto(val id: Int, val fileName: String)
-data class PostDto(val id: Int, val channel: ChannelDto, val date: String, val title: LocalizedString, val content: LocalizedString, val files: List<PostFileDto>)
+data class PostDto(val id: Int, val channel: ChannelDto, val date: String, val title: MultiLocaleString, val content: MultiLocaleString, val files: List<PostFileDto>)
 data class PostGroupDto(val channel: ChannelDto, val posts: List<PostDto>)
 
-data class LogDto(val user: UserDto?, val timestamp: OffsetDateTime, val type: LogType, val info: String)
+// event
+data class CoordsDto(val x: Double, val y: Double)
+data class EventDto(val id: Int, val channel: ChannelDto, val place: String?, val coords: CoordsDto?, val startTime: String, val endTime: String?, val name: MultiLocaleString, val info: MultiLocaleString?)
 
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)

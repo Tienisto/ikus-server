@@ -35,6 +35,11 @@ class ChannelService (
         return channelRepo.save(channel)
     }
 
+    // dummy only
+    suspend fun saveAll(events: List<Channel>): List<Channel> {
+        return channelRepo.saveAll(events).toList()
+    }
+
     suspend fun delete(channel: Channel) {
         channelRepo.delete(channel)
     }
