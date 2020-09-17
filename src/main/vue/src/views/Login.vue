@@ -1,5 +1,5 @@
 <template>
-  <div class="primary" style="height: 100vh; width: 100%; display: flex; align-items: center; justify-content: center">
+  <div class="primary" style="min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center">
     <div style="text-align: center">
       <img src="@/assets/logo-512-alpha.png" style="width: 200px">
       <p class="white--text text-h4">Welcome at OVGU</p>
@@ -18,7 +18,8 @@
         </v-card-actions>
       </v-card>
     </div>
-    <div class="white--text text-body-1" style="position: absolute; right: 10px; bottom: 10px; text-align: right">
+
+    <div id="version-container" class="white--text text-body-1">
       <span>Version {{ version }}</span>
       <br>
       <router-link to="/privacy" v-slot="{ href, navigate }">
@@ -28,6 +29,7 @@
         <a @click="navigate" :href="href" class="white--text text-decoration-underline ml-2">Status</a>
       </router-link>
     </div>
+
   </div>
 </template>
 
@@ -67,3 +69,22 @@ export default {
   }
 }
 </script>
+
+<style>
+@media screen and (max-width: 600px) {
+  #version-container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 601px) {
+  #version-container {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    text-align: right;
+  }
+}
+</style>
