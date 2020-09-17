@@ -28,6 +28,10 @@ One-Liner:
     
 ## Environment Variables
 
+Rename if you set it via (docker) environment variables. E.g. `storage.path` will be `STORAGE_PATH`.
+
+Otherwise, leave the keys as is: `java -jar ikus-0.9.0.jar --storage.path="/my/path"`
+
 Key|Description|Default
 ---|---|---
 `storage.path`|Path to the persistent storage|`(invalid path)`
