@@ -56,8 +56,8 @@ class ChannelController (
 
         when (channel.type) {
             ChannelType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            ChannelType.CALENDAR -> {}
-            ChannelType.FAQ -> {}
+            ChannelType.CALENDAR -> cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+            ChannelType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
         }
     }
 
@@ -69,8 +69,8 @@ class ChannelController (
 
         when (channel.type) {
             ChannelType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            ChannelType.CALENDAR -> {}
-            ChannelType.FAQ -> {}
+            ChannelType.CALENDAR -> cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+            ChannelType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
         }
     }
 }

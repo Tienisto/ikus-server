@@ -77,7 +77,7 @@ class PostController (
 
         when (post.type) {
             PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> {}
+            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
         }
     }
 
@@ -101,7 +101,7 @@ class PostController (
 
         when (post.type) {
             PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> {}
+            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
         }
     }
 
@@ -113,7 +113,7 @@ class PostController (
 
         when (post.type) {
             PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> {}
+            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
         }
     }
 
