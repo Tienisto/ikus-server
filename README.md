@@ -19,7 +19,7 @@ Let's run this server on your (local) machine.
     
 ## Build the Docker Image
 
-1. Build the vue frontent (see step 2 of [Getting Started](#getting-started))
+1. Build the vue frontend (see step 2 of [Getting Started](#getting-started))
 2. `./gradle bootBuildImage` or `gradlew.bat bootBuildImage`
 
 One-Liner:
