@@ -16,7 +16,7 @@ class ImageService {
 
     /**
      * compress the image and apply the changes to the hard drive and also to the database
-     * @param file image which should be compressed.
+     * @param imageInput image which should be compressed.
      */
     fun reduceSizeOfFile(imageInput: InputStream): ByteArrayOutputStream {
         val image = ImageIO.read(imageInput)
