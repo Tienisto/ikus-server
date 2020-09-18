@@ -3,14 +3,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-	id("org.springframework.boot") version "2.4.0-M2"
+	id("org.springframework.boot") version "2.4.0-M3"
 	id("io.spring.dependency-management") version "1.0.10.RELEASE"
-	kotlin("jvm") version "1.3.72"
-	kotlin("plugin.spring") version "1.3.72"
+	kotlin("jvm") version "1.4.10"
+	kotlin("plugin.spring") version "1.4.10"
 }
 
 group = "de.ovgu"
-version = "0.9.0"
+version = "0.9.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
