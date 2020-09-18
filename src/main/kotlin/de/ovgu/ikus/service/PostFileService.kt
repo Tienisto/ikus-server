@@ -33,13 +33,13 @@ class PostFileService(
 
     suspend fun findByPostIn(posts: List<Post>): List<PostFile> {
         return when (posts.isNotEmpty()) {
-            true -> postFileRepo.findByPostIdIn(posts.map { post -> post.id!! }).toList()
+            true -> postFileRepo.findByPostIdIn(posts.map { post -> post.id }).toList()
             false -> emptyList()
         }
     }
 
     suspend fun findByPost(post: Post): List<PostFile> {
-        return postFileRepo.findByPostId(post.id!!).toList()
+        return postFileRepo.findByPostId(post.id).toList()
     }
 
     suspend fun saveAll(files: List<PostFile>) {
@@ -51,7 +51,7 @@ class PostFileService(
         checkExtension(originalFileName)
 
         // save and get id
-        val savedFile = postFileRepo.save(PostFile(null, null, originalFileName))
+        val savedFile = postFileRepo.save(PostFile(fileName = originalFileName, timestamp = OffsetDateTime.now()))
 
         // apply id to save to hard drive
         savedFile.fileName = "posts/${savedFile.id}.jpg"

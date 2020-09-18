@@ -42,17 +42,17 @@ fun Channel.toLocalizedDto(locale: IkusLocale): LocalizedChannelDto {
 }
 
 fun Post.toDto(channel: ChannelDto, files: List<PostFileDto>): PostDto {
-    return PostDto(id!!, channel, date.toString(), MultiLocaleString(en = title, de = titleDe), MultiLocaleString(en = content, de = contentDe), files)
+    return PostDto(id, channel, date.toString(), MultiLocaleString(en = title, de = titleDe), MultiLocaleString(en = content, de = contentDe), files)
 }
 
 fun PostFile.toDto(): PostFileDto {
-    return PostFileDto(id!!, fileName)
+    return PostFileDto(id, fileName)
 }
 
 fun Post.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto, files: List<PostFileDto>): LocalizedPostDto {
     return when (locale) {
-        IkusLocale.EN -> LocalizedPostDto(id!!, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content, files)
-        IkusLocale.DE -> LocalizedPostDto(id!!, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe, files)
+        IkusLocale.EN -> LocalizedPostDto(id, channel, date.toString(), title, Jsoup.parse(content).text().take(300), content, files)
+        IkusLocale.DE -> LocalizedPostDto(id, channel, date.toString(), titleDe, Jsoup.parse(contentDe).text().take(300), contentDe, files)
     }
 }
 

@@ -8,9 +8,8 @@ enum class PostType {
     NEWS, FAQ
 }
 
-// TODO: make id non-nullable (https://github.com/spring-projects/spring-data-r2dbc/issues/444)
 @Table
-data class Post(@Id var id: Int? = null,
+data class Post(@Id var id: Int = 0,
                 var type: PostType = PostType.NEWS,
                 var channelId: Int = 0,
                 var date: LocalDate = LocalDate.now(),
