@@ -81,10 +81,10 @@ class DummyService (
                 true -> Constants.eventCoords.random()
                 false -> null
             }
-            val date = LocalDate.now().plusDays(Random.nextInt(60).toLong() - 30)
+            val date = LocalDate.now().plusDays(Random.nextInt(30).toLong() - 15)
 
             val offset = Constants.zoneId.rules.getOffset(date.atStartOfDay())
-            val start = OffsetDateTime.of(date.year, date.monthValue, date.dayOfMonth, Constants.eventHours.random(), 0, 0, 0, offset)
+            val start = OffsetDateTime.of(date.year, date.monthValue, date.dayOfMonth, Constants.eventHours.random(), Constants.eventMinutes.random(), 0, 0, offset)
             val end = when (Random.nextInt(3) != 0) {
                 true -> start.plusHours(2)
                 false -> null
@@ -140,7 +140,7 @@ private object Constants {
 
     const val content = "At <b>vero</b> eos et <span style=\"color: red\">accusamus</span> et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.<br><br>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.<br><table><tr><th>Firstname</th><th>Lastname</th><th>Age</th></tr><tr><td>Jill</td><td>Smith</td><td>50</td></tr><tr><td>Eve</td><td>Jackson</td><td>94</td></tr></table><br>Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
 
-    const val eventCount = 20
+    const val eventCount = 30
     val eventNames = listOf(
             "Welcome Day" to "Immatrikulationsfeier",
             "Dorm Game Night" to "Wohnheim-Spieleabend",
@@ -155,6 +155,7 @@ private object Constants {
             Point(52.137813, 11.646508) to "Festung Mark"
     )
     val eventHours = listOf(16, 18, 20)
+    val eventMinutes = listOf(0, 30)
     val zoneId = ZoneId.of("Europe/Berlin")
 
 }
