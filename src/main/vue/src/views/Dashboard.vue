@@ -65,7 +65,7 @@
               <v-btn @click="$refs.calendar.prev()" color="black" text>
                 <v-icon dark>mdi-chevron-left</v-icon>
               </v-btn>
-              <span class="black--text">{{ moment(today).format('MMMM YYYY') }}</span>
+              <span class="black--text">{{ currMonth }}</span>
               <v-btn @click="$refs.calendar.next()" color="black" text>
                 <v-icon dark>mdi-chevron-right</v-icon>
               </v-btn>
@@ -108,8 +108,7 @@ export default {
       logs: [],
       posts: []
     },
-    today: new Date(),
-    moment: moment
+    today: new Date()
   }),
   methods: {
     fetchData: async function() {
@@ -124,6 +123,9 @@ export default {
     },
     timeString: function() {
       return (time) => moment(time).format('ddd, DD.MM.YYYY');
+    },
+    currMonth: function() {
+      return moment(this.today).format('MMMM YYYY')
     }
   },
   mounted: async function() {

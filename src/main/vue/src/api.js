@@ -222,6 +222,21 @@ export function getFileUrl({ name }) {
     return API_URL + '/public/file/' + name;
 }
 
+export async function getAllEvents() {
+    return await makeRequest({
+        route: 'events/all',
+        method: 'GET'
+    });
+}
+
+export async function getEventsByChannel({ channelId }) {
+    return await makeRequest({
+        route: 'events',
+        method: 'GET',
+        params: { channelId }
+    });
+}
+
 export async function getChannels({type}) {
     return await makeRequest({
         route: 'channels',
