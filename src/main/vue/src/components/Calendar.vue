@@ -4,7 +4,7 @@
     <v-calendar ref="calendar" locale="de" color="primary" :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                 v-model="today" :events="internalEvents" event-start="start" event-end="end"
                 :interval-format="intervalFormat"
-                @click:event="$emit('click:event', $event.event)" @click:date="$emit('click:day', $event)"
+                @click:event="$emit('click:event', $event.event)" @click:date="$emit('click:day', $event.date)"
                 :style="{'min-height': $vuetify.breakpoint.lgAndUp ? '500px' : '400px'}">
 
       <template v-slot:event="{ event }">

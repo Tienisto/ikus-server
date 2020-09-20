@@ -50,9 +50,7 @@
       </div>
     </editor-menu-bar>
     <div class="pa-4">
-      <input type="text" name="osqloi4faVMosL" :placeholder="titlePlaceholder" :value="title" @input="$emit('change-title', $event.target.value)"
-             autocomplete="false"
-             class="grey--text text--darken-1 text-h5 mb-2" style="border: none; width: 100%; outline: none">
+      <SimpleTextField class="mb-2" :value="title" @input="$emit('change-title', $event)" :placeholder="titlePlaceholder" :big="true"/>
       <editor-content :editor="editor"/>
     </div>
   </div>
@@ -63,10 +61,11 @@ import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import { History, Bold, Italic, Underline, Heading, Link, Placeholder } from 'tiptap-extensions'
 import GenericDialog from "@/components/dialog/GenericDialog";
 import ToolbarButton from "@/components/ToolbarButton";
+import SimpleTextField from "@/components/input/SimpleTextField";
 
 export default {
   name: 'RichEditor',
-  components: {ToolbarButton, GenericDialog, EditorContent, EditorMenuBar},
+  components: {SimpleTextField, ToolbarButton, GenericDialog, EditorContent, EditorMenuBar},
   props: {
     title: String,
     titlePlaceholder: String,

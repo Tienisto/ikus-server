@@ -12,7 +12,7 @@
       <v-select
           label="Kanal" style="width: 250px"
           v-model="channel" @change="updateChannel"
-          :items="channels" item-text="name.en" item-value="id"
+          :items="channelsWithAll" item-text="name.en" item-value="id"
           return-object
       />
 
@@ -20,13 +20,15 @@
 
       <br>
 
-      <v-btn color="primary" block :disabled="loading || channels.length === 0">
+      <v-btn @click="showCreateEvent()" color="primary" block :disabled="loading || channels.length === 0">
         <v-icon left>mdi-plus</v-icon>
         Neues Event
       </v-btn>
     </template>
 
-    <v-card>
+    <LoadingIndicator v-if="fetching" />
+
+    <v-card v-if="!fetching">
       <v-card-text>
         <Calendar ref="calendar" :events="events" :locale="locale" @click:day="showCreateEvent" @click:event="showUpdateEvent">
           <template v-slot:header="{ currMonth }">
@@ -45,36 +47,77 @@
       </v-card-text>
     </v-card>
 
+    <EventDialog ref="eventDialog" v-model="dialogEvent" :channels="channels" :locales="locales" :updating="dialogUpdating" :loading="loading"
+                  @submit="submit" @delete="showDeleteDialog"/>
+
+    <GenericDialog v-model="dialogDelete" title="Event löschen">
+      <template v-slot:content>
+        Folgendes Event wird gelöscht:
+        <br>
+        <b>{{ nameOfEvent }} ({{ dateOfEvent }})</b>
+        <br><br>
+        Möchten Sie wirklich diesen Event löschen?
+        <br>
+        Dieser Vorgang ist nicht widerrufbar.
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="dialogDelete = false" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="deleteEvent" color="primary" :loading="loading">
+          <v-icon left>mdi-delete</v-icon>
+          Löschen
+        </v-btn>
+      </template>
+    </GenericDialog>
+
   </MainContainer>
 </template>
 
 <script>
+import moment from "moment"
 import MainContainer from "@/components/layout/MainContainer";
-import {getAllEvents, getChannels, getEventsByChannel} from "@/api";
+import {
+  createEvent,
+  deleteEvent,
+  getAllEvents,
+  getChannels,
+  getEventsByChannel,
+  updateEvent,
+} from "@/api";
 import LocaleSelector from "@/components/LocaleSelector";
 import Calendar from "@/components/Calendar";
+import EventDialog from "@/components/dialog/EventDialog";
+import LoadingIndicator from "@/components/LoadingIndicator";
+import {showSnackbar} from "@/utils";
+import GenericDialog from "@/components/dialog/GenericDialog";
 
 const channelAll = { id: -1, name: { en: 'Alle', de: 'Alle' } };
 
 export default {
   name: 'CalendarView',
-  components: {Calendar, LocaleSelector, MainContainer},
+  components: {GenericDialog, LoadingIndicator, EventDialog, Calendar, LocaleSelector, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
+    channelsWithAll: [],
     channels: [],
     channel: {},
     locales: ['EN', 'DE'],
     locale: 'EN',
     events: [],
-    today: new Date()
+    dialogEvent: false,
+    dialogUpdating: false,
+    dialogDelete: false,
+    selectedEvent: {}
   }),
   methods: {
     fetchData: async function() {
       this.fetching = true;
 
-      const channels = await getChannels({ type: 'CALENDAR' });
-      this.channels = [ channelAll, ...channels ];
+      this.channels = await getChannels({ type: 'CALENDAR' });
+      this.channelsWithAll = [ channelAll, ...this.channels ];
       if (!this.channel.id) {
         // init
         this.channel = channelAll;
@@ -92,11 +135,80 @@ export default {
     updateChannel: async function() {
       await this.fetchData();
     },
-    showCreateEvent: function(date) {
-      console.log(date);
+    showCreateEvent: function(date = new Date().toISOString().substr(0, 10)) {
+      this.$refs.eventDialog.reset(this.channel, this.locale, date);
+      this.dialogEvent = true;
+      this.dialogUpdating = false;
     },
     showUpdateEvent: function(event) {
-      console.log(event);
+      this.selectedEvent = event;
+      this.$refs.eventDialog.reset(event.channel, this.locale, null);
+      this.$refs.eventDialog.load(event);
+      this.dialogUpdating = true;
+      this.dialogEvent = true;
+    },
+    showDeleteDialog: function() {
+      this.dialogEvent = false;
+      this.dialogDelete = true;
+    },
+    submit: async function(event) {
+      if (this.dialogUpdating)
+        await this.updateEvent(event);
+      else
+        await this.createEvent(event);
+    },
+    createEvent: async function(event) {
+      try {
+        this.loading = true;
+        await createEvent(event);
+        this.dialogEvent = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    updateEvent: async function(event) {
+      try {
+        this.loading = true;
+        await updateEvent({
+          id: this.selectedEvent.id,
+          ...event
+        });
+        this.dialogEvent = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    deleteEvent: async function() {
+      try {
+        this.loading = true;
+        await deleteEvent({ id: this.selectedEvent.id });
+        this.dialogDelete = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+  },
+  computed: {
+    nameOfEvent: function() {
+      if (this.selectedEvent.name)
+        return this.selectedEvent.name.en;
+      else
+        return '';
+    },
+    dateOfEvent: function() {
+      if (this.selectedEvent.startTime)
+        return moment(this.selectedEvent.startTime).format('DD.MM.YYYY');
+      else
+        return '';
     }
   },
   mounted: async function() {

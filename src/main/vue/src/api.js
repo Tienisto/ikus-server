@@ -237,6 +237,30 @@ export async function getEventsByChannel({ channelId }) {
     });
 }
 
+export async function createEvent({ channelId, name, info, place, coords, startTime, endTime }) {
+    return await makeRequest({
+        route: 'events',
+        method: 'POST',
+        body: { channelId, name, info, place, coords, startTime, endTime }
+    });
+}
+
+export async function updateEvent({ id, channelId, name, info, place, coords, startTime, endTime }) {
+    return await makeRequest({
+        route: 'events',
+        method: 'PUT',
+        body: { id, channelId, name, info, place, coords, startTime, endTime }
+    });
+}
+
+export async function deleteEvent({ id }) {
+    return await makeRequest({
+        route: 'events',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
 export async function getChannels({type}) {
     return await makeRequest({
         route: 'channels',
