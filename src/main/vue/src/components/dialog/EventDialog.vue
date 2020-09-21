@@ -31,7 +31,7 @@
           <DatePicker v-model="date" label="Datum" icon="mdi-calendar"/>
         </v-col>
         <v-col cols="4">
-          <TimePicker v-model="startTime" label="Von" icon="mdi-clock-outline"/>
+          <TimePicker v-model="startTime" label="Von (optional)"/>
         </v-col>
         <v-col cols="4">
           <TimePicker v-model="endTime" label="Bis (optional)"/>
@@ -40,9 +40,11 @@
           <v-text-field v-model="place" label="Ort (optional)" prepend-icon="mdi-map" hide-details/>
         </v-col>
         <v-col cols="12">
-          <v-text-field v-model="coords" label="Koordinaten (optional)" prepend-icon="mdi-map-marker" />
+          <LocationPicker v-model="coords" label="Koordinaten (optional)" icon="mdi-map-marker" />
         </v-col>
       </v-row>
+
+      <br>
 
       <v-btn v-if="updating" @click="$emit('delete')" color="primary" :disabled="loading" text>
         <v-icon left>mdi-delete</v-icon>
@@ -72,10 +74,11 @@ import SimpleTextArea from "@/components/input/SimpleTextArea";
 import TimePicker from "@/components/input/TimePicker";
 import DatePicker from "@/components/input/DatePicker";
 import {showSnackbar} from "@/utils";
+import LocationPicker from "@/components/input/LocationPicker";
 
 export default {
   name: 'EventDialog',
-  components: {DatePicker, TimePicker, SimpleTextArea, SimpleTextField, LocaleSelector, GenericDialog},
+  components: {LocationPicker, DatePicker, TimePicker, SimpleTextArea, SimpleTextField, LocaleSelector, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -109,7 +112,7 @@ export default {
     startTime: '',
     endTime: '',
     place: '',
-    coords: ''
+    coords: {}
   }),
   methods: {
     reset: function(channel, locale, date) {
@@ -122,7 +125,7 @@ export default {
       this.startTime = '';
       this.endTime = '';
       this.place = '';
-      this.coords = '';
+      this.coords = {};
 
       // apply prefilled values
       this.channel = channel;
@@ -147,7 +150,7 @@ export default {
       }
 
       this.place = event.place;
-      this.coords = event.coords;
+      this.coords = event.coords ? event.coords : {};
     },
     submit: async function() {
       if (!this.channel.id || this.channel.id < 0) {
@@ -197,6 +200,9 @@ export default {
         endTimestamp = endTimestamp.toISOString();
       }
 
+      // prepare coords
+      const coords = this.coords && this.coords.x && this.coords.y ? this.coords : null;
+
       await this.$emit('submit', {
         channelId: this.channel.id,
         name: {
@@ -205,10 +211,7 @@ export default {
         },
         info,
         place: this.place,
-        coords: {
-          x: 3,
-          y: 3
-        },
+        coords,
         startTime: startTimestamp.toISOString(),
         endTime: endTimestamp
       });

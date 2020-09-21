@@ -10,10 +10,12 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "moment": "^2.27.0",
+    "ol": "^6.4.3",
     "tiptap": "^1.29.6",
     "tiptap-extensions": "^1.32.7",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
+    "vuelayers": "^0.11.27",
     "vuetify": "^2.3.10"
   },
   "devDependencies": {
