@@ -1,9 +1,6 @@
 package de.ovgu.ikus.controller
 
-import de.ovgu.ikus.dto.LocalizedChannelDto
-import de.ovgu.ikus.dto.PublicEventDto
-import de.ovgu.ikus.dto.PublicFAQDto
-import de.ovgu.ikus.dto.PublicPostDto
+import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.PostType
@@ -22,7 +19,9 @@ class PublicController(
         private val postFileService: PostFileService,
         private val eventService: EventService,
         private val channelService: ChannelService,
-        private val fileService: FileService
+        private val fileService: FileService,
+        private val linkGroupService: LinkGroupService,
+        private val linkService: LinkService
 ) {
 
     @GetMapping("/file/{folder}/{name}")
@@ -65,6 +64,22 @@ class PublicController(
                     }
 
             PublicEventDto(channelsDtoMap.values.toList(), events)
+        }
+    }
+
+    @GetMapping("/links")
+    suspend fun getLinks(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.LINKS, locale) {
+            val groups = linkGroupService.findAllOrdered(locale)
+            val links = linkService.findAllOrdered(locale)
+            groups.map { group ->
+                val groupDto = group.toLocalizedDto(locale)
+                val linksDto = links
+                        .filter { link -> link.groupId == group.id }
+                        .map { link -> link.toLocalizedDto(locale, groupDto) }
+
+                PublicLinkDto(groupDto, linksDto)
+            }
         }
     }
 

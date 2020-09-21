@@ -15,13 +15,16 @@ class DummyService (
         private val channelService: ChannelService,
         private val postService: PostService,
         private val postFileService: PostFileService,
-        private val eventService: EventService
+        private val eventService: EventService,
+        private val linkGroupService: LinkGroupService,
+        private val linkService: LinkService
 ) {
 
     suspend fun clear() {
         logService.deleteAll()
         channelService.deleteAll()
         postFileService.cleanup(Duration.ZERO) // delete files
+        linkGroupService.deleteAll()
         userService.deleteAll()
         userService.repairAdminAccount() // create admin account
     }
@@ -40,6 +43,8 @@ class DummyService (
 
         val channelsFAQ = channelService.findByType(ChannelType.FAQ)
         createPosts(channelsFAQ, Constants.faqTitles, Constants.faqCount)
+
+        createLinks()
     }
 
     suspend fun createUsers(): List<User> {
@@ -101,6 +106,19 @@ class DummyService (
 
         eventService.saveAll(events)
     }
+
+    suspend fun createLinks() {
+        val tempGroups = Constants.linkGroups.map { group -> LinkGroup(name = group.first, nameDe = group.second) }
+        val savedGroups = linkGroupService.saveAll(tempGroups)
+
+        val links = List(Constants.linkCount) {
+            val group = savedGroups.random()
+            val link = Constants.links.random()
+            Link(groupId = group.id, url = link.url, urlDe = link.urlDe, info = link.info, infoDe = link.infoDe)
+        }
+
+        linkService.saveAll(links)
+    }
 }
 
 private object Constants {
@@ -157,5 +175,18 @@ private object Constants {
     val eventHours = listOf(16, 18, 20)
     val eventMinutes = listOf(0, 30)
     val zoneId = ZoneId.of("Europe/Berlin")
+
+    val linkGroups = listOf(
+            "Studying" to "Studieren",
+            "Life" to "Leben",
+            "Work" to "Arbeit"
+    )
+    const val linkCount = 20
+    val links = listOf(
+            Link(url = "https://www.ovgu.de/en", urlDe = "https://www.ovgu.de", info = "Homepage of the OVGU", infoDe = "Uni-Homepage"),
+            Link(url = "https://lsf.ovgu.de", urlDe = "https://lsf.ovgu.de", info = "Manage your courses", infoDe = "Interne Studium-Verwaltung"),
+            Link(url = "https://myovgu.ovgu.de", urlDe = "https://myovgu.ovgu.de", info = "MyOVGU", infoDe = "MyOVGU"),
+            Link(url = "https://servicecenter.ovgu.de/en", urlDe = "https://servicecenter.ovgu.de", info = "Campus Service Center", infoDe = "Campus Service Center"),
+    )
 
 }

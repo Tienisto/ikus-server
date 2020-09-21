@@ -52,6 +52,7 @@ CREATE TABLE link (
     id SERIAL PRIMARY KEY,
     group_id INT NOT NULL REFERENCES link_group(id) ON DELETE CASCADE,
     url TEXT NOT NULL,
+    url_de TEXT NOT NULL,
     info TEXT NOT NULL,
     info_de TEXT NOT NULL
 );

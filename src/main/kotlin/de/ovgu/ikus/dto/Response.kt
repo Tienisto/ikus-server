@@ -26,10 +26,19 @@ data class PostGroupDto(val channel: ChannelDto, val posts: List<PostDto>)
 data class CoordsDto(val x: Double, val y: Double)
 data class EventDto(val id: Int, val channel: ChannelDto, val place: String?, val coords: CoordsDto?, val startTime: String, val endTime: String?, val name: MultiLocaleString, val info: MultiLocaleString?)
 
+// links
+data class LinkGroupDto(val id: Int, val name: MultiLocaleString)
+data class LinkDto(val id: Int, val group: LinkGroupDto, val url: MultiLocaleString, val info: MultiLocaleString)
+data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDto>)
+
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
+data class LocalizedLinkGroupDto(val id: Int, val name: String)
+data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val url: String, val info: String)
+
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
+data class PublicLinkDto(val group: LocalizedLinkGroupDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array

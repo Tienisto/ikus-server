@@ -77,6 +77,28 @@ fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): Loca
     }
 }
 
+fun LinkGroup.toDto(): LinkGroupDto {
+    return LinkGroupDto(id, MultiLocaleString(en = name, de = nameDe))
+}
+
+fun LinkGroup.toLocalizedDto(locale: IkusLocale): LocalizedLinkGroupDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedLinkGroupDto(id, name)
+        IkusLocale.DE -> LocalizedLinkGroupDto(id, nameDe)
+    }
+}
+
+fun Link.toDto(group: LinkGroupDto): LinkDto {
+    return LinkDto(id, group, MultiLocaleString(en = url, de = urlDe), MultiLocaleString(en = info, de = infoDe))
+}
+
+fun Link.toLocalizedDto(locale: IkusLocale, group: LocalizedLinkGroupDto): LocalizedLinkDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedLinkDto(id, group, url, info)
+        IkusLocale.DE -> LocalizedLinkDto(id, group, urlDe, infoDe)
+    }
+}
+
 // other
 
 fun CoordsDto.toPoint(): Point {
