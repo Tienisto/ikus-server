@@ -134,8 +134,8 @@ export default {
         icon: 'mdi-help-circle'
       },
       {
-        route: '/contact',
-        label: 'Kontakt',
+        route: '/contacts',
+        label: 'Kontakte',
         icon: 'mdi-card-account-mail'
       },
     ],

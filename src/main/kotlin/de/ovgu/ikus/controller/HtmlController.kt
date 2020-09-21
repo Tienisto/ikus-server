@@ -17,7 +17,7 @@ class HtmlController (
         private val jwtService: JwtService
 ) {
 
-    @GetMapping("/" , "/privacy", "/status", "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contact", "/statistics")
+    @GetMapping("/" , "/privacy", "/status", "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contacts", "/statistics")
     @ResponseBody
     suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
 

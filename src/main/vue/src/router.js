@@ -10,7 +10,7 @@ import Calendar from "@/views/Calendar";
 import Links from "@/views/Links";
 import Handbook from "@/views/Handbook";
 import FAQ from "@/views/FAQ";
-import Contact from "@/views/Contact";
+import Contacts from "@/views/Contacts";
 import Statistics from "@/views/Statistics";
 import Status from "@/views/Status";
 import Privacy from "@/views/Privacy";
@@ -74,9 +74,9 @@ Vue.use(VueRouter)
     component: FAQ
   },
   {
-    path: '/contact',
-    name: 'Contact',
-    component: Contact
+    path: '/contacts',
+    name: 'Contacts',
+    component: Contacts
   },
   {
     path: '/channels',

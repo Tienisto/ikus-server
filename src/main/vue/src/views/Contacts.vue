@@ -1,5 +1,5 @@
 <template>
-  <MainContainer title="Kontakt" icon="mdi-card-account-mail">
+  <MainContainer title="Kontakte" icon="mdi-card-account-mail">
 
     <template v-slot:intro>
       Hier können Sie die Kontakte verwalten.
