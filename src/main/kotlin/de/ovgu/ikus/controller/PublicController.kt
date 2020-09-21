@@ -1,6 +1,7 @@
 package de.ovgu.ikus.controller
 
 import de.ovgu.ikus.dto.LocalizedChannelDto
+import de.ovgu.ikus.dto.PublicEventDto
 import de.ovgu.ikus.dto.PublicFAQDto
 import de.ovgu.ikus.dto.PublicPostDto
 import de.ovgu.ikus.model.ChannelType
@@ -19,6 +20,7 @@ class PublicController(
         private val cacheService: CacheService,
         private val postService: PostService,
         private val postFileService: PostFileService,
+        private val eventService: EventService,
         private val channelService: ChannelService,
         private val fileService: FileService
 ) {
@@ -31,7 +33,7 @@ class PublicController(
     @GetMapping("/news")
     suspend fun getPosts(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
-            val channels = channelService.findByType(ChannelType.NEWS)
+            val channels = channelService.findByTypeOrdered(ChannelType.NEWS, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val postsUnsorted = channels
                     .map { channel -> postService.findByChannelOrdered(channel, 10) }
@@ -47,6 +49,22 @@ class PublicController(
                     .sortedByDescending { post -> post.date }
 
             PublicPostDto(channelsDtoMap.values.toList(), posts)
+        }
+    }
+
+    @GetMapping("/calendar")
+    suspend fun getEvents(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.CALENDAR, locale) {
+            val channels = channelService.findByTypeOrdered(ChannelType.CALENDAR, locale)
+            val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
+            val events = eventService
+                    .findAllOrdered()
+                    .map { event ->
+                        val channel = channelsDtoMap[event.channelId] ?: LocalizedChannelDto(0, "Error")
+                        event.toLocalizedDto(locale, channel)
+                    }
+
+            PublicEventDto(channelsDtoMap.values.toList(), events)
         }
     }
 

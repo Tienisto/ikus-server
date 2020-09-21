@@ -70,8 +70,19 @@ fun Event.toDto(channel: ChannelDto): EventDto {
     return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale)
 }
 
+fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedEventDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedEventDto(id, channel, name, info, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto())
+        IkusLocale.DE -> LocalizedEventDto(id, channel, nameDe, infoDe, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto())
+    }
+}
+
 // other
 
 fun CoordsDto.toPoint(): Point {
     return Point(x, y)
+}
+
+fun Point.toCoordsDto(): CoordsDto {
+    return CoordsDto(x, y)
 }
