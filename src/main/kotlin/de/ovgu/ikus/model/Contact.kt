@@ -5,6 +5,7 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table
 data class Contact(@Id var id: Int = 0,
+                   var file: String? = null,
                    var email: String? = null,
                    var phoneNumber: String? = null,
                    var place: String? = null,

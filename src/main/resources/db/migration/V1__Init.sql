@@ -66,6 +66,7 @@ CREATE TABLE handbook_bookmark (
 
 CREATE TABLE contact (
     id SERIAL PRIMARY KEY,
+    file TEXT,
     email TEXT,
     phoneNumber TEXT,
     place TEXT,
