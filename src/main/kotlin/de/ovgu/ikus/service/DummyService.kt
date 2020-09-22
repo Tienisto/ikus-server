@@ -17,7 +17,8 @@ class DummyService (
         private val postFileService: PostFileService,
         private val eventService: EventService,
         private val linkGroupService: LinkGroupService,
-        private val linkService: LinkService
+        private val linkService: LinkService,
+        private val contactService: ContactService
 ) {
 
     suspend fun clear() {
@@ -45,6 +46,7 @@ class DummyService (
         createPosts(channelsFAQ, Constants.faqTitles, Constants.faqCount)
 
         createLinks()
+        createContacts()
     }
 
     suspend fun createUsers(): List<User> {
@@ -119,6 +121,10 @@ class DummyService (
 
         linkService.saveAll(links)
     }
+
+    suspend fun createContacts() {
+        contactService.saveAll(Constants.contacts)
+    }
 }
 
 private object Constants {
@@ -189,4 +195,8 @@ private object Constants {
             Link(url = "https://servicecenter.ovgu.de/en", urlDe = "https://servicecenter.ovgu.de", info = "Campus Service Center", infoDe = "Campus Service Center"),
     )
 
+    val contacts = listOf(
+            Contact(name = "International Office", nameDe = "Akademisches Auslandsamt", place = "G18"),
+            Contact(name = "IKUS", nameDe = "IKUS", email = "ikus@ovgu.de", phoneNumber = "+49 (0)391 - 67 515 75", place = "InterKultiTreff\nWalther-Rathenau-Straße 19\n39106 Magdeburg", openingHours = "Mon 15-17, Thu 17-19", openingHoursDe = "Mo. 15-17, Do. 17-19")
+    )
 }

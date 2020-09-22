@@ -2,6 +2,8 @@ package de.ovgu.ikus.service
 
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.exif.ExifIFD0Directory
+import de.ovgu.ikus.utils.toBytes
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.awt.Image
@@ -13,6 +15,21 @@ import javax.imageio.ImageIO
 
 @Service
 class ImageService {
+
+    /**
+     * makes sure that the image is compressed and has the correct rotation
+     * calls [reduceSizeOfFile] and [digestImageRotation] internally
+     */
+    suspend fun digestImage(file: FilePart): InputStream {
+        val bytesOriginal = file.toBytes()
+
+        val scaled = when (val rotated = digestImageRotation(bytesOriginal)) {
+            null -> reduceSizeOfFile(ByteArrayInputStream(bytesOriginal)) // not rotated
+            else -> reduceSizeOfFile(ByteArrayInputStream(rotated.toByteArray())) // rotated
+        }
+
+        return ByteArrayInputStream(scaled.toByteArray())
+    }
 
     /**
      * compress the image and apply the changes to the hard drive and also to the database

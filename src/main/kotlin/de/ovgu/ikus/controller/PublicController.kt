@@ -21,7 +21,8 @@ class PublicController(
         private val channelService: ChannelService,
         private val fileService: FileService,
         private val linkGroupService: LinkGroupService,
-        private val linkService: LinkService
+        private val linkService: LinkService,
+        private val contactService: ContactService
 ) {
 
     @GetMapping("/file/{folder}/{name}")
@@ -101,6 +102,15 @@ class PublicController(
                         }
                 PublicFAQDto(channelDto, postsDto)
             }
+        }
+    }
+
+    @GetMapping("/contacts")
+    suspend fun getContacts(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.CONTACTS, locale) {
+            contactService
+                    .findAllOrdered(locale)
+                    .map { contact -> contact.toLocalizedDto(locale) }
         }
     }
 }

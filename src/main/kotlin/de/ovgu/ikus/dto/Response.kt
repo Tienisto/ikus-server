@@ -31,12 +31,16 @@ data class LinkGroupDto(val id: Int, val name: MultiLocaleString)
 data class LinkDto(val id: Int, val group: LinkGroupDto, val url: MultiLocaleString, val info: MultiLocaleString)
 data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDto>)
 
+// contacts
+data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
+
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
 data class LocalizedLinkGroupDto(val id: Int, val name: String)
 data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val url: String, val info: String)
+data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)

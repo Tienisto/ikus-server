@@ -99,6 +99,23 @@ fun Link.toLocalizedDto(locale: IkusLocale, group: LocalizedLinkGroupDto): Local
     }
 }
 
+fun Contact.toDto(): ContactDto {
+    val tempOpeningHoursEn = openingHours
+    val tempOpeningHoursDe = openingHoursDe
+    val openingHoursMultiLocale = when {
+        tempOpeningHoursEn != null && tempOpeningHoursDe != null -> MultiLocaleString(en = tempOpeningHoursEn, de = tempOpeningHoursDe)
+        else -> null
+    }
+    return ContactDto(id, file, MultiLocaleString(en = name, de = nameDe), email, phoneNumber, place, openingHoursMultiLocale)
+}
+
+fun Contact.toLocalizedDto(locale: IkusLocale): LocalizedContactDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedContactDto(id, file, name, email, phoneNumber, place, openingHours)
+        IkusLocale.DE -> LocalizedContactDto(id, file, nameDe, email, phoneNumber, place, openingHoursDe)
+    }
+}
+
 // other
 
 fun CoordsDto.toPoint(): Point {

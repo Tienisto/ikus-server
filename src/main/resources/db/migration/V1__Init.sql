@@ -68,7 +68,7 @@ CREATE TABLE contact (
     id SERIAL PRIMARY KEY,
     file TEXT,
     email TEXT,
-    phoneNumber TEXT,
+    phone_number TEXT,
     place TEXT,
     name TEXT NOT NULL,
     name_de TEXT NOT NULL,

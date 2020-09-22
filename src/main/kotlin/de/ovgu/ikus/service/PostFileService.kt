@@ -4,12 +4,10 @@ import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostFile
 import de.ovgu.ikus.repository.PostFileRepo
-import de.ovgu.ikus.utils.toBytes
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
-import java.io.ByteArrayInputStream
 import java.time.Duration
 import java.time.OffsetDateTime
 
@@ -47,24 +45,16 @@ class PostFileService(
     }
 
     suspend fun uploadFile(file: FilePart): PostFile {
-        val originalFileName = file.filename()
-        checkExtension(originalFileName)
+        checkExtension(file.filename())
 
         // save and get id
-        val savedFile = postFileRepo.save(PostFile(fileName = originalFileName, timestamp = OffsetDateTime.now()))
+        val savedFile = postFileRepo.save(PostFile(fileName = "will be replaced", timestamp = OffsetDateTime.now()))
 
         // apply id to save to hard drive
-        savedFile.fileName = "posts/${savedFile.id}.jpg"
-
-        val bytesOriginal = file.toBytes()
-
-        val scaled = when (val rotated = imageService.digestImageRotation(bytesOriginal)) {
-            null -> imageService.reduceSizeOfFile(ByteArrayInputStream(bytesOriginal))
-            else -> imageService.reduceSizeOfFile(ByteArrayInputStream(rotated.toByteArray()))
-        }
-
-        fileService.storeFileInputStream(ByteArrayInputStream(scaled.toByteArray()), savedFile.fileName)
-
+        val inputStream = imageService.digestImage(file)
+        val path = "posts/${savedFile.id}.jpg"
+        fileService.storeFileInputStream(inputStream, path)
+        savedFile.fileName = path
         return postFileRepo.save(savedFile) // update file name
     }
 

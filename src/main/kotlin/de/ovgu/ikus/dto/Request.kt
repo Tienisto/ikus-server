@@ -24,4 +24,7 @@ object Request {
     data class UpdateLinkGroup(val id: Int, val name: MultiLocaleString)
     data class CreateLink(val groupId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
     data class UpdateLink(val id: Int, val groupId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
+
+    data class CreateContact(val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
+    data class UpdateContact(val id: Int, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
 }

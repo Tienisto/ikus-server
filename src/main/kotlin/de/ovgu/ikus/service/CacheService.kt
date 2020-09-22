@@ -11,6 +11,7 @@ enum class CacheKey {
     CALENDAR,
     LINKS,
     FAQ,
+    CONTACTS
 }
 private val lifeTime = Duration.ofMinutes(5).toMillis()
 data class CachedData(var json: String?, var needUpdate: Boolean, var expires: Long)
