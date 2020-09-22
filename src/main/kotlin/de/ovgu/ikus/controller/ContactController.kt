@@ -12,6 +12,7 @@ import de.ovgu.ikus.service.CacheService
 import de.ovgu.ikus.service.ContactService
 import de.ovgu.ikus.service.LogService
 import de.ovgu.ikus.utils.toDto
+import de.ovgu.ikus.utils.trimOrNull
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
@@ -37,9 +38,9 @@ class ContactController (
     @PostMapping
     suspend fun createContact(authentication: Authentication, @RequestBody request: Request.CreateContact): ContactDto {
         val contact = Contact(
-                email = request.email?.trim(), phoneNumber = request.phoneNumber?.trim(), place = request.place?.trim(),
+                email = request.email?.trimOrNull(), phoneNumber = request.phoneNumber?.trimOrNull(), place = request.place?.trimOrNull(),
                 name = request.name.en.trim(), nameDe = request.name.de.trim(),
-                openingHours = request.openingHours?.en?.trim(), openingHoursDe = request.openingHours?.de?.trim()
+                openingHours = request.openingHours?.en?.trimOrNull(), openingHoursDe = request.openingHours?.de?.trimOrNull()
         )
 
         val savedContact = contactService.save(contact)
@@ -54,13 +55,13 @@ class ContactController (
         val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
 
         // apply
-        contact.email = request.email?.trim()
-        contact.phoneNumber = request.phoneNumber?.trim()
-        contact.place = request.place?.trim()
+        contact.email = request.email?.trimOrNull()
+        contact.phoneNumber = request.phoneNumber?.trimOrNull()
+        contact.place = request.place?.trimOrNull()
         contact.name = request.name.en.trim()
         contact.nameDe = request.name.de.trim()
-        contact.openingHours = request.openingHours?.en?.trim()
-        contact.openingHoursDe = request.openingHours?.de?.trim()
+        contact.openingHours = request.openingHours?.en?.trimOrNull()
+        contact.openingHoursDe = request.openingHours?.de?.trimOrNull()
 
         contactService.save(contact)
         logService.log(LogType.UPDATE_CONTACT, authentication.toUser(), "${contact.name} (${contact.nameDe})")

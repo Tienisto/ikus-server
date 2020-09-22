@@ -8,6 +8,7 @@ import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPoint
+import de.ovgu.ikus.utils.trimOrNull
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
@@ -49,10 +50,10 @@ class EventController (
 
         val event = Event (
                 channelId = channel.id,
-                place = request.place, coords = request.coords?.toPoint(),
+                place = request.place?.trimOrNull(), coords = request.coords?.toPoint(),
                 startTime = request.startTime, endTime = request.endTime,
                 name = request.name.en.trim(), nameDe = request.name.de.trim(),
-                info = request.info?.en?.trim(), infoDe = request.info?.de?.trim()
+                info = request.info?.en?.trimOrNull(), infoDe = request.info?.de?.trimOrNull()
         )
 
         eventService.save(event)
@@ -69,14 +70,14 @@ class EventController (
 
         // apply
         event.channelId = channel.id
-        event.place = request.place
+        event.place = request.place?.trimOrNull()
         event.coords = request.coords?.toPoint()
         event.startTime = request.startTime
         event.endTime = request.endTime
         event.name = request.name.en.trim()
         event.nameDe = request.name.de.trim()
-        event.info = request.info?.en?.trim()
-        event.infoDe = request.info?.de?.trim()
+        event.info = request.info?.en?.trimOrNull()
+        event.infoDe = request.info?.de?.trimOrNull()
 
         eventService.save(event)
         logService.log(LogType.UPDATE_EVENT, authentication.toUser(), "${event.name} (${event.nameDe})")
