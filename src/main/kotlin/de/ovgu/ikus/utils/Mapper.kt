@@ -120,6 +120,10 @@ fun Contact.toLocalizedDto(locale: IkusLocale): LocalizedContactDto {
     }
 }
 
+fun AppStart.toDto(): AppStartDto {
+    return AppStartDto(date.toString(), android, ios)
+}
+
 // other
 
 fun CoordsDto.toPoint(): Point {

@@ -51,3 +51,7 @@ data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: Lis
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
 data class PublicLinkDto(val group: LocalizedLinkGroupDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array
+
+// analytics
+data class AppStartDto(val date: String, val android: Int, val ios: Int)
+data class CurrentAppStarts(val month: Int, val week: Int, val day: Int)

@@ -18,7 +18,8 @@ class DummyService (
         private val eventService: EventService,
         private val linkGroupService: LinkGroupService,
         private val linkService: LinkService,
-        private val contactService: ContactService
+        private val contactService: ContactService,
+        private val analyticsService: AnalyticsService
 ) {
 
     suspend fun clear() {
@@ -26,27 +27,28 @@ class DummyService (
         channelService.deleteAll()
         postFileService.cleanup(Duration.ZERO) // delete files
         linkGroupService.deleteAll()
+        analyticsService.deleteAll()
         userService.deleteAll()
         userService.repairAdminAccount() // create admin account
     }
 
     suspend fun create() {
-        createUsers()
-        val users = userService.findAllOrdered()
+        val users = createUsers()
         createLogs(users)
-        createChannels()
+        val channels = createChannels()
 
-        val channelsNews = channelService.findByType(ChannelType.NEWS)
+        val channelsNews = channels.filter { channel -> channel.type == ChannelType.NEWS }
         createPosts(channelsNews, Constants.postTitles, Constants.postCount)
 
-        val channelsCalendar = channelService.findByType(ChannelType.CALENDAR)
+        val channelsCalendar = channels.filter { channel -> channel.type == ChannelType.CALENDAR }
         createEvents(channelsCalendar)
 
-        val channelsFAQ = channelService.findByType(ChannelType.FAQ)
+        val channelsFAQ = channels.filter { channel -> channel.type == ChannelType.FAQ }
         createPosts(channelsFAQ, Constants.faqTitles, Constants.faqCount)
 
         createLinks()
         createContacts()
+        createAppStarts()
     }
 
     suspend fun createUsers(): List<User> {
@@ -59,13 +61,13 @@ class DummyService (
         }
     }
 
-    suspend fun createChannels() {
+    suspend fun createChannels(): List<Channel> {
 
         val news = Constants.channelsNews.map { channel -> Channel(type = ChannelType.NEWS, name = channel, nameDe = channel) }
         val calendar = Constants.channelsCalendar.map { channel -> Channel(type = ChannelType.CALENDAR, name = channel, nameDe = channel) }
         val faq = Constants.channelsFAQ.map { channel -> Channel(type = ChannelType.FAQ, name = channel.first, nameDe = channel.second) }
 
-        channelService.saveAll(news + calendar + faq)
+        return channelService.saveAll(news + calendar + faq)
     }
 
     suspend fun createPosts(channels: List<Channel>, titles: List<Pair<String, String>>, count: Int) {
@@ -124,6 +126,15 @@ class DummyService (
 
     suspend fun createContacts() {
         contactService.saveAll(Constants.contacts)
+    }
+
+    suspend fun createAppStarts() {
+        val now = OffsetDateTime.now()
+        val users = List(Constants.userCount) { index ->
+            AppStartCache("User $index", Platform.values().random(), now.minusDays(Random.nextInt(30).toLong()))
+        }.onEach { start -> start.setNewFlag() }
+
+        analyticsService.saveAllAppStartCaches(users)
     }
 }
 
@@ -199,4 +210,6 @@ private object Constants {
             Contact(name = "International Office", nameDe = "Akademisches Auslandsamt", place = "G18"),
             Contact(name = "IKUS", nameDe = "IKUS", email = "ikus@ovgu.de", phoneNumber = "+49 (0)391 - 67 515 75", place = "InterKultiTreff\nWalther-Rathenau-Straße 19\n39106 Magdeburg", openingHours = "Mon 15-17, Thu 17-19", openingHoursDe = "Mo. 15-17, Do. 17-19")
     )
+
+    const val userCount = 300
 }

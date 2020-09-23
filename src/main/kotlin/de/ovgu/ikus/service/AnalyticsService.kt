@@ -6,25 +6,16 @@ import de.ovgu.ikus.model.Platform
 import de.ovgu.ikus.model.StatsType
 import de.ovgu.ikus.repository.AppStartCacheRepo
 import de.ovgu.ikus.repository.AppStartRepo
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactor.mono
-import org.slf4j.LoggerFactory
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
-import java.time.LocalDate
 import java.time.OffsetDateTime
-import java.time.Period
-import java.time.temporal.TemporalAmount
 
 @Service
 class AnalyticsService (
         private val appStartCacheRepo: AppStartCacheRepo,
         private val appStartRepo: AppStartRepo
 ) {
-
-    private val logger = LoggerFactory.getLogger(AnalyticsService::class.java)
 
     suspend fun handleAppStart(platform: Platform, deviceId: String) {
         val cached = appStartCacheRepo.findById(deviceId)
@@ -40,48 +31,26 @@ class AnalyticsService (
         }
     }
 
-    // sec - min - hour - dayOfMonth - month - dayOfWeek
-    // every 00:10 each day
-    @Scheduled(cron = "0 10 0 * * *")
-    fun tickDaily() {
-        countGeneric(StatsType.DAILY, Period.ofDays(1)).subscribeOn(Schedulers.parallel()).subscribe()
+    suspend fun findByType(type: StatsType): List<AppStart> {
+        return appStartRepo.findByTypeOrderByDate(type).toList()
     }
 
-    // every 00:20 each monday
-    @Scheduled(cron = "0 20 0 * * MON")
-    fun tickWeekly() {
-        countGeneric(StatsType.WEEKLY, Period.ofWeeks(1)).subscribeOn(Schedulers.parallel()).subscribe()
+    suspend fun countActiveUsersAfter(timestamp: OffsetDateTime): Int {
+        return appStartCacheRepo.countByLastUpdateAfter(timestamp)
     }
 
-    // every 00:30 each first day of month
-    @Scheduled(cron = "0 30 0 1 * *")
-    fun tickMonthly() {
-        countGeneric(StatsType.MONTHLY, Period.ofMonths(1), true).subscribeOn(Schedulers.parallel()).subscribe()
+    // dummy only
+    suspend fun saveAllAppStartCaches(starts: List<AppStartCache>) {
+        appStartCacheRepo.saveAll(starts).collect()
     }
 
-    private fun countGeneric(type: StatsType, time: TemporalAmount, clearUsers: Boolean = false): Mono<Any> {
-        return mono {
-            logger.info("Start counting.")
+    // dummy only
+    suspend fun saveAllAppStarts(starts: List<AppStart>) {
+        appStartRepo.saveAll(starts).collect()
+    }
 
-            val appStarts = appStartCacheRepo.findByLastUpdateAfter(OffsetDateTime.now().minus(time)).toList()
-
-            val android = appStarts.count { start -> start.platform == Platform.ANDROID }
-            val ios = appStarts.size - android
-
-            val stats = AppStart(
-                    type = type,
-                    date = LocalDate.now(),
-                    android = android,
-                    ios = ios
-            )
-
-            appStartRepo.save(stats)
-            logger.info(stats.toString())
-
-            if (clearUsers) {
-                val deleteCount = appStartCacheRepo.deleteOlderThan(OffsetDateTime.now().minusDays(60))
-                logger.info("Deleted inactive users: $deleteCount")
-            }
-        }
+    suspend fun deleteAll() {
+        appStartRepo.deleteAll()
+        appStartCacheRepo.deleteAll()
     }
 }
