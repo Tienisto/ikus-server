@@ -16,4 +16,5 @@ data class Post(@Id var id: Int = 0,
                 var title: String = "",
                 var titleDe: String = "",
                 var content: String = "",
-                var contentDe: String = "")
+                var contentDe: String = "",
+                var position: Int = 0)

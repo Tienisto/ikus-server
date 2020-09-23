@@ -19,7 +19,8 @@ CREATE TABLE post (
     title TEXT NOT NULL,
     title_de TEXT NOT NULL,
     content TEXT NOT NULL,
-    content_de TEXT NOT NULL
+    content_de TEXT NOT NULL,
+    position INT NOT NULL
 );
 
 CREATE TABLE post_file (
@@ -54,7 +55,8 @@ CREATE TABLE link (
     url TEXT NOT NULL,
     url_de TEXT NOT NULL,
     info TEXT NOT NULL,
-    info_de TEXT NOT NULL
+    info_de TEXT NOT NULL,
+    position INT NOT NULL
 );
 
 CREATE TABLE handbook_bookmark (
