@@ -30,14 +30,14 @@
 
     <v-card v-if="!fetching">
       <v-card-text>
-        <Calendar ref="calendar" :events="events" :locale="locale" @click:day="showCreateEvent" @click:event="showUpdateEvent">
-          <template v-slot:header="{ currMonth }">
+        <Calendar :events="events" :locale="locale" @click:date="showCreateEvent" @click:event="showUpdateEvent" :calendar-style="{'min-height': $vuetify.breakpoint.lgAndUp ? '500px' : '400px'}">
+          <template v-slot:header="{ currMonth, prev, next }">
             <div style="display: flex; align-items: center; justify-content: space-between">
-              <v-btn @click="$refs.calendar.prev()" color="black" text>
+              <v-btn @click="prev()" color="black" text>
                 <v-icon dark>mdi-chevron-left</v-icon>
               </v-btn>
               <span class="text-h6">{{ currMonth }}</span>
-              <v-btn @click="$refs.calendar.next()" color="black" text>
+              <v-btn @click="next()" color="black" text>
                 <v-icon dark>mdi-chevron-right</v-icon>
               </v-btn>
             </div>

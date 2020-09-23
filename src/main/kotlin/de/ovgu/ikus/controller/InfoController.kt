@@ -33,7 +33,8 @@ class InfoController (
         private val postFileService: PostFileService,
         private val channelService: ChannelService,
         private val fileService: FileService,
-        private val jwtService: JwtService
+        private val jwtService: JwtService,
+        private val eventService: EventService
 ) {
 
     private var startTime: Long = 0
@@ -96,18 +97,30 @@ class InfoController (
 
     @GetMapping("/dashboard")
     suspend fun dashboard(): DashboardDto {
-        val logs = logService.findAll(5)
-        val channels = channelService.findByType(ChannelType.NEWS)
-        val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 5).map { post ->
-            val channel = channels
-                    .first { c -> c.id == post.channelId }
-                    .toDto()
+        val logs = logService.findAll(7)
+        val postChannelMap = channelService
+                .findByType(ChannelType.NEWS)
+                .map { channel -> channel.id to channel.toDto() }
+                .toMap()
+        val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 7).map { post ->
+            val channel = postChannelMap[post.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))
 
             val files = postFileService
                     .findByPost(post)
                     .map { file -> file.toDto() }
             post.toDto(channel, files)
         }
-        return DashboardDto(logs, posts)
+
+        val eventChannelMap = channelService
+                .findByType(ChannelType.CALENDAR)
+                .map { channel -> channel.id to channel.toDto() }
+                .toMap()
+
+        val events = eventService.findAllOrdered().map { event ->
+            val channel = eventChannelMap[event.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))
+            event.toDto(channel)
+        }
+
+        return DashboardDto(logs, posts, events)
     }
 }

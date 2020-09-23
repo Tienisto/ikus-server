@@ -1,11 +1,10 @@
 <template>
   <div>
-    <slot name="header" :curr-month="currMonth"></slot>
+    <slot name="header" :curr-month="currMonth" :prev="prev" :next="next"></slot>
     <v-calendar ref="calendar" locale="de" color="primary" :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                 v-model="today" :events="internalEvents" event-start="start" event-end="end"
-                :interval-format="intervalFormat"
-                @click:event="$emit('click:event', $event.event)" @click:date="$emit('click:day', $event.date)"
-                :style="{'min-height': $vuetify.breakpoint.lgAndUp ? '500px' : '400px'}">
+                @click:event="$emit('click:event', $event.event)" @click:date="$emit('click:date', $event.date)" @click:more="more"
+                :style="calendarStyle">
 
       <template v-slot:event="{ event }">
         <span class="font-weight-bold ml-1">{{ eventTime(event) }}</span>
@@ -29,6 +28,10 @@ export default {
     locale: {
       type: String,
       default: 'EN'
+    },
+    calendarStyle: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -46,9 +49,12 @@ export default {
       const end = event.endTime ? moment(event.endTime).format('YYYY-MM-DD HH:mm') : null;
       return { start, end, ...event };
     },
-    intervalFormat: function(obj) {
-      console.log(obj);
-      return obj.time;
+    more: function(date) {
+      const filtered = this.events.filter(e => {
+        const start = moment(e.startTime);
+        return start.year() === date.year && start.month() + 1 === date.month && start.date() === date.day;
+      })
+      this.$emit('click:more', filtered);
     }
   },
   computed: {
