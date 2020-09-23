@@ -7,28 +7,67 @@
       Hier können Sie diese Kanäle verwalten.
     </template>
 
+    <template v-slot:meta>
+      <p class="text-h6 mb-0">Modus</p>
+
+      <v-list class="mt-2 mb-4" style="width: 200px">
+        <v-list-item-group v-model="mode" color="pink darken-4" mandatory>
+          <v-list-item @click="type = 'NEWS'">
+            <v-list-item-icon>
+              <v-icon>mdi-newspaper</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                Neuigkeiten
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="type = 'CALENDAR'">
+            <v-list-item-icon>
+              <v-icon>mdi-calendar</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>
+                Kalender
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+
+      <v-btn @click="showCreateDialog" color="primary" block :disabled="loading">
+        <v-icon left>mdi-plus</v-icon>
+        Neuer Kanal
+      </v-btn>
+    </template>
+
     <v-card>
       <v-card-text>
-        <v-tabs vertical>
-          <v-tab @change="type = 'NEWS'">
-            <v-icon left>mdi-newspaper</v-icon>
-            Neuigkeiten
-            <v-spacer/>
-          </v-tab>
-          <v-tab @change="type = 'CALENDAR'">
-            <v-icon left>mdi-calendar</v-icon>
-            Kalender
-            <v-spacer/>
-          </v-tab>
 
-          <v-tab-item>
-            <ChannelTabItem :channels="channels.post" :loading="fetching" @create="showCreateDialog" @update="showRenameDialog" @delete="showDeleteDialog" />
-          </v-tab-item>
+        <v-data-table
+            :loading="loading"
+            :headers="[
+                { text: 'Name (englisch)', value: 'name.en' },
+                { text: 'Name (deutsch)', value: 'name.de' },
+                { text: 'Aktionen', value: 'actions' }
+            ]"
+            :items="currChannels"
+            loading-text="Lade Daten..."
+            no-data-text="Keine Kanäle vorhanden"
+            hide-default-footer
+        >
 
-          <v-tab-item>
-            <ChannelTabItem :channels="channels.event" :loading="fetching" @create="showCreateDialog" @update="showRenameDialog" @delete="showDeleteDialog" />
-          </v-tab-item>
-        </v-tabs>
+          <template v-slot:item.actions="props">
+            <v-btn @click="showRenameDialog(props.item)" elevation="2" color="primary">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+
+            <v-btn @click="showDeleteDialog(props.item)" class="ml-4" elevation="2" color="primary">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
       </v-card-text>
     </v-card>
 
@@ -51,13 +90,12 @@
 import {createChannel, deleteChannel, getChannels, renameChannel} from "@/api";
 import {showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
-import ChannelTabItem from "@/components/ChannelTabItem";
 import ChannelDialog from "@/components/dialog/ChannelDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
 
 export default {
   name: 'ChannelsView',
-  components: {ConfirmTextDialog, ChannelDialog, ChannelTabItem, MainContainer},
+  components: {ConfirmTextDialog, ChannelDialog, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -66,6 +104,7 @@ export default {
       event: []
     },
     type: 'NEWS',
+    mode: 0, // only used for list state
     dialogChannel: false,
     dialogUpdating: false,
     dialogDelete: false,
@@ -149,6 +188,12 @@ export default {
   computed: {
     confirmText: function() {
       return this.selectedChannel.name ? this.selectedChannel.name.de : '';
+    },
+    currChannels: function() {
+      if (this.type === 'NEWS')
+        return this.channels.post;
+      else
+        return this.channels.event;
     }
   },
   mounted: async function() {
