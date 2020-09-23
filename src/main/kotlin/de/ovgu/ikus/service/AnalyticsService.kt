@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.Period
+import java.time.temporal.TemporalAmount
 
 @Service
 class AnalyticsService (
@@ -39,60 +41,47 @@ class AnalyticsService (
     }
 
     // sec - min - hour - dayOfMonth - month - dayOfWeek
-    // every 00:15 each first day of month
-    @Scheduled(cron = "0 15 0 1 * *")
-    fun tickMonthly() {
-        countMonthly().subscribeOn(Schedulers.parallel()).subscribe()
+    // every 00:10 each day
+    @Scheduled(cron = "0 10 0 * * *")
+    fun tickDaily() {
+        countGeneric(StatsType.DAILY, Period.ofDays(1)).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
-    // every 00:30 each monday
-    @Scheduled(cron = "0 30 0 * * MON")
+    // every 00:20 each monday
+    @Scheduled(cron = "0 20 0 * * MON")
     fun tickWeekly() {
-        countWeekly().subscribeOn(Schedulers.parallel()).subscribe()
+        countGeneric(StatsType.WEEKLY, Period.ofWeeks(1)).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
-    private fun countMonthly(): Mono<Any> {
-        return mono {
-            logger.info("Start counting monthly users.")
+    // every 00:30 each first day of month
+    @Scheduled(cron = "0 30 0 1 * *")
+    fun tickMonthly() {
+        countGeneric(StatsType.MONTHLY, Period.ofMonths(1), true).subscribeOn(Schedulers.parallel()).subscribe()
+    }
 
-            val appStarts = appStartCacheRepo.findByLastUpdateAfter(OffsetDateTime.now().minusMonths(1)).toList()
+    private fun countGeneric(type: StatsType, time: TemporalAmount, clearUsers: Boolean = false): Mono<Any> {
+        return mono {
+            logger.info("Start counting.")
+
+            val appStarts = appStartCacheRepo.findByLastUpdateAfter(OffsetDateTime.now().minus(time)).toList()
 
             val android = appStarts.count { start -> start.platform == Platform.ANDROID }
             val ios = appStarts.size - android
 
             val stats = AppStart(
-                    type = StatsType.MONTHLY,
+                    type = type,
                     date = LocalDate.now(),
                     android = android,
                     ios = ios
             )
 
             appStartRepo.save(stats)
-            val deleteCount = appStartCacheRepo.deleteOlderThan(OffsetDateTime.now().minusDays(60))
+            logger.info(stats.toString())
 
-            logger.info("Result: $stats")
-            logger.info("Deleted inactive users: $deleteCount")
-        }
-    }
-
-    private fun countWeekly(): Mono<Any> {
-        return mono {
-            logger.info("Start counting weekly users.")
-
-            val appStarts = appStartCacheRepo.findByLastUpdateAfter(OffsetDateTime.now().minusDays(7)).toList()
-
-            val android = appStarts.count { start -> start.platform == Platform.ANDROID }
-            val ios = appStarts.size - android
-
-            val stats = AppStart(
-                    type = StatsType.WEEKLY,
-                    date = LocalDate.now(),
-                    android = android,
-                    ios = ios
-            )
-
-            appStartRepo.save(stats)
-            logger.info("Result: $stats")
+            if (clearUsers) {
+                val deleteCount = appStartCacheRepo.deleteOlderThan(OffsetDateTime.now().minusDays(60))
+                logger.info("Deleted inactive users: $deleteCount")
+            }
         }
     }
 }
