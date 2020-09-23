@@ -30,7 +30,8 @@ export function logTypeString(type) {
         case 'CREATE_LINK': return 'Link erstellt';
         case 'UPDATE_LINK': return 'Link geändert';
         case 'DELETE_LINK': return 'Link gelöscht';
-        case 'UPDATE_HAND_BOOK': return 'Handbook geändert';
+        case 'UPDATE_HANDBOOK': return 'Handbook geändert';
+        case 'UPDATE_HANDBOOK_BOOKMARKS': return 'Handbook (Inhaltsverzeichnis) geändert';
         case 'CREATE_CONTACT': return 'Neue Kontaktdaten';
         case 'UPDATE_CONTACT': return 'Kontaktdaten geändert';
         case 'DELETE_CONTACT': return 'Kontaktdaten gelöscht';
