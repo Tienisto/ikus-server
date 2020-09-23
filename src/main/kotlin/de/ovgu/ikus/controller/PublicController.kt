@@ -24,6 +24,7 @@ class PublicController(
         private val fileService: FileService,
         private val linkGroupService: LinkGroupService,
         private val linkService: LinkService,
+        private val handbookService: HandbookService,
         private val contactService: ContactService,
         private val analyticsService: AnalyticsService
 ) {
@@ -84,6 +85,15 @@ class PublicController(
 
                 PublicLinkDto(groupDto, linksDto)
             }
+        }
+    }
+
+    @GetMapping("/handbook-bookmarks")
+    suspend fun getHandbookBookmarks(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.HANDBOOK_BOOKMARKS, locale) {
+            handbookService
+                    .findByLocaleOrdered(locale)
+                    .map { bookmark -> bookmark.toDto() }
         }
     }
 

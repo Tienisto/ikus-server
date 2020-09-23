@@ -99,6 +99,10 @@ fun Link.toLocalizedDto(locale: IkusLocale, group: LocalizedLinkGroupDto): Local
     }
 }
 
+fun HandbookBookmark.toDto(): HandbookBookmarkDto {
+    return HandbookBookmarkDto(page, name)
+}
+
 fun Contact.toDto(): ContactDto {
     val tempOpeningHoursEn = openingHours
     val tempOpeningHoursDe = openingHoursDe

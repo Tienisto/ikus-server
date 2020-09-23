@@ -10,6 +10,7 @@ enum class CacheKey {
     NEWS,
     CALENDAR,
     LINKS,
+    HANDBOOK_BOOKMARKS,
     FAQ,
     CONTACTS
 }

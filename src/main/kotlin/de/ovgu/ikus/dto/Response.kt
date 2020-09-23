@@ -1,5 +1,6 @@
 package de.ovgu.ikus.dto
 
+import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.JwtStatus
 import java.time.OffsetDateTime
@@ -30,6 +31,10 @@ data class EventDto(val id: Int, val channel: ChannelDto, val place: String?, va
 data class LinkGroupDto(val id: Int, val name: MultiLocaleString)
 data class LinkDto(val id: Int, val group: LinkGroupDto, val url: MultiLocaleString, val info: MultiLocaleString)
 data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDto>)
+
+// handbook
+data class HandbookBookmarkDto(val page: Int, val name: String)
+data class HandbookBookmarkGroupedDto(val locale: IkusLocale, val bookmarks: List<HandbookBookmarkDto>)
 
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)

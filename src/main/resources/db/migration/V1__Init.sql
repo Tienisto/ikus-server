@@ -60,8 +60,8 @@ CREATE TABLE link (
 CREATE TABLE handbook_bookmark (
     id SERIAL PRIMARY KEY,
     locale TEXT NOT NULL,
-    name TEXT NOT NULL,
-    page INT NOT NULL
+    page INT NOT NULL,
+    name TEXT NOT NULL
 );
 
 CREATE TABLE contact (
@@ -87,7 +87,7 @@ CREATE TABLE log (
 CREATE TABLE app_start (
     id SERIAL PRIMARY KEY,
     type TEXT NOT NULL,
-    date DATE NOT NULL, -- mondays or first day of month
+    date DATE NOT NULL, -- date of insertion (end of an period)
     android INT NOT NULL,
     ios INT NOT NULL
 );

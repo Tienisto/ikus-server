@@ -10,5 +10,5 @@ enum class IkusLocale {
 @Table
 data class HandbookBookmark(@Id var id: Int = 0,
                             var locale: IkusLocale = IkusLocale.EN,
-                            var name: String = "",
-                            var page: Int = 0)
+                            var page: Int = 0,
+                            var name: String = "")
