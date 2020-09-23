@@ -2,9 +2,19 @@
   <MainContainer title="Dashboard" icon="mdi-view-dashboard">
 
     <template v-slot:intro>
-      Willkommen auf Ihrem Dashboard.
-      <br>
-      Hier sehen Sie den aktuellen Stand auf einem Blick.
+      <div style="display: flex; align-items: flex-start; justify-content: space-between">
+        <div>
+          Willkommen auf Ihrem Dashboard.
+          <br>
+          Hier sehen Sie den aktuellen Stand auf einem Blick.
+        </div>
+        <div>
+          <v-btn @click="showAccountSettings" rounded color="primary">
+            <v-icon left>mdi-account</v-icon>
+            {{ user.name }}
+          </v-btn>
+        </div>
+      </div>
     </template>
 
     <v-row>
@@ -113,14 +123,41 @@
       </template>
     </GenericDialog>
 
+    <GenericDialog v-model="dialogAccount" title="Passwort ändern">
+      <template v-slot:content>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="oldPassword" label="Aktuelles Passwort" type="password" :disabled="loading" hide-details></v-text-field>
+          </v-col>
+          <v-col cols="6"></v-col>
+          <v-col cols="6">
+            <v-text-field v-model="newPassword" label="Neues Passwort" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-text-field v-model="newPasswordRepeat" label="Passwort wiederholen" type="password" :disabled="loading"></v-text-field>
+          </v-col>
+        </v-row>
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="dialogAccount = false" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="updatePassword" color="primary" :loading="loading">
+          <v-icon left>mdi-content-save</v-icon>
+          Speichern
+        </v-btn>
+      </template>
+    </GenericDialog>
+
   </MainContainer>
 </template>
 
 <script>
 import moment from "moment";
-import {getDashboard} from "@/api";
+import {getDashboard, getUserInfo, isInitialized, updateMyPassword} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
-import {logTypeString} from "@/utils";
+import {logTypeString, showSnackbar} from "@/utils";
 import Notice from "@/components/Notice";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import Calendar from "@/components/Calendar";
@@ -132,22 +169,38 @@ export default {
   components: {GenericDialog, EventInfoDialog, Calendar, LoadingIndicator, Notice, MainContainer},
   data: () => ({
     fetching: true,
+    loading: false,
+    user: {},
     dashboard: {
       logs: [],
       posts: [],
       events: []
     },
     locales: ['EN', 'DE'],
+    dialogAccount: false,
     dialogEvent: false,
     dialogMoreEvents: false,
     event: {},
-    moreEvents: []
+    moreEvents: [],
+    oldPassword: '',
+    newPassword: '',
+    newPasswordRepeat: ''
   }),
   methods: {
     fetchData: async function() {
       this.fetching = true;
+      while(!isInitialized()) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.user = getUserInfo();
       this.dashboard = await getDashboard();
       this.fetching = false;
+    },
+    showAccountSettings: function() {
+      this.oldPassword = '';
+      this.newPassword = '';
+      this.newPasswordRepeat = '';
+      this.dialogAccount = true;
     },
     showEvent: function(event) {
       this.event = event;
@@ -157,6 +210,30 @@ export default {
     showMoreEvents: function(events) {
       this.moreEvents = events;
       this.dialogMoreEvents = true;
+    },
+    updatePassword: async function() {
+      if (!this.oldPassword || !this.newPassword || !this.newPasswordRepeat) {
+        showSnackbar('Bitte alle Felder ausfüllen');
+        return;
+      }
+
+      if (this.newPassword !== this.newPasswordRepeat) {
+        showSnackbar('Passwörter stimmen nicht überein');
+        return;
+      }
+
+      try {
+        this.loading = true;
+        await updateMyPassword({ oldPassword: this.oldPassword, newPassword: this.newPassword });
+        this.dialogAccount = false;
+      } catch (e) {
+        if (e === 403)
+          showSnackbar('Falsches Passwort');
+        else
+          showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
     }
   },
   computed: {

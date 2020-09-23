@@ -72,7 +72,7 @@ export function getUserInfo() {
 export async function initAccountInfo() {
     try {
         me = await makeRequest({
-            route: "me",
+            route: "account",
             method: "GET",
             no401Callback: true
         });
@@ -161,6 +161,14 @@ export async function deleteUser({ id }) {
 }
 
 // user
+
+export async function updateMyPassword({ oldPassword, newPassword }) {
+    return await makeRequest({
+        route: 'account/password',
+        method: 'POST',
+        body: { oldPassword, newPassword }
+    });
+}
 
 export async function getDashboard() {
     return await makeRequest({

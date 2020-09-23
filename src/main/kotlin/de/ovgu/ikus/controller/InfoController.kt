@@ -9,12 +9,9 @@ import de.ovgu.ikus.properties.DBProperties
 import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.properties.StorageProperties
 import de.ovgu.ikus.security.JwtService
-import de.ovgu.ikus.security.isAdmin
-import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import org.springframework.http.server.reactive.ServerHttpRequest
-import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -81,13 +78,6 @@ class InfoController (
                 jwtApp = jwtService.getStatusApp(),
                 env = env
         )
-    }
-
-    @GetMapping("/me")
-    fun me(authentication: Authentication): MeDto {
-        val user = authentication.toUser()
-        val admin = authentication.isAdmin()
-        return MeDto(user.name, admin)
     }
 
     @GetMapping("/logs")

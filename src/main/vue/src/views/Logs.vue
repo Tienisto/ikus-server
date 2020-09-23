@@ -20,10 +20,10 @@
         <v-data-table
             :loading="fetching"
             :headers="[
-                { text: 'Aktion', value: 'type' },
-                { text: 'Von', value: 'user' },
+                { text: 'Aktion', value: 'type', width: '200px' },
+                { text: 'Von', value: 'user', width: '100px' },
                 { text: 'Info', value: 'info' },
-                { text: 'Zeitstempel', value: 'timestamp' }
+                { text: 'Zeitstempel', value: 'timestamp', width: '155px' }
             ]"
             :items="logs"
             loading-text="Lade Daten..."
