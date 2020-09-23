@@ -1,5 +1,6 @@
 package de.ovgu.ikus.dto
 
+import de.ovgu.ikus.model.Platform
 import java.time.OffsetDateTime
 
 object Request {
@@ -27,4 +28,6 @@ object Request {
 
     data class CreateContact(val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
     data class UpdateContact(val id: Int, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
+
+    data class AppStartSignal(val token: String?, val platform: Platform?, val deviceId: String?)
 }

@@ -4,6 +4,7 @@ import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.PostType
+import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toLocalizedDto
@@ -15,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange
 @RequestMapping("/api/public")
 class PublicController(
         private val cacheService: CacheService,
+        private val jwtService: JwtService,
         private val postService: PostService,
         private val postFileService: PostFileService,
         private val eventService: EventService,
@@ -22,7 +24,8 @@ class PublicController(
         private val fileService: FileService,
         private val linkGroupService: LinkGroupService,
         private val linkService: LinkService,
-        private val contactService: ContactService
+        private val contactService: ContactService,
+        private val analyticsService: AnalyticsService
 ) {
 
     @GetMapping("/file/{folder}/{name}")
@@ -112,5 +115,19 @@ class PublicController(
                     .findAllOrdered(locale)
                     .map { contact -> contact.toLocalizedDto(locale) }
         }
+    }
+
+    @PostMapping("/start")
+    suspend fun appStart(@RequestBody(required = false) request: Request.AppStartSignal?) {
+        if (request == null)
+            return
+
+        if (!jwtService.checkAppToken(request.token))
+            return
+
+        if (request.platform == null || request.deviceId == null)
+            return
+
+        analyticsService.handleAppStart(request.platform, request.deviceId)
     }
 }

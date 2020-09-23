@@ -84,14 +84,10 @@ CREATE TABLE log (
     info TEXT NOT NULL
 );
 
-CREATE TABLE app_start_monthly (
-    date DATE PRIMARY KEY, -- first day of month
-    android INT NOT NULL,
-    ios INT NOT NULL
-);
-
-CREATE TABLE app_start_weekly (
-    date DATE PRIMARY KEY, -- mondays
+CREATE TABLE app_start (
+    id SERIAL PRIMARY KEY,
+    type TEXT NOT NULL,
+    date DATE NOT NULL, -- mondays or first day of month
     android INT NOT NULL,
     ios INT NOT NULL
 );
@@ -99,7 +95,7 @@ CREATE TABLE app_start_weekly (
 CREATE TABLE app_start_cache (
     device_id TEXT PRIMARY KEY,
     platform TEXT NOT NULL,
-    last_login TIMESTAMP WITH TIME ZONE NOT NULL
+    last_update TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE config (

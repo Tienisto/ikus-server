@@ -31,12 +31,19 @@ class JwtService (
 
     private lateinit var jwtKey: SecretKeySpec
     private lateinit var jwtParser: JwtParser
+    private lateinit var jwtParserApp: JwtParser
 
     @PostConstruct
     protected fun init() {
         val jwtKeyBytes = propsJwt.website.toByteArray()
         jwtKey = SecretKeySpec(jwtKeyBytes, 0, jwtKeyBytes.size, "HmacSHA256")
         jwtParser = Jwts.parserBuilder().setSigningKey(jwtKey).build()
+
+        val jwtKeyBytesApp = propsJwt.app.toByteArray()
+        jwtParserApp = Jwts
+                .parserBuilder()
+                .setSigningKey(SecretKeySpec(jwtKeyBytesApp, 0, jwtKeyBytesApp.size, "HmacSHA256"))
+                .build()
     }
 
     fun getStatusWebsite(): JwtStatus {
@@ -87,6 +94,19 @@ class JwtService (
             return null
         }
         return userRepo.findById(userID)
+    }
+
+    suspend fun checkAppToken(token: String?): Boolean {
+        if (token == null)
+            return false
+
+        try {
+            jwtParserApp.parseClaimsJws(token)
+            return true
+        } catch (e: Exception) {
+            println(e)
+            return false
+        }
     }
 }
 
