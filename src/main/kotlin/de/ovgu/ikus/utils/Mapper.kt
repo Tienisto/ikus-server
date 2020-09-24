@@ -77,6 +77,17 @@ fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): Loca
     }
 }
 
+fun Food.toLocalizedDto(locale: IkusLocale): LocalizedFoodDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedFoodDto(name, price, tags)
+        IkusLocale.DE -> LocalizedFoodDto(nameDe, price, tags)
+    }
+}
+
+fun Menu.toLocalizedDto(food: List<LocalizedFoodDto>): LocalizedMenuDto {
+    return LocalizedMenuDto(date.toString(), food)
+}
+
 fun LinkGroup.toDto(): LinkGroupDto {
     return LinkGroupDto(id, MultiLocaleString(en = name, de = nameDe))
 }

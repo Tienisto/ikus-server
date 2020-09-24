@@ -1,7 +1,9 @@
 package de.ovgu.ikus.dto
 
+import de.ovgu.ikus.model.FoodTag
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
+import de.ovgu.ikus.model.MensaLocation
 import de.ovgu.ikus.security.JwtStatus
 import java.time.OffsetDateTime
 
@@ -39,6 +41,10 @@ data class HandbookBookmarkGroupedDto(val locale: IkusLocale, val bookmarks: Lis
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
 
+// analytics
+data class AppStartDto(val date: String, val android: Int, val ios: Int)
+data class CurrentAppStarts(val month: Int, val week: Int, val day: Int)
+
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
@@ -46,12 +52,11 @@ data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val 
 data class LocalizedLinkGroupDto(val id: Int, val name: String)
 data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val url: String, val info: String)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
+data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
+data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
+data class PublicMensaDto(val location: MensaLocation, val menus: List<LocalizedMenuDto>)
 data class PublicLinkDto(val group: LocalizedLinkGroupDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array
-
-// analytics
-data class AppStartDto(val date: String, val android: Int, val ios: Int)
-data class CurrentAppStarts(val month: Int, val week: Int, val day: Int)

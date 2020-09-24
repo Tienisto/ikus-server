@@ -9,6 +9,7 @@ import java.time.Duration
 enum class CacheKey {
     NEWS,
     CALENDAR,
+    MENSA,
     LINKS,
     HANDBOOK_BOOKMARKS,
     FAQ,
