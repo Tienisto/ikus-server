@@ -89,7 +89,7 @@ fun Menu.toLocalizedDto(food: List<LocalizedFoodDto>): LocalizedMenuDto {
 }
 
 fun MensaInfo.toLocalizedDto(menus: List<LocalizedMenuDto>): LocalizedMenuInfoDto {
-    return LocalizedMenuInfoDto(location, menus)
+    return LocalizedMenuInfoDto(name, menus)
 }
 
 fun LinkGroup.toDto(): LinkGroupDto {
