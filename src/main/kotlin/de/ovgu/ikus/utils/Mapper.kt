@@ -88,6 +88,10 @@ fun Menu.toLocalizedDto(food: List<LocalizedFoodDto>): LocalizedMenuDto {
     return LocalizedMenuDto(date.toString(), food)
 }
 
+fun MensaInfo.toLocalizedDto(menus: List<LocalizedMenuDto>): LocalizedMenuInfoDto {
+    return LocalizedMenuInfoDto(location, menus)
+}
+
 fun LinkGroup.toDto(): LinkGroupDto {
     return LinkGroupDto(id, MultiLocaleString(en = name, de = nameDe))
 }

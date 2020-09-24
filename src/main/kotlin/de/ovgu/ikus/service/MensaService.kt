@@ -1,9 +1,6 @@
 package de.ovgu.ikus.service
 
-import de.ovgu.ikus.model.Food
-import de.ovgu.ikus.model.FoodTag
-import de.ovgu.ikus.model.MensaLocation
-import de.ovgu.ikus.model.Menu
+import de.ovgu.ikus.model.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -25,9 +22,9 @@ class MensaService (
     private val client = WebClient.create()
     private val datePattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-    private var menuCache = listOf<Menu>()
+    private var menuCache = listOf<MensaInfo>()
 
-    fun getMenu(): List<Menu> {
+    fun getMenu(): List<MensaInfo> {
         return menuCache
     }
 
@@ -45,47 +42,46 @@ class MensaService (
                         null
                     }
                 }
-                .flatten()
         cacheService.triggerUpdateFlag(CacheKey.MENSA)
     }
 
-    private suspend fun scrapeUniCampusDown(): List<Menu> {
+    private suspend fun scrapeUniCampusDown(): MensaInfo {
         return scrapeStudentenwerk(
                 location = MensaLocation.UNI_CAMPUS_DOWN,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/"
         )
     }
 
-    private suspend fun scrapeUniCampusUp(): List<Menu> {
+    private suspend fun scrapeUniCampusUp(): MensaInfo {
         return scrapeStudentenwerk(
                 location = MensaLocation.UNI_CAMPUS_UP,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/"
         )
     }
 
-    private suspend fun scrapeZschokke(): List<Menu> {
+    private suspend fun scrapeZschokke(): MensaInfo {
         return scrapeStudentenwerk(
                 location = MensaLocation.ZSCHOKKE,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/"
         )
     }
 
-    private suspend fun scrapeHerrenkrug(): List<Menu> {
+    private suspend fun scrapeHerrenkrug(): MensaInfo {
         return scrapeStudentenwerk(
                 location = MensaLocation.HERRENKRUG,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/"
         )
     }
 
-    private suspend fun scrapeStudentenwerk(location: MensaLocation, url: String): List<Menu> {
-        val doc = getDocument(url) ?: return emptyList()
-
-        return doc.select(".mensa table")
+    private suspend fun scrapeStudentenwerk(location: MensaLocation, url: String): MensaInfo {
+        val doc = getDocument(url) ?: return MensaInfo(location, emptyList())
+        val menus = doc.select(".mensa table")
                 .map { table ->
                     val date = getDateFromTable(table)
                     val food = getFoodFromTable(table)
-                    Menu(location, date, food)
+                    Menu(date, food)
                 }
+        return MensaInfo(location, menus)
     }
 
     private fun getDateFromTable(table: Element): LocalDate {

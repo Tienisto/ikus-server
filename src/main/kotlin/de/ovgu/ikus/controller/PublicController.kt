@@ -3,7 +3,6 @@ package de.ovgu.ikus.controller
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
-import de.ovgu.ikus.model.MensaLocation
 import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.service.*
@@ -77,16 +76,15 @@ class PublicController(
     @GetMapping("/mensa")
     suspend fun getMensa(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.MENSA, locale) {
-            val menus = mensaService.getMenu()
-            MensaLocation.values().map { location ->
-                val currMenus = menus
-                        .filter { menu -> menu.location == location }
-                        .map { menu ->
+            mensaService
+                    .getMenu()
+                    .map { menuInfo ->
+                        val menus = menuInfo.menus.map { menu ->
                             val food = menu.food.map { food -> food.toLocalizedDto(locale) }
                             menu.toLocalizedDto(food)
                         }
-                location to currMenus
-            }.toMap()
+                        menuInfo.toLocalizedDto(menus)
+                    }
         }
     }
 
