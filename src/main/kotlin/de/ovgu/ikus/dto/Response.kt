@@ -53,10 +53,9 @@ data class LocalizedLinkGroupDto(val id: Int, val name: String)
 data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val url: String, val info: String)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
 data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
-data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
+data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>) // as map
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
-data class PublicMensaDto(val location: MensaLocation, val menus: List<LocalizedMenuDto>)
 data class PublicLinkDto(val group: LocalizedLinkGroupDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array

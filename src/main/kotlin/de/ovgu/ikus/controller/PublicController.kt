@@ -85,8 +85,8 @@ class PublicController(
                             val food = menu.food.map { food -> food.toLocalizedDto(locale) }
                             menu.toLocalizedDto(food)
                         }
-                PublicMensaDto(location, currMenus)
-            }
+                location to currMenus
+            }.toMap()
         }
     }
 

@@ -21,8 +21,8 @@ class MensaScheduler (
     }
 
     // sec - min - hour - dayOfMonth - month - dayOfWeek
-    // every hour
-    @Scheduled(cron = "30 0 * * * *")
+    // every half hour
+    @Scheduled(cron = "0 0,30 * * * *")
     fun tick() {
         mono {
             logger.info("Updating mensa cache.")
