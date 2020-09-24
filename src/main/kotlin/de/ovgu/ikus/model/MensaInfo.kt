@@ -1,11 +1,11 @@
 package de.ovgu.ikus.model
 
-enum class MensaName {
+enum class Mensa {
     UNI_CAMPUS_DOWN,
     UNI_CAMPUS_UP,
     ZSCHOKKE,
     HERRENKRUG
 }
 
-data class MensaInfo(val name: MensaName,
+data class MensaInfo(val name: Mensa,
                      val menus: List<Menu>)

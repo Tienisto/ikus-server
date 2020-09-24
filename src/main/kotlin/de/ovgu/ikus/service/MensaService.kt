@@ -29,14 +29,14 @@ class MensaService (
     }
 
     suspend fun updateMenu() {
-        menuCache = MensaName.values()
+        menuCache = Mensa.values()
                 .mapNotNull { location ->
                     try {
                         when (location) {
-                            MensaName.UNI_CAMPUS_DOWN -> scrapeUniCampusDown()
-                            MensaName.UNI_CAMPUS_UP -> scrapeUniCampusUp()
-                            MensaName.ZSCHOKKE -> scrapeZschokke()
-                            MensaName.HERRENKRUG -> scrapeHerrenkrug()
+                            Mensa.UNI_CAMPUS_DOWN -> scrapeUniCampusDown()
+                            Mensa.UNI_CAMPUS_UP -> scrapeUniCampusUp()
+                            Mensa.ZSCHOKKE -> scrapeZschokke()
+                            Mensa.HERRENKRUG -> scrapeHerrenkrug()
                         }
                     } catch (e: Exception) {
                         null
@@ -47,33 +47,33 @@ class MensaService (
 
     private suspend fun scrapeUniCampusDown(): MensaInfo {
         return scrapeStudentenwerk(
-                name = MensaName.UNI_CAMPUS_DOWN,
+                name = Mensa.UNI_CAMPUS_DOWN,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/"
         )
     }
 
     private suspend fun scrapeUniCampusUp(): MensaInfo {
         return scrapeStudentenwerk(
-                name = MensaName.UNI_CAMPUS_UP,
+                name = Mensa.UNI_CAMPUS_UP,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/"
         )
     }
 
     private suspend fun scrapeZschokke(): MensaInfo {
         return scrapeStudentenwerk(
-                name = MensaName.ZSCHOKKE,
+                name = Mensa.ZSCHOKKE,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/"
         )
     }
 
     private suspend fun scrapeHerrenkrug(): MensaInfo {
         return scrapeStudentenwerk(
-                name = MensaName.HERRENKRUG,
+                name = Mensa.HERRENKRUG,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/"
         )
     }
 
-    private suspend fun scrapeStudentenwerk(name: MensaName, url: String): MensaInfo {
+    private suspend fun scrapeStudentenwerk(name: Mensa, url: String): MensaInfo {
         val doc = getDocument(url) ?: return MensaInfo(name, emptyList())
         val menus = doc.select(".mensa table")
                 .map { table ->

@@ -3,7 +3,7 @@ package de.ovgu.ikus.dto
 import de.ovgu.ikus.model.FoodTag
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
-import de.ovgu.ikus.model.MensaName
+import de.ovgu.ikus.model.Mensa
 import de.ovgu.ikus.security.JwtStatus
 import java.time.OffsetDateTime
 
@@ -54,7 +54,7 @@ data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val u
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
 data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
 data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
-data class LocalizedMenuInfoDto(val name: MensaName, val menus: List<LocalizedMenuDto>) // as array
+data class LocalizedMenuInfoDto(val name: Mensa, val menus: List<LocalizedMenuDto>) // as array
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
