@@ -64,7 +64,7 @@ import {getFileUrl, updateBookmarks, uploadHandbook} from "@/api";
 import {showSnackbar, sleep} from "@/utils";
 import SimpleTextArea from "@/components/input/SimpleTextArea";
 export default {
-  name: 'HandbookCard',
+  name: 'HandbookComponent',
   components: {SimpleTextArea, FileUpload},
   props: {
     title: {

@@ -2,16 +2,16 @@
   <MainContainer title="Handbook" icon="mdi-file-document">
 
     <template v-slot:intro>
-      Hier können das Handbuch verwalten.
+      Hier können Sie das Handbuch verwalten.
       <br>
       Nach dem Upload versucht das System, ein Inhaltsverzeichnis zu erstellen, den Sie im Nachhinein bearbeiten können.
     </template>
     <v-row>
       <v-col cols="6">
-        <HandbookCard locale="EN" title="englisch" :bookmarks="bookmarksEn" @update="fetchData"/>
+        <HandbookComponent locale="EN" title="englisch" :bookmarks="bookmarksEn" @update="fetchData"/>
       </v-col>
       <v-col cols="6">
-        <HandbookCard locale="DE" title="deutsch" :bookmarks="bookmarksDe" @update="fetchData" />
+        <HandbookComponent locale="DE" title="deutsch" :bookmarks="bookmarksDe" @update="fetchData" />
       </v-col>
     </v-row>
 
@@ -19,14 +19,14 @@
 </template>
 
 <script>
-import MainContainer from "@/components/layout/MainContainer";
-import HandbookCard from "@/components/cards/HandbookCard";
 import {getHandbookBookmarks} from "@/api";
 import {showSnackbar} from "@/utils";
+import MainContainer from "@/components/layout/MainContainer";
+import HandbookComponent from "@/components/HandbookComponent";
 
 export default {
   name: 'HandbookView',
-  components: {HandbookCard, MainContainer},
+  components: {HandbookComponent, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
