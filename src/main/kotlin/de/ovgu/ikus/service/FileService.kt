@@ -71,12 +71,13 @@ class FileService (
         }
     }
 
-    fun loadFile(path: String, webExchange: ServerWebExchange): FileSystemResource {
+    fun loadFile(path: String, download: Boolean, webExchange: ServerWebExchange): FileSystemResource {
         val resource = FileSystemResource(propsStorage.path + "/" + normalize(path))
         if (!resource.exists())
             throw ErrorCode(404, "File not found")
 
         webExchange.response.headers["Content-Type"] = getMime(path)
+        webExchange.response.headers["Content-Disposition"] = if (download) "attachment" else "inline"
         return resource
     }
 
