@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter
 import org.springframework.web.reactive.config.WebFluxConfigurer
 import reactor.core.publisher.Mono
 
@@ -18,6 +19,8 @@ class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : We
                 .csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
+                .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN) // e.g. embed pdf
+                .and()
                 .authorizeExchange()
                 .pathMatchers("/api/login", "/api/version", "/api/status", "/api/public/**").permitAll()
                 .pathMatchers("/api/**").authenticated()
