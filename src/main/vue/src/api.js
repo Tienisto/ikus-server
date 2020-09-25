@@ -226,8 +226,11 @@ export async function uploadPostFile({ file }) {
     });
 }
 
-export function getFileUrl({ name }) {
-    return API_URL + '/public/file/' + name;
+export function getFileUrl(name, { download } = {}) {
+    if (download)
+        return API_URL + '/public/file/' + name + '?download=true';
+    else
+        return API_URL + '/public/file/' + name;
 }
 
 export async function getAllEvents() {
@@ -299,6 +302,31 @@ export async function deleteChannel({ id }) {
         route: 'channels',
         method: 'DELETE',
         body: { id }
+    });
+}
+
+export async function getHandbookBookmarks() {
+    return await makeRequest({
+        route: 'handbook',
+        method: 'GET'
+    });
+}
+
+export async function uploadHandbook({ file, locale }) {
+    return await makeRequest({
+        route: 'handbook/upload',
+        method: 'PUT',
+        body: { file },
+        params: { locale },
+        useJSON: false
+    });
+}
+
+export async function updateBookmarks({ bookmarks, locale }) {
+    return await makeRequest({
+        route: 'handbook/bookmarks',
+        method: 'PUT',
+        body: { bookmarks, locale }
     });
 }
 

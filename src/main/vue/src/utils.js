@@ -42,3 +42,7 @@ export function logTypeString(type) {
 export function localizedString(obj, locale) {
     return locale === 'EN' ? obj.en : obj.de;
 }
+
+export function sleep(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}

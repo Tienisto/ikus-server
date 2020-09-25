@@ -14,7 +14,7 @@
     </v-col>
     <v-col cols="4">
       <div style="height: 100%; display: flex; align-items: center;" :style="files.length !== 0 ? { 'justify-content': 'center' } : {}">
-        <FileUpload v-slot:default="{ upload }" @start="$emit('upload', $event)">
+        <FileUpload v-slot:default="{ upload }" @select="$emit('upload', $event)" multiple>
           <v-btn @click="upload" class="primary" fab>
             <v-icon>mdi-upload</v-icon>
           </v-btn>
@@ -39,7 +39,7 @@ export default {
   },
   computed: {
     fileUrl: function() {
-      return (file) => getFileUrl({ name: file.fileName });
+      return (file) => getFileUrl(file.fileName);
     }
   },
 }

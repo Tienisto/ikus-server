@@ -9,6 +9,7 @@
 
 <script>
 import {getUserInfo, isInitialized} from "@/api";
+import {sleep} from "@/utils";
 
 export default {
   name: 'ToHomePageButton',
@@ -19,7 +20,7 @@ export default {
   }),
   mounted: async function() {
     while(!isInitialized()) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await sleep(200);
     }
     this.loggedIn = !!getUserInfo();
     this.fetching = false;

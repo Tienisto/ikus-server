@@ -157,7 +157,7 @@
 import moment from "moment";
 import {getDashboard, getUserInfo, isInitialized, updateMyPassword} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
-import {logTypeString, showSnackbar} from "@/utils";
+import {logTypeString, showSnackbar, sleep} from "@/utils";
 import Notice from "@/components/Notice";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import Calendar from "@/components/Calendar";
@@ -190,7 +190,7 @@ export default {
     fetchData: async function() {
       this.fetching = true;
       while(!isInitialized()) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await sleep(100);
       }
       this.user = getUserInfo();
       this.dashboard = await getDashboard();

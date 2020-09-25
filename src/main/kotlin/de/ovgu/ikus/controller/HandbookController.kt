@@ -1,6 +1,6 @@
 package de.ovgu.ikus.controller
 
-import de.ovgu.ikus.dto.HandbookBookmarkGroupedDto
+import de.ovgu.ikus.dto.HandbookBookmarkDto
 import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.model.HandbookBookmark
 import de.ovgu.ikus.model.IkusLocale
@@ -27,7 +27,7 @@ class HandbookController (
 ) {
 
     @GetMapping
-    suspend fun getBookmarks(): List<HandbookBookmarkGroupedDto> {
+    suspend fun getBookmarks(): Map<IkusLocale, List<HandbookBookmarkDto>> {
         val bookmarks = handbookService.findAllOrdered()
         return IkusLocale
                 .values()
@@ -36,8 +36,8 @@ class HandbookController (
                             .filter { bookmark -> bookmark.locale == locale }
                             .map { bookmark -> bookmark.toDto() }
 
-                    HandbookBookmarkGroupedDto(locale, currBookmarks)
-                }
+                    locale to currBookmarks
+                }.toMap()
     }
 
     @PutMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -49,7 +49,7 @@ class HandbookController (
     @PutMapping("/bookmarks")
     suspend fun updateBookmarks(authentication: Authentication, @RequestBody request: Request.UpdateBookmarks) {
         val locale = request.locale
-        val bookmarks = request.bookmarks.map { bookmark -> HandbookBookmark(locale = locale, page = bookmark.page, name = bookmark.name) }
+        val bookmarks = request.bookmarks.map { bookmark -> HandbookBookmark(locale = locale, page = bookmark.page, name = bookmark.name.trim()) }
         handbookService.updateBookmarks(bookmarks, locale)
         logService.log(LogType.UPDATE_HANDBOOK_BOOKMARKS, authentication.toUser(), locale.toString())
         cacheService.triggerUpdateFlag(CacheKey.HANDBOOK_BOOKMARKS)

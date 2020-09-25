@@ -36,7 +36,6 @@ data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDt
 
 // handbook
 data class HandbookBookmarkDto(val page: Int, val name: String)
-data class HandbookBookmarkGroupedDto(val locale: IkusLocale, val bookmarks: List<HandbookBookmarkDto>)
 
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
