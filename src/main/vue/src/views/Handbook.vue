@@ -4,7 +4,7 @@
     <template v-slot:intro>
       Hier können Sie das Handbuch verwalten.
       <br>
-      Nach dem Upload versucht das System, ein Inhaltsverzeichnis zu erstellen, den Sie im Nachhinein bearbeiten können.
+      Das System kann automatisch ein Inhaltsverzeichnis erstellen, den Sie im Nachhinein bearbeiten können.
     </template>
     <v-row>
       <v-col cols="6">
