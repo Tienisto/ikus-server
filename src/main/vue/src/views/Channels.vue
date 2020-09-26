@@ -71,7 +71,7 @@
       </v-card-text>
     </v-card>
 
-    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Kanal umbenennen' : 'Neuer Kanal'" :updating="dialogUpdating" :loading="loading"
+    <GroupDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Kanal umbenennen' : 'Neuer Kanal'" :updating="dialogUpdating" :loading="loading"
                   @submit="createOrRename"/>
 
     <ConfirmTextDialog ref="deleteDialog" v-model="dialogDelete" :confirm-text="confirmText" :loading="loading" title="Kanal löschen"
@@ -90,12 +90,12 @@
 import {createChannel, deleteChannel, getChannels, renameChannel} from "@/api";
 import {showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
-import ChannelDialog from "@/components/dialog/ChannelDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
+import GroupDialog from "@/components/dialog/GroupDialog";
 
 export default {
   name: 'ChannelsView',
-  components: {ConfirmTextDialog, ChannelDialog, MainContainer},
+  components: {GroupDialog, ConfirmTextDialog, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,

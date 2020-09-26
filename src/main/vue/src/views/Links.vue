@@ -75,7 +75,7 @@
       </template>
     </GenericDialog>
 
-    <ChannelDialog ref="groupDialog" v-model="dialogGroup" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
+    <GroupDialog ref="groupDialog" v-model="dialogGroup" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
                    @submit="submitGroup"/>
 
     <ConfirmTextDialog ref="deleteGroupDialog" v-model="dialogDeleteGroup" :confirm-text="confirmText" :loading="loading" title="Gruppe löschen"
@@ -91,29 +91,21 @@
 </template>
 
 <script>
+import {createLink, createLinkGroup, deleteLink, deleteLinkGroup, getLinksGrouped, updateLink, updateLinkGroup} from "@/api";
+import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LocaleSelector from "@/components/LocaleSelector";
-import {
-  createLink, createLinkGroup,
-  deleteLink, deleteLinkGroup,
-  getLinksGrouped,
-  updateLink, updateLinkGroup,
-} from "@/api";
-import {localizedString, showSnackbar} from "@/utils";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import Notice from "@/components/Notice";
 import ListCard from "@/components/ListCard";
 import LinkDialog from "@/components/dialog/LinkDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
-import ChannelDialog from "@/components/dialog/ChannelDialog";
 import GenericDialog from "@/components/dialog/GenericDialog";
+import GroupDialog from "@/components/dialog/GroupDialog";
 
 export default {
   name: 'LinksView',
-  components: {
-    GenericDialog,
-    ChannelDialog,
-    ConfirmTextDialog, LinkDialog, ListCard, Notice, LoadingIndicator, LocaleSelector, MainContainer},
+  components: {GroupDialog, GenericDialog, ConfirmTextDialog, LinkDialog, ListCard, Notice, LoadingIndicator, LocaleSelector, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,

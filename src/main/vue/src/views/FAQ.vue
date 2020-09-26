@@ -71,7 +71,7 @@
       </template>
     </GenericDialog>
 
-    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
+    <GroupDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
                   @submit="submitChannel"/>
 
     <ConfirmTextDialog ref="deleteChannelDialog" v-model="dialogDeleteChannel" :confirm-text="confirmText" :loading="loading" title="Gruppe löschen"
@@ -87,26 +87,22 @@
 </template>
 
 <script>
-import MainContainer from "@/components/layout/MainContainer";
-import {createChannel, createPost, deleteChannel, deletePost, getPostsGrouped, renameChannel, updatePost} from "@/api";
-import LocaleSelector from "@/components/LocaleSelector";
-import {localizedString, showSnackbar} from "@/utils";
 import moment from "moment";
+import {createChannel, createPost, deleteChannel, deletePost, getPostsGrouped, renameChannel, updatePost} from "@/api";
+import {localizedString, showSnackbar} from "@/utils";
+import MainContainer from "@/components/layout/MainContainer";
+import LocaleSelector from "@/components/LocaleSelector";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import PostDialog from "@/components/dialog/PostDialog";
 import GenericDialog from "@/components/dialog/GenericDialog";
-import ChannelDialog from "@/components/dialog/ChannelDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
 import Notice from "@/components/Notice";
 import ListCard from "@/components/ListCard";
+import GroupDialog from "@/components/dialog/GroupDialog";
 
 export default {
   name: 'FAQView',
-  components: {
-    ListCard,
-    Notice,
-    ConfirmTextDialog,
-    ChannelDialog, GenericDialog, PostDialog, LoadingIndicator, LocaleSelector, MainContainer},
+  components: {GroupDialog, ListCard, Notice, ConfirmTextDialog, GenericDialog, PostDialog, LoadingIndicator, LocaleSelector, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,

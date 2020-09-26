@@ -28,7 +28,7 @@ import GenericDialog from "@/components/dialog/GenericDialog";
 import {showSnackbar} from "@/utils";
 
 export default {
-  name: 'ChannelDialog',
+  name: 'GroupDialog',
   components: {GenericDialog},
   props: {
     value: {
