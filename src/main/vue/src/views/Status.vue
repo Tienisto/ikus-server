@@ -97,7 +97,8 @@ export default {
   data: () => ({
     fetching: true,
     status: {},
-    runTime: null
+    runTime: null,
+    timerId: null
   }),
   computed: {
     dateString() {
@@ -125,9 +126,14 @@ export default {
     this.fetching = false;
 
     this.runTime = this.status.runTime;
-    setInterval(() => {
+    this.timerId = setInterval(() => {
       this.runTime += 1000;
     }, 1000);
+  },
+  destroyed: function() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 }
 </script>
