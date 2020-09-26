@@ -305,6 +305,61 @@ export async function deleteChannel({ id }) {
     });
 }
 
+export async function getLinksGrouped() {
+    return await makeRequest({
+        route: 'links',
+        method: 'GET'
+    });
+}
+
+export async function createLinkGroup({ name }) {
+    return await makeRequest({
+        route: 'links/group',
+        method: 'POST',
+        body: { name }
+    });
+}
+
+export async function updateLinkGroup({ id, name }) {
+    return await makeRequest({
+        route: 'links/group',
+        method: 'PUT',
+        body: { id, name }
+    });
+}
+
+export async function deleteLinkGroup({ id }) {
+    return await makeRequest({
+        route: 'links/group',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
+export async function createLink({ groupId, url, info }) {
+    return await makeRequest({
+        route: 'links',
+        method: 'POST',
+        body: { groupId, url, info }
+    });
+}
+
+export async function updateLink({ id, groupId, url, info }) {
+    return await makeRequest({
+        route: 'links',
+        method: 'PUT',
+        body: { id, groupId, url, info }
+    });
+}
+
+export async function deleteLink({ id }) {
+    return await makeRequest({
+        route: 'links',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
 export async function getHandbookBookmarks() {
     return await makeRequest({
         route: 'handbook',

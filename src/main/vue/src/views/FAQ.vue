@@ -22,57 +22,26 @@
     <Notice v-if="!fetching && groups.length === 0"
             title="Es existieren noch keine Gruppen" info="Sie können rechts eine neue Gruppe erstellen" />
 
-    <v-row v-if="!fetching">
-      <v-col cols="6" v-for="g in groups" :key="g.channel.id" class="pt-0 pb-6">
-        <v-card>
-          <v-card-title>
-            <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
-              <span>
-                {{ localized(g.channel.name) }}
-                <v-btn @click="showUpdateChannel(g.channel)" class="black--text ml-2" icon small>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn @click="showDeleteChannel(g.channel)" class="black--text ml-2" icon small>
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </span>
-              <v-btn @click="showCreatePost(g.channel)" color="primary" small>
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </div>
-          </v-card-title>
-          <v-card-text class="mt-2">
-            <v-card outlined>
-              <v-card-text class="pa-0">
-                <div style="height: 250px; overflow-y: scroll" >
+    <div v-if="!fetching">
+      <ListCard v-for="g in groups" :key="g.channel.id"
+                :title="localized(g.channel.name)" :items="g.posts" :empty-notice="!fetching && g.posts.length === 0" empty-notice-text="Noch keine Fragen."
+                @edit="showUpdateChannel(g.channel)" @delete="showDeleteChannel(g.channel)" @create="showCreatePost(g.channel)"
+                class="mb-6">
 
-                  <div v-if="!fetching && g.posts.length === 0" class="pl-2 pt-2">
-                    <Notice title="Noch keine Fragen." />
-                  </div>
+        <template v-slot:item="{ item }">
+          <span class="">{{ localized(item.title) }}</span>
+        </template>
 
-                  <div v-for="p in g.posts" :key="p.id" @mouseover="mouseOverPost = p.id" @mouseleave="mouseOverPost = -1">
-                    <div class="ml-2 mt-2 mb-2" style="display: flex; align-items: center">
-                      <div style="flex: 1">
-                        <span class="">{{ localized(p.title) }}</span>
-                      </div>
-                      <div style="display: flex" class="pl-1 pr-1" :style="mouseOverPost === p.id ? {} : { 'visibility': 'hidden' }">
-                        <v-btn @click="showUpdatePost(p)" icon small>
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <v-btn @click="showDeletePost(p)" class="ml-2" icon small>
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>
-                      </div>
-                    </div>
-                    <v-divider />
-                  </div>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+        <template v-slot:actions="{ item }">
+          <v-btn @click="showUpdatePost(item)" icon small>
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn @click="showDeletePost(item)" class="ml-2" icon small>
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </template>
+      </ListCard>
+    </div>
 
     <!-- DIALOGS -->
 
@@ -129,10 +98,12 @@ import GenericDialog from "@/components/dialog/GenericDialog";
 import ChannelDialog from "@/components/dialog/ChannelDialog";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
 import Notice from "@/components/Notice";
+import ListCard from "@/components/ListCard";
 
 export default {
   name: 'FAQView',
   components: {
+    ListCard,
     Notice,
     ConfirmTextDialog,
     ChannelDialog, GenericDialog, PostDialog, LoadingIndicator, LocaleSelector, MainContainer},
@@ -150,7 +121,6 @@ export default {
     dialogDeleteChannel: false,
     selectedPost: {},
     selectedChannel: {},
-    mouseOverPost: -1
   }),
   methods: {
     fetchData: async function() {
