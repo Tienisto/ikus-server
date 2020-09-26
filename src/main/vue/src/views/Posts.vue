@@ -147,13 +147,6 @@ export default {
       this.selectedPost = post;
       this.dialogDelete = true;
     },
-    validateDialog: function(post) {
-      if (!post.title.en || !post.title.de) {
-        showSnackbar('Bitte alle Felder ausfüllen');
-        return false;
-      }
-      return true;
-    },
     createOrUpdate: async function(post) {
       if (this.dialogUpdating)
         await this.update(post);
@@ -161,10 +154,6 @@ export default {
         await this.create(post);
     },
     create: async function(post) {
-
-      if(!this.validateDialog(post))
-        return;
-
       try {
         this.loading = true;
         await createPost(post);
@@ -177,9 +166,6 @@ export default {
       }
     },
     update: async function(post) {
-      if(!this.validateDialog(post))
-        return;
-
       try {
         this.loading = true;
         await updatePost({

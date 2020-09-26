@@ -141,6 +141,17 @@ export default {
       this.files = this.files.filter((f) => f.id !== file.id);
     },
     submit: async function() {
+
+      if (!this.titleEn) {
+        showSnackbar('Englische Überschrift fehlt');
+        return false;
+      }
+
+      if (!this.titleDe) {
+        showSnackbar('Deutsche Überschrift fehlt');
+        return false;
+      }
+
       await this.$emit('submit', {
         channelId: this.channel.id,
         title: { en: this.titleEn, de: this.titleDe },

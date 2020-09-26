@@ -219,13 +219,6 @@ export default {
         this.loading = false;
       }
     },
-    validatePost: function(post) {
-      if (!post.title.en || !post.title.de) {
-        showSnackbar('Bitte alle Felder ausfüllen');
-        return false;
-      }
-      return true;
-    },
     submitPost: async function(post) {
       if (this.dialogUpdating)
         await this.updatePost(post);
@@ -233,10 +226,6 @@ export default {
         await this.createPost(post);
     },
     createPost: async function(post) {
-
-      if(!this.validatePost(post))
-        return;
-
       try {
         this.loading = true;
         await createPost(post);
@@ -249,9 +238,6 @@ export default {
       }
     },
     updatePost: async function(post) {
-      if(!this.validatePost(post))
-        return;
-
       try {
         this.loading = true;
         await updatePost({
