@@ -71,7 +71,7 @@
       </template>
     </GenericDialog>
 
-    <ChannelDialog ref="channelDialog" v-model="dialogChannel" channel-type="FAQ" :updating="dialogUpdating" :loading="loading"
+    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
                   @submit="submitChannel"/>
 
     <ConfirmTextDialog ref="deleteChannelDialog" v-model="dialogDeleteChannel" :confirm-text="confirmText" :loading="loading" title="Gruppe löschen"
@@ -162,13 +162,6 @@ export default {
       this.selectedPost = post;
       this.dialogDeletePost = true;
     },
-    validateChannel: function(channel) {
-      if (!channel.name.en || !channel.name.de) {
-        showSnackbar('Bitte alle Felder ausfüllen');
-        return false;
-      }
-      return true;
-    },
     submitChannel: async function(channel) {
       if (this.dialogUpdating)
         await this.updateChannel(channel);
@@ -176,10 +169,6 @@ export default {
         await this.createChannel(channel);
     },
     createChannel: async function(channel) {
-
-      if(!this.validateChannel(channel))
-        return;
-
       try {
         this.loading = true;
         await createChannel({ type: 'FAQ', ...channel });
@@ -192,10 +181,6 @@ export default {
       }
     },
     updateChannel: async function(channel) {
-
-      if(!this.validateChannel(channel))
-        return;
-
       try {
         this.loading = true;
         await renameChannel({ id: this.selectedChannel.id, ...channel });

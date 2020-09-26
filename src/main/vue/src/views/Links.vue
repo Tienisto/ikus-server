@@ -75,7 +75,7 @@
       </template>
     </GenericDialog>
 
-    <ChannelDialog ref="groupDialog" v-model="dialogGroup" channel-type="FAQ" :updating="dialogUpdating" :loading="loading"
+    <ChannelDialog ref="groupDialog" v-model="dialogGroup" :dialog-title="dialogUpdating ? 'Gruppe umbenennen' : 'Neue Gruppe'" :updating="dialogUpdating" :loading="loading"
                    @submit="submitGroup"/>
 
     <ConfirmTextDialog ref="deleteGroupDialog" v-model="dialogDeleteGroup" :confirm-text="confirmText" :loading="loading" title="Gruppe löschen"

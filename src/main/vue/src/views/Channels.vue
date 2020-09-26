@@ -71,7 +71,7 @@
       </v-card-text>
     </v-card>
 
-    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :channel-type="type" :updating="dialogUpdating" :loading="loading"
+    <ChannelDialog ref="channelDialog" v-model="dialogChannel" :dialog-title="dialogUpdating ? 'Kanal umbenennen' : 'Neuer Kanal'" :updating="dialogUpdating" :loading="loading"
                   @submit="createOrRename"/>
 
     <ConfirmTextDialog ref="deleteDialog" v-model="dialogDelete" :confirm-text="confirmText" :loading="loading" title="Kanal löschen"
@@ -139,11 +139,6 @@ export default {
         await this.createChannel(channel);
     },
     createChannel: async function(channel) {
-      if (!channel.name.en || !channel.name.de) {
-        showSnackbar('Bitte alle Felder ausfüllen');
-        return;
-      }
-
       try {
         this.loading = true;
         await createChannel({ type: this.type, ...channel });
@@ -156,11 +151,6 @@ export default {
       }
     },
     renameChannel: async function(channel) {
-      if (!channel.name.en || !channel.name.de) {
-        showSnackbar('Bitte alle Felder ausfüllen');
-        return;
-      }
-
       try {
         this.loading = true;
         await renameChannel({ id: this.selectedChannel.id, ...channel });

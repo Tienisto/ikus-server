@@ -25,6 +25,7 @@
 
 <script>
 import GenericDialog from "@/components/dialog/GenericDialog";
+import {showSnackbar} from "@/utils";
 
 export default {
   name: 'ChannelDialog',
@@ -34,7 +35,7 @@ export default {
       type: Boolean,
       required: true
     },
-    channelType: {
+    dialogTitle: {
       type: String,
       required: true
     },
@@ -63,6 +64,11 @@ export default {
       this.nameDe = nameDe;
     },
     submit: async function() {
+      if (!this.nameEn || !this.nameDe) {
+        showSnackbar('Bitte alle Felder ausfüllen');
+        return;
+      }
+
       await this.$emit('submit', {
         name: {
           en: this.nameEn,
@@ -72,12 +78,6 @@ export default {
     }
   },
   computed: {
-    dialogTitle: function() {
-      if (this.channelType === 'FAQ')
-        return this.updating ? 'Gruppe umbenennen' : 'Neue Gruppe';
-      else
-        return this.updating ? 'Kanal umbenennen' : 'Neuer Kanal';
-    },
     submitText: function() {
       return this.updating ? 'Speichern' : 'Erstellen';
     },
