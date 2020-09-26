@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "de.ovgu"
-version = "0.9.4"
+version = "0.9.5"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
