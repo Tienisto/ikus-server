@@ -399,3 +399,20 @@ export async function deleteContact({ id }) {
         body: { id }
     });
 }
+
+// analytics
+
+export async function getStats({ type }) {
+    return await makeRequest({
+        route: 'analytics/app-starts',
+        method: 'GET',
+        params: { type }
+    });
+}
+
+export async function getStatsCurr() {
+    return await makeRequest({
+        route: 'analytics/app-starts/curr',
+        method: 'GET'
+    });
+}

@@ -7,5 +7,5 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface AppStartRepo : CoroutineCrudRepository<AppStart, Int> {
 
-    fun findByTypeOrderByDate(type: StatsType): Flow<AppStart>
+    fun findFirst90ByTypeOrderByDate(type: StatsType): Flow<AppStart>
 }

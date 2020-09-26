@@ -25,7 +25,7 @@ class AnalyticsController (
 
     @GetMapping("/app-starts/curr")
     suspend fun getCurrAppStarts(): CurrentAppStarts {
-        val now = OffsetDateTime.now()
+        val now = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC)
         val month = analyticsService.countActiveUsersAfter(now.minusMonths(1))
         val week = analyticsService.countActiveUsersAfter(now.minusWeeks(1))
         val day = analyticsService.countActiveUsersAfter(OffsetDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0, ZoneOffset.UTC))
