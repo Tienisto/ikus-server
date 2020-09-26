@@ -87,7 +87,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import {createChannel, createPost, deleteChannel, deletePost, getPostsGrouped, renameChannel, updatePost} from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
@@ -249,9 +248,6 @@ export default {
   computed: {
     localized: function() {
       return (obj) => localizedString(obj, this.locale);
-    },
-    timeString: function() {
-      return (time) => moment(time).format('ddd, DD.MM.YYYY');
     },
     confirmText: function() {
       return this.selectedChannel.name ? this.selectedChannel.name.de : '';
