@@ -163,11 +163,6 @@ export default {
         return;
       }
 
-      if (!this.nameEn || !this.nameDe) {
-        showSnackbar('Bitte Event-Namen eingeben');
-        return;
-      }
-
       // prepare info
       let info = null;
       if (this.infoEn && this.infoDe) {
