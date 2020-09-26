@@ -3,20 +3,20 @@
     <v-card>
       <v-card-title>
         <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
-        <span style="display: flex; align-items: center">
-          <v-icon color="black" left>mdi-file-document</v-icon>
-          PDF-Datei ({{ title }})
-        </span>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <FileUpload v-slot:default="{ upload }" @select="uploadHandbook">
-              <v-btn @click="upload" class="primary" v-bind="attrs" v-on="on" small>
-                <v-icon>mdi-upload</v-icon>
-              </v-btn>
-            </FileUpload>
-          </template>
-          <span>PDF Hochladen</span>
-        </v-tooltip>
+          <span style="display: flex; align-items: center">
+            <v-icon color="black" left>mdi-file-document</v-icon>
+            PDF-Datei ({{ title }})
+          </span>
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <FileUpload v-slot:default="{ upload }" @select="uploadHandbook">
+                <v-btn @click="upload" class="primary" v-bind="attrs" v-on="on" small>
+                  <v-icon>mdi-upload</v-icon>
+                </v-btn>
+              </FileUpload>
+            </template>
+            <span>PDF Hochladen</span>
+          </v-tooltip>
         </div>
       </v-card-title>
       <v-card-text>

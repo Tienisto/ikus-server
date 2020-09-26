@@ -38,7 +38,7 @@ data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDt
 data class HandbookBookmarkDto(val page: Int, val name: String)
 
 // contacts
-data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?)
+data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?)
 
 // analytics
 data class AppStartDto(val date: String, val android: Int, val ios: Int)

@@ -125,7 +125,7 @@ fun Contact.toDto(): ContactDto {
         tempOpeningHoursEn != null && tempOpeningHoursDe != null -> MultiLocaleString(en = tempOpeningHoursEn, de = tempOpeningHoursDe)
         else -> null
     }
-    return ContactDto(id, file, MultiLocaleString(en = name, de = nameDe), email, phoneNumber, place, openingHoursMultiLocale)
+    return ContactDto(id, file, MultiLocaleString(en = name, de = nameDe), place, email, phoneNumber, openingHoursMultiLocale)
 }
 
 fun Contact.toLocalizedDto(locale: IkusLocale): LocalizedContactDto {

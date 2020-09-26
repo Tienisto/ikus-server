@@ -392,3 +392,34 @@ export async function getLogs({ limit }) {
         params: { limit }
     });
 }
+
+export async function getContacts() {
+    return await makeRequest({
+        route: 'contacts',
+        method: 'GET'
+    });
+}
+
+export async function createContact({ name, email, phoneNumber, place, openingHours }) {
+    return await makeRequest({
+        route: 'contacts',
+        method: 'POST',
+        body: { name, email, phoneNumber, place, openingHours }
+    });
+}
+
+export async function updateContact({ id, name, email, phoneNumber, place, openingHours }) {
+    return await makeRequest({
+        route: 'contacts',
+        method: 'PUT',
+        body: { id, name, email, phoneNumber, place, openingHours }
+    });
+}
+
+export async function deleteContact({ id }) {
+    return await makeRequest({
+        route: 'contacts',
+        method: 'DELETE',
+        body: { id }
+    });
+}
