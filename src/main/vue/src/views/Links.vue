@@ -17,39 +17,37 @@
       </v-btn>
     </template>
 
-    <LoadingIndicator v-if="fetching" />
+    <LoadingIndicator v-if="fetching && channels.length === 0" />
 
-    <Notice v-if="!fetching && groups.length === 0"
+    <Notice v-if="!fetching && channels.length === 0"
             title="Es existieren noch keine Gruppen" info="Sie können rechts eine neue Gruppe erstellen" />
 
-    <div v-if="!fetching">
-      <ListCard v-for="g in data" :key="g.group.id"
-                :title="localized(g.group.name)" :items="g.links" :empty-notice="!fetching && g.links.length === 0" empty-notice-text="Noch keine Links"
-                @edit="showUpdateGroup(g.group)" @delete="showDeleteGroup(g.group)" @create="showCreateLink(g.group)"
-                class="mb-6">
+    <ListCard v-for="g in data" :key="g.channel.id"
+              :title="localized(g.channel.name)" :items="g.links" :empty-notice="!fetching && g.links.length === 0" empty-notice-text="Noch keine Links"
+              @edit="showUpdateGroup(g.channel)" @delete="showDeleteGroup(g.channel)" @create="showCreateLink(g.channel)"
+              class="mb-6">
 
-        <template v-slot:item="{ item }">
-          <span class="">
-            <b>{{ localized(item.info) }}</b>
-            <br>
-            {{ localized(item.url) }}
-          </span>
-        </template>
+      <template v-slot:item="{ item }">
+        <span class="">
+          <b>{{ localized(item.info) }}</b>
+          <br>
+          {{ localized(item.url) }}
+        </span>
+      </template>
 
-        <template v-slot:actions="{ item }">
-          <v-btn @click="showUpdateLink(item)" icon small>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn @click="showDeleteLink(item)" class="ml-2" icon small>
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-      </ListCard>
-    </div>
+      <template v-slot:actions="{ item }">
+        <v-btn @click="showUpdateLink(item)" icon small>
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn @click="showDeleteLink(item)" class="ml-2" icon small>
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </template>
+    </ListCard>
 
     <!-- DIALOGS -->
 
-    <LinkDialog ref="linkDialog" v-model="dialogLink" :groups="groups"
+    <LinkDialog ref="linkDialog" v-model="dialogLink" :channels="channels"
                 :updating="dialogUpdating" :loading="loading"
                 @submit="submitLink"/>
 
@@ -91,7 +89,7 @@
 </template>
 
 <script>
-import {createLink, createLinkGroup, deleteLink, deleteLinkGroup, getLinksGrouped, updateLink, updateLinkGroup} from "@/api";
+import {createLink, createChannel, deleteLink, deleteChannel, getLinksGrouped, updateLink, renameChannel} from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LocaleSelector from "@/components/LocaleSelector";
@@ -110,7 +108,7 @@ export default {
     fetching: true,
     loading: false,
     data: [],
-    groups: [],
+    channels: [],
     locales: ['EN', 'DE'],
     locale: 'EN',
     dialogLink: false,
@@ -125,7 +123,7 @@ export default {
     fetchData: async function() {
       this.fetching = true;
       this.data = await getLinksGrouped();
-      this.groups = this.data.map((g) => g.group);
+      this.channels = this.data.map((g) => g.channel);
       this.fetching = false;
     },
     showCreateGroup: function() {
@@ -152,7 +150,7 @@ export default {
     showUpdateLink: function(link) {
       // apply link
       this.selectedLink = link;
-      this.$refs.linkDialog.reset(link.group);
+      this.$refs.linkDialog.reset(link.channel);
       this.$refs.linkDialog.load(link);
       this.dialogUpdating = true;
       this.dialogLink = true;
@@ -170,7 +168,7 @@ export default {
     createGroup: async function(group) {
       try {
         this.loading = true;
-        await createLinkGroup(group);
+        await createChannel({ type: 'LINK', ...group });
         this.dialogGroup = false;
         await this.fetchData();
       } catch (e) {
@@ -182,7 +180,7 @@ export default {
     updateGroup: async function(group) {
       try {
         this.loading = true;
-        await updateLinkGroup({ id: this.selectedGroup.id, ...group });
+        await renameChannel({ id: this.selectedGroup.id, ...group });
         this.dialogGroup = false;
         await this.fetchData();
       } catch (e) {
@@ -194,7 +192,7 @@ export default {
     deleteGroup: async function() {
       try {
         this.loading = true;
-        await deleteLinkGroup({ id: this.selectedGroup.id });
+        await deleteChannel({ id: this.selectedGroup.id });
         this.dialogDeleteGroup = false;
         await this.fetchData();
       } catch (e) {

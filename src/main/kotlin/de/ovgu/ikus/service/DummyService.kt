@@ -16,7 +16,6 @@ class DummyService (
         private val postService: PostService,
         private val postFileService: PostFileService,
         private val eventService: EventService,
-        private val linkGroupService: LinkGroupService,
         private val linkService: LinkService,
         private val contactService: ContactService,
         private val analyticsService: AnalyticsService
@@ -26,7 +25,6 @@ class DummyService (
         logService.deleteAll()
         channelService.deleteAll()
         postFileService.cleanup(Duration.ZERO) // delete files
-        linkGroupService.deleteAll()
         analyticsService.deleteAll()
         userService.deleteAll()
         userService.repairAdminAccount() // create admin account
@@ -46,7 +44,9 @@ class DummyService (
         val channelsFAQ = channels.filter { channel -> channel.type == ChannelType.FAQ }
         createPosts(channelsFAQ, Constants.faqTitles, Constants.faqCount)
 
-        createLinks()
+        val channelsLinks = channels.filter { channel -> channel.type == ChannelType.LINK }
+        createLinks(channelsLinks)
+
         createContacts()
         createAppStarts()
     }
@@ -66,8 +66,9 @@ class DummyService (
         val news = Constants.channelsNews.map { channel -> Channel(type = ChannelType.NEWS, name = channel, nameDe = channel) }
         val calendar = Constants.channelsCalendar.map { channel -> Channel(type = ChannelType.CALENDAR, name = channel, nameDe = channel) }
         val faq = Constants.channelsFAQ.map { channel -> Channel(type = ChannelType.FAQ, name = channel.first, nameDe = channel.second) }
+        val links = Constants.channelsLinks.map { channel -> Channel(type = ChannelType.LINK, name = channel.first, nameDe = channel.second) }
 
-        return channelService.saveAll(news + calendar + faq)
+        return channelService.saveAll(news + calendar + faq + links)
     }
 
     suspend fun createPosts(channels: List<Channel>, titles: List<Pair<String, String>>, count: Int) {
@@ -111,14 +112,11 @@ class DummyService (
         eventService.saveAll(events)
     }
 
-    suspend fun createLinks() {
-        val tempGroups = Constants.linkGroups.map { group -> LinkGroup(name = group.first, nameDe = group.second) }
-        val savedGroups = linkGroupService.saveAll(tempGroups)
-
+    suspend fun createLinks(channels: List<Channel>) {
         val links = List(Constants.linkCount) {
-            val group = savedGroups.random()
+            val channel = channels.random()
             val link = Constants.links.random()
-            Link(groupId = group.id, url = link.url, urlDe = link.urlDe, info = link.info, infoDe = link.infoDe)
+            Link(channelId = channel.id, url = link.url, urlDe = link.urlDe, info = link.info, infoDe = link.infoDe)
         }
 
         linkService.saveAll(links)
@@ -158,6 +156,11 @@ private object Constants {
             "Examination" to "Prüfung",
             "Financing" to "Finanzierung"
     )
+    val channelsLinks = listOf(
+            "Studying" to "Studieren",
+            "Life" to "Leben",
+            "Work" to "Arbeit"
+    )
 
     const val postCount = 20
     const val faqCount = 10
@@ -193,11 +196,6 @@ private object Constants {
     val eventMinutes = listOf(0, 30)
     val zoneId = ZoneId.of("Europe/Berlin")
 
-    val linkGroups = listOf(
-            "Studying" to "Studieren",
-            "Life" to "Leben",
-            "Work" to "Arbeit"
-    )
     const val linkCount = 20
     val links = listOf(
             Link(url = "https://www.ovgu.de/en", urlDe = "https://www.ovgu.de", info = "Homepage of the OVGU", infoDe = "Uni-Homepage"),

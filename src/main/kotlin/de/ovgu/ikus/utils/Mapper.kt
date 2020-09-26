@@ -10,6 +10,7 @@ fun ChannelType.toPostType(): PostType? {
         ChannelType.NEWS -> PostType.NEWS
         ChannelType.FAQ -> PostType.FAQ
         ChannelType.CALENDAR -> null
+        ChannelType.LINK -> null
     }
 }
 
@@ -92,25 +93,14 @@ fun MensaInfo.toLocalizedDto(menus: List<LocalizedMenuDto>): LocalizedMenuInfoDt
     return LocalizedMenuInfoDto(name, menus)
 }
 
-fun LinkGroup.toDto(): LinkGroupDto {
-    return LinkGroupDto(id, MultiLocaleString(en = name, de = nameDe))
+fun Link.toDto(channel: ChannelDto): LinkDto {
+    return LinkDto(id, channel, MultiLocaleString(en = url, de = urlDe), MultiLocaleString(en = info, de = infoDe))
 }
 
-fun LinkGroup.toLocalizedDto(locale: IkusLocale): LocalizedLinkGroupDto {
+fun Link.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedLinkDto {
     return when (locale) {
-        IkusLocale.EN -> LocalizedLinkGroupDto(id, name)
-        IkusLocale.DE -> LocalizedLinkGroupDto(id, nameDe)
-    }
-}
-
-fun Link.toDto(group: LinkGroupDto): LinkDto {
-    return LinkDto(id, group, MultiLocaleString(en = url, de = urlDe), MultiLocaleString(en = info, de = infoDe))
-}
-
-fun Link.toLocalizedDto(locale: IkusLocale, group: LocalizedLinkGroupDto): LocalizedLinkDto {
-    return when (locale) {
-        IkusLocale.EN -> LocalizedLinkDto(id, group, url, info)
-        IkusLocale.DE -> LocalizedLinkDto(id, group, urlDe, infoDe)
+        IkusLocale.EN -> LocalizedLinkDto(id, channel, url, info)
+        IkusLocale.DE -> LocalizedLinkDto(id, channel, urlDe, infoDe)
     }
 }
 

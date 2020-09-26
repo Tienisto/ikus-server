@@ -5,8 +5,8 @@
         <v-col cols="6">
           <v-select
               label="Gruppe"
-              v-model="group"
-              :items="groups" item-text="name.en" item-value="id"
+              v-model="channel"
+              :items="channels" item-text="name.en" item-value="id"
               hide-details
               return-object
           ></v-select>
@@ -62,13 +62,13 @@ export default {
       type: Boolean,
       required: true
     },
-    groups: {
+    channels: {
       type: Array,
       required: true
     }
   },
   data: () => ({
-    group: {},
+    channel: {},
     infoEn: '',
     infoDe: '',
     urlEn: '',
@@ -76,7 +76,7 @@ export default {
     sameUrl: true
   }),
   methods: {
-    reset: function(group) {
+    reset: function(channel) {
       // reset input
       this.infoEn = '';
       this.infoDe = '';
@@ -85,10 +85,10 @@ export default {
       this.sameUrl = true;
 
       // apply predefined group
-      this.group = group;
+      this.channel = channel;
     },
     load: function(link) {
-      // apply post
+      // apply
       this.infoEn = link.info.en;
       this.infoDe = link.info.de;
       this.urlEn = link.url.en;
@@ -107,7 +107,7 @@ export default {
         return;
       }
 
-      if (!this.group.id) {
+      if (!this.channel.id) {
         showSnackbar('Bitte Gruppe festlegen');
         return;
       }
@@ -125,7 +125,7 @@ export default {
       }
 
       await this.$emit('submit', {
-        groupId: this.group.id,
+        channelId: this.channel.id,
         info: { en: this.infoEn, de: this.infoDe },
         url,
       });

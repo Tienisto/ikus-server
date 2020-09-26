@@ -23,10 +23,8 @@ object Request {
     data class CreateEvent(val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
     data class UpdateEvent(val id: Int, val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
 
-    data class CreateLinkGroup(val name: MultiLocaleString)
-    data class UpdateLinkGroup(val id: Int, val name: MultiLocaleString)
-    data class CreateLink(val groupId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
-    data class UpdateLink(val id: Int, val groupId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
+    data class CreateLink(val channelId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
+    data class UpdateLink(val id: Int, val channelId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
 
     data class UpdateBookmarks(val locale: IkusLocale, val bookmarks: List<HandbookBookmarkDto>)
 

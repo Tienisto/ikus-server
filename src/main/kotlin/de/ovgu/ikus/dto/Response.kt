@@ -1,7 +1,6 @@
 package de.ovgu.ikus.dto
 
 import de.ovgu.ikus.model.FoodTag
-import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.model.Mensa
 import de.ovgu.ikus.security.JwtStatus
@@ -30,9 +29,8 @@ data class CoordsDto(val x: Double, val y: Double)
 data class EventDto(val id: Int, val channel: ChannelDto, val place: String?, val coords: CoordsDto?, val startTime: String, val endTime: String?, val name: MultiLocaleString, val info: MultiLocaleString?)
 
 // links
-data class LinkGroupDto(val id: Int, val name: MultiLocaleString)
-data class LinkDto(val id: Int, val group: LinkGroupDto, val url: MultiLocaleString, val info: MultiLocaleString)
-data class LinkGroupWithLinksDto(val group: LinkGroupDto, val links: List<LinkDto>)
+data class LinkDto(val id: Int, val channel: ChannelDto, val url: MultiLocaleString, val info: MultiLocaleString)
+data class LinkGroupDto(val channel: ChannelDto, val links: List<LinkDto>)
 
 // handbook
 data class HandbookBookmarkDto(val page: Int, val name: String)
@@ -48,8 +46,7 @@ data class CurrentAppStarts(val month: Int, val week: Int, val day: Int)
 data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
-data class LocalizedLinkGroupDto(val id: Int, val name: String)
-data class LocalizedLinkDto(val id: Int, val group: LocalizedLinkGroupDto, val url: String, val info: String)
+data class LocalizedLinkDto(val id: Int, val channel: LocalizedChannelDto, val url: String, val info: String)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
 data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
 data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
@@ -57,5 +54,5 @@ data class LocalizedMenuInfoDto(val name: Mensa, val menus: List<LocalizedMenuDt
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
-data class PublicLinkDto(val group: LocalizedLinkGroupDto, val links: List<LocalizedLinkDto>) // as array
+data class PublicLinkDto(val channel: LocalizedChannelDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array

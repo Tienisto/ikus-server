@@ -58,6 +58,7 @@ class ChannelController (
             ChannelType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
             ChannelType.CALENDAR -> cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
             ChannelType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
+            ChannelType.LINK -> cacheService.triggerUpdateFlag(CacheKey.LINKS)
         }
     }
 
@@ -71,6 +72,7 @@ class ChannelController (
             ChannelType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
             ChannelType.CALENDAR -> cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
             ChannelType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
+            ChannelType.LINK -> cacheService.triggerUpdateFlag(CacheKey.LINKS)
         }
     }
 }

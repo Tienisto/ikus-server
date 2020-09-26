@@ -22,7 +22,6 @@ class PublicController(
         private val eventService: EventService,
         private val channelService: ChannelService,
         private val fileService: FileService,
-        private val linkGroupService: LinkGroupService,
         private val linkService: LinkService,
         private val handbookService: HandbookService,
         private val contactService: ContactService,
@@ -91,12 +90,12 @@ class PublicController(
     @GetMapping("/links")
     suspend fun getLinks(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.LINKS, locale) {
-            val groups = linkGroupService.findAllOrdered(locale)
+            val channels = channelService.findByTypeOrdered(ChannelType.LINK, locale)
             val links = linkService.findAllOrdered(locale)
-            groups.map { group ->
-                val groupDto = group.toLocalizedDto(locale)
+            channels.map { channel ->
+                val groupDto = channel.toLocalizedDto(locale)
                 val linksDto = links
-                        .filter { link -> link.groupId == group.id }
+                        .filter { link -> link.channelId == channel.id }
                         .map { link -> link.toLocalizedDto(locale, groupDto) }
 
                 PublicLinkDto(groupDto, linksDto)

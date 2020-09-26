@@ -312,43 +312,19 @@ export async function getLinksGrouped() {
     });
 }
 
-export async function createLinkGroup({ name }) {
-    return await makeRequest({
-        route: 'links/group',
-        method: 'POST',
-        body: { name }
-    });
-}
-
-export async function updateLinkGroup({ id, name }) {
-    return await makeRequest({
-        route: 'links/group',
-        method: 'PUT',
-        body: { id, name }
-    });
-}
-
-export async function deleteLinkGroup({ id }) {
-    return await makeRequest({
-        route: 'links/group',
-        method: 'DELETE',
-        body: { id }
-    });
-}
-
-export async function createLink({ groupId, url, info }) {
+export async function createLink({ channelId, url, info }) {
     return await makeRequest({
         route: 'links',
         method: 'POST',
-        body: { groupId, url, info }
+        body: { channelId, url, info }
     });
 }
 
-export async function updateLink({ id, groupId, url, info }) {
+export async function updateLink({ id, channelId, url, info }) {
     return await makeRequest({
         route: 'links',
         method: 'PUT',
-        body: { id, groupId, url, info }
+        body: { id, channelId, url, info }
     });
 }
 

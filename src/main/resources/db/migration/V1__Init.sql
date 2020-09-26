@@ -8,7 +8,8 @@ CREATE TABLE channel (
     id SERIAL PRIMARY KEY,
     type TEXT NOT NULL,
     name TEXT NOT NULL,
-    name_de TEXT NOT NULL
+    name_de TEXT NOT NULL,
+    position INT NOT NULL
 );
 
 CREATE TABLE post (
@@ -43,15 +44,9 @@ CREATE TABLE event (
     info_de TEXT
 );
 
-CREATE TABLE link_group (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    name_de TEXT NOT NULL
-);
-
 CREATE TABLE link (
     id SERIAL PRIMARY KEY,
-    group_id INT NOT NULL REFERENCES link_group(id) ON DELETE CASCADE,
+    channel_id INT NOT NULL REFERENCES channel(id) ON DELETE CASCADE,
     url TEXT NOT NULL,
     url_de TEXT NOT NULL,
     info TEXT NOT NULL,
