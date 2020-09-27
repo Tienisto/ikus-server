@@ -1,6 +1,5 @@
 package de.ovgu.ikus.service
 
-import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.Link
 import de.ovgu.ikus.repository.LinkRepo
 import kotlinx.coroutines.flow.toList
@@ -11,11 +10,12 @@ class LinkService (
         private val linkRepo: LinkRepo
 ) {
 
-    suspend fun findAllOrdered(locale: IkusLocale): List<Link> {
-        return when (locale) {
-            IkusLocale.EN -> linkRepo.findByOrderByInfo().toList()
-            IkusLocale.DE -> linkRepo.findByOrderByInfoDe().toList()
-        }
+    suspend fun findAllOrdered(): List<Link> {
+        return linkRepo.findByOrderByPosition().toList()
+    }
+
+    suspend fun findByChannelId(channelId: Int): List<Link> {
+        return linkRepo.findByChannelIdOrderByPosition(channelId).toList()
     }
 
     suspend fun findById(id: Int): Link? {
@@ -26,7 +26,7 @@ class LinkService (
         return linkRepo.save(link)
     }
 
-    // dummy only
+    // dummy or when changing order
     suspend fun saveAll(links: List<Link>): List<Link> {
         return linkRepo.saveAll(links).toList()
     }

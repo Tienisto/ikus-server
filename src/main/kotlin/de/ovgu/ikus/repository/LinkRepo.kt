@@ -6,6 +6,6 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface LinkRepo : CoroutineCrudRepository<Link, Int> {
 
-    fun findByOrderByInfo(): Flow<Link>
-    fun findByOrderByInfoDe(): Flow<Link>
+    fun findByOrderByPosition(): Flow<Link>
+    fun findByChannelIdOrderByPosition(channelId: Int): Flow<Link>
 }

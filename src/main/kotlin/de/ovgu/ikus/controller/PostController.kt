@@ -4,9 +4,7 @@ import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
-import de.ovgu.ikus.utils.toChannelType
-import de.ovgu.ikus.utils.toDto
-import de.ovgu.ikus.utils.toPostType
+import de.ovgu.ikus.utils.*
 import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
@@ -31,7 +29,7 @@ class PostController (
         val channelDto = channel.toDto()
 
         return postService
-                .findByChannelOrdered(channel)
+                .findByChannelOrderByDate(channel)
                 .map { post ->
                     val files = postFileService
                             .findByPost(post)
@@ -40,10 +38,10 @@ class PostController (
                 }
     }
 
-    @GetMapping("/grouped")
+    @GetMapping("/grouped-order-position")
     suspend fun getByType(@RequestParam type: PostType): List<PostGroupDto> {
-        val posts = postService.findByTypeOrderByTitle(type)
-        val channels = channelService.findByTypeOrdered(type.toChannelType(), IkusLocale.EN)
+        val posts = postService.findByTypeOrderByPosition(type)
+        val channels = channelService.findByTypeOrderByPosition(type.toChannelType())
         val files = postFileService.findByPostIn(posts)
 
         return channels.map { channel ->
@@ -63,7 +61,7 @@ class PostController (
     @PostMapping
     suspend fun createPost(authentication: Authentication, @RequestBody request: Request.CreatePost) {
         val channel = channelService.findById(request.channelId) ?: throw ErrorCode(404, "Channel not found")
-        val postType = channel.type.toPostType() ?: throw ErrorCode(409, "Channel cannot have type EVENT")
+        val postType = channel.type.toPostType() ?: throw ErrorCode(409, "Wrong Channel Type")
         val post = Post(
                 type = postType, channelId = channel.id, date = LocalDate.now(),
                 title = request.title.en.trim(), titleDe = request.title.de.trim(),
@@ -74,11 +72,7 @@ class PostController (
 
         postService.save(post, files)
         logService.log(LogType.CREATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
-
-        when (post.type) {
-            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
-        }
+        triggerUpdateFlag(postType)
     }
 
     @PutMapping
@@ -98,10 +92,32 @@ class PostController (
 
         postService.save(post, files)
         logService.log(LogType.UPDATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+        triggerUpdateFlag(post.type)
+    }
 
-        when (post.type) {
-            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
+    @PostMapping("/move-up")
+    suspend fun moveUp(authentication: Authentication, @RequestBody request: Request.Id) {
+        val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
+        val posts = postService
+                .findByChannelIdOrderByPosition(post.channelId)
+                .moveUpItem(item = post, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (posts != null) {
+            postService.saveAll(posts)
+            triggerUpdateFlag(post.type)
+        }
+    }
+
+    @PostMapping("/move-down")
+    suspend fun moveDown(authentication: Authentication, @RequestBody request: Request.Id) {
+        val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
+        val posts = postService
+                .findByChannelIdOrderByPosition(post.channelId)
+                .moveDownItem(item = post, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (posts != null) {
+            postService.saveAll(posts)
+            triggerUpdateFlag(post.type)
         }
     }
 
@@ -110,15 +126,18 @@ class PostController (
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
         postService.delete(post)
         logService.log(LogType.DELETE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
-
-        when (post.type) {
-            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
-            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
-        }
+        triggerUpdateFlag(post.type)
     }
 
     @PostMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     suspend fun upload(@RequestPart("file") file: Mono<FilePart>): PostFile {
         return postFileService.uploadFile(file.awaitFirst())
+    }
+
+    private fun triggerUpdateFlag(type: PostType) {
+        when (type) {
+            PostType.NEWS -> cacheService.triggerUpdateFlag(CacheKey.NEWS)
+            PostType.FAQ -> cacheService.triggerUpdateFlag(CacheKey.FAQ)
+        }
     }
 }

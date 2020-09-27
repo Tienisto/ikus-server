@@ -12,15 +12,19 @@ class ChannelService (
         private val channelRepo: ChannelRepo
 ) {
 
-    suspend fun findAll(): List<Channel> {
-        return channelRepo.findByOrderByName().toList()
+    suspend fun findAllOrderByPosition(): List<Channel> {
+        return channelRepo.findByOrderByPosition().toList()
     }
 
     suspend fun findByType(type: ChannelType): List<Channel> {
         return channelRepo.findByType(type).toList()
     }
 
-    suspend fun findByTypeOrdered(type: ChannelType, locale: IkusLocale): List<Channel> {
+    suspend fun findByTypeOrderByPosition(type: ChannelType): List<Channel> {
+        return channelRepo.findByTypeOrderByPosition(type).toList()
+    }
+
+    suspend fun findByTypeOrderByName(type: ChannelType, locale: IkusLocale): List<Channel> {
         return when (locale) {
             IkusLocale.EN -> channelRepo.findByTypeOrderByName(type).toList()
             IkusLocale.DE -> channelRepo.findByTypeOrderByNameDe(type).toList()
@@ -35,7 +39,7 @@ class ChannelService (
         return channelRepo.save(channel)
     }
 
-    // dummy only
+    // dummy only or when changing order
     suspend fun saveAll(events: List<Channel>): List<Channel> {
         return channelRepo.saveAll(events).toList()
     }

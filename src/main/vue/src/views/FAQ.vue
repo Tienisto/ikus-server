@@ -17,31 +17,36 @@
       </v-btn>
     </template>
 
-    <LoadingIndicator v-if="fetching" />
+    <LoadingIndicator v-if="fetching && groups.length === 0" />
 
     <Notice v-if="!fetching && groups.length === 0"
             title="Es existieren noch keine Gruppen" info="Sie können rechts eine neue Gruppe erstellen" />
 
-    <div v-if="!fetching">
-      <ListCard v-for="g in groups" :key="g.channel.id"
-                :title="localized(g.channel.name)" :items="g.posts" :empty-notice="!fetching && g.posts.length === 0" empty-notice-text="Noch keine Fragen."
-                @edit="showUpdateChannel(g.channel)" @delete="showDeleteChannel(g.channel)" @create="showCreatePost(g.channel)"
-                class="mb-6">
+    <ListCard v-for="g in groups" :key="g.channel.id"
+              :title="localized(g.channel.name)" :items="g.posts" :empty-notice="!fetching && g.posts.length === 0" empty-notice-text="Noch keine Fragen."
+              @move-up="moveUpChannel(g.channel)" @move-down="moveDownChannel(g.channel)"
+              @edit="showUpdateChannel(g.channel)" @delete="showDeleteChannel(g.channel)" @create="showCreatePost(g.channel)"
+              class="mb-6">
 
-        <template v-slot:item="{ item }">
-          <span class="">{{ localized(item.title) }}</span>
-        </template>
+      <template v-slot:item="{ item }">
+        <span class="">{{ localized(item.title) }}</span>
+      </template>
 
-        <template v-slot:actions="{ item }">
-          <v-btn @click="showUpdatePost(item)" icon small>
-            <v-icon>mdi-pencil</v-icon>
-          </v-btn>
-          <v-btn @click="showDeletePost(item)" class="ml-2" icon small>
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-      </ListCard>
-    </div>
+      <template v-slot:actions="{ item }">
+        <v-btn @click="moveUpPost(item)" icon small>
+          <v-icon>mdi-arrow-up</v-icon>
+        </v-btn>
+        <v-btn @click="moveDownPost(item)" class="ml-2" icon small>
+          <v-icon>mdi-arrow-down</v-icon>
+        </v-btn>
+        <v-btn @click="showUpdatePost(item)" class="ml-2" icon small>
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+        <v-btn @click="showDeletePost(item)" class="ml-2" icon small>
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+      </template>
+    </ListCard>
 
     <!-- DIALOGS -->
 
@@ -87,7 +92,16 @@
 </template>
 
 <script>
-import {createChannel, createPost, deleteChannel, deletePost, getPostsGrouped, renameChannel, updatePost} from "@/api";
+import {
+  createChannel,
+  createPost,
+  deleteChannel,
+  deletePost,
+  getPostsGrouped, moveDownChannel, moveDownPost,
+  moveUpChannel, moveUpPost,
+  renameChannel,
+  updatePost
+} from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LocaleSelector from "@/components/LocaleSelector";
@@ -187,6 +201,28 @@ export default {
         this.loading = false;
       }
     },
+    moveUpChannel: async function(channel) {
+      try {
+        this.loading = true;
+        await moveUpChannel({id: channel.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveDownChannel: async function(channel) {
+      try {
+        this.loading = true;
+        await moveDownChannel({id: channel.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
     deleteChannel: async function() {
       try {
         this.loading = true;
@@ -225,6 +261,28 @@ export default {
           ...post
         });
         this.dialogPost = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveUpPost: async function(post) {
+      try {
+        this.loading = true;
+        await moveUpPost({id: post.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveDownPost: async function(post) {
+      try {
+        this.loading = true;
+        await moveDownPost({id: post.id});
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');

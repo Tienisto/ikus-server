@@ -1,6 +1,5 @@
 package de.ovgu.ikus.repository
 
-import de.ovgu.ikus.model.Channel
 import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostType
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +11,10 @@ interface PostRepo : CoroutineCrudRepository<Post, Int> {
     @Query("SELECT * FROM post WHERE type = :type ORDER BY date DESC LIMIT :limit")
     fun findByOrderByDateDesc(type: String, limit: Int): Flow<Post>
 
-    fun findByChannelIdOrderByDateDesc(channel: Channel): Flow<Post>
-    fun findByTypeOrderByTitle(type: PostType): Flow<Post>
+    @Query("SELECT * FROM post WHERE channel_id = :channelId ORDER BY date DESC LIMIT :limit")
+    fun findByChannelIdOrderByDateDesc(channelId: Int, limit: Int): Flow<Post>
+
+    fun findByChannelIdOrderByDateDesc(channelId: Int): Flow<Post>
+    fun findByChannelIdOrderByPosition(channelId: Int): Flow<Post>
+    fun findByTypeOrderByPosition(type: PostType): Flow<Post>
 }

@@ -187,7 +187,7 @@ export async function getPosts({ channelId }) {
 
 export async function getPostsGrouped({ type }) {
     return await makeRequest({
-        route: 'posts/grouped',
+        route: 'posts/grouped-order-position',
         method: 'GET',
         params: { type }
     });
@@ -206,6 +206,22 @@ export async function updatePost({ id, channelId, title, content, files }) {
         route: 'posts',
         method: 'PUT',
         body: { id, channelId, title, content, files }
+    });
+}
+
+export async function moveUpPost({ id }) {
+    return await makeRequest({
+        route: 'posts/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownPost({ id }) {
+    return await makeRequest({
+        route: 'posts/move-down',
+        method: 'POST',
+        body: { id }
     });
 }
 
@@ -297,6 +313,22 @@ export async function renameChannel({ id, name }) {
     });
 }
 
+export async function moveUpChannel({ id }) {
+    return await makeRequest({
+        route: 'channels/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownChannel({ id }) {
+    return await makeRequest({
+        route: 'channels/move-down',
+        method: 'POST',
+        body: { id }
+    });
+}
+
 export async function deleteChannel({ id }) {
     return await makeRequest({
         route: 'channels',
@@ -325,6 +357,22 @@ export async function updateLink({ id, channelId, url, info }) {
         route: 'links',
         method: 'PUT',
         body: { id, channelId, url, info }
+    });
+}
+
+export async function moveUpLink({ id }) {
+    return await makeRequest({
+        route: 'links/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownLink({ id }) {
+    return await makeRequest({
+        route: 'links/move-down',
+        method: 'POST',
+        body: { id }
     });
 }
 

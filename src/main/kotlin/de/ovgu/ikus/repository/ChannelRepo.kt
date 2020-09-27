@@ -7,8 +7,9 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface ChannelRepo : CoroutineCrudRepository<Channel, Int> {
 
-    fun findByOrderByName(): Flow<Channel>
+    fun findByOrderByPosition(): Flow<Channel>
     fun findByType(type: ChannelType): Flow<Channel>
+    fun findByTypeOrderByPosition(type: ChannelType): Flow<Channel>
     fun findByTypeOrderByName(type: ChannelType): Flow<Channel>
     fun findByTypeOrderByNameDe(type: ChannelType): Flow<Channel>
 }

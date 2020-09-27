@@ -37,10 +37,10 @@ class PublicController(
     @GetMapping("/news")
     suspend fun getPosts(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
-            val channels = channelService.findByTypeOrdered(ChannelType.NEWS, locale)
+            val channels = channelService.findByTypeOrderByName(ChannelType.NEWS, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val postsUnsorted = channels
-                    .map { channel -> postService.findByChannelOrdered(channel, 10) }
+                    .map { channel -> postService.findByChannelOrderByDate(channel, 10) }
                     .flatten()
             val files = postFileService.findByPostIn(postsUnsorted)
             val posts = postsUnsorted
@@ -59,7 +59,7 @@ class PublicController(
     @GetMapping("/calendar")
     suspend fun getEvents(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.CALENDAR, locale) {
-            val channels = channelService.findByTypeOrdered(ChannelType.CALENDAR, locale)
+            val channels = channelService.findByTypeOrderByName(ChannelType.CALENDAR, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val events = eventService
                     .findAllOrdered()
@@ -90,8 +90,8 @@ class PublicController(
     @GetMapping("/links")
     suspend fun getLinks(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.LINKS, locale) {
-            val channels = channelService.findByTypeOrdered(ChannelType.LINK, locale)
-            val links = linkService.findAllOrdered(locale)
+            val channels = channelService.findByTypeOrderByPosition(ChannelType.LINK)
+            val links = linkService.findAllOrdered()
             channels.map { channel ->
                 val groupDto = channel.toLocalizedDto(locale)
                 val linksDto = links
@@ -115,8 +115,8 @@ class PublicController(
     @GetMapping("/faq")
     suspend fun getFAQ(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.FAQ, locale) {
-            val channels = channelService.findByTypeOrdered(ChannelType.FAQ, locale)
-            val posts = postService.findByTypeOrderByTitle(PostType.FAQ)
+            val channels = channelService.findByTypeOrderByPosition(ChannelType.FAQ)
+            val posts = postService.findByTypeOrderByPosition(PostType.FAQ)
             val files = postFileService.findByPostIn(posts)
             channels.map { channel ->
                 val channelDto = channel.toLocalizedDto(locale)

@@ -18,16 +18,20 @@ class PostService (
         return postRepo.findByOrderByDateDesc(type.name, limit).toList()
     }
 
-    suspend fun findByTypeOrderByTitle(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByTitle(type).toList()
+    suspend fun findByTypeOrderByPosition(type: PostType): List<Post> {
+        return postRepo.findByTypeOrderByPosition(type).toList()
     }
 
-    suspend fun findByChannelOrdered(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
+    suspend fun findByChannelOrderByDate(channel: Channel): List<Post> {
+        return postRepo.findByChannelIdOrderByDateDesc(channel.id).toList()
     }
 
-    suspend fun findByChannelOrdered(channel: Channel, limit: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel).toList()
+    suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
+        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit).toList()
+    }
+
+    suspend fun findByChannelIdOrderByPosition(channelId: Int): List<Post> {
+        return postRepo.findByChannelIdOrderByPosition(channelId).toList()
     }
 
     suspend fun findById(id: Int): Post? {
@@ -55,7 +59,7 @@ class PostService (
         return saved
     }
 
-    // dummy only
+    // dummy only or when changing order
     suspend fun saveAll(posts: List<Post>): List<Post> {
         return postRepo.saveAll(posts).toList()
     }

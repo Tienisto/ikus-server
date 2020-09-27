@@ -4,6 +4,12 @@
       <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
         <span>
           {{ title }}
+          <v-btn @click="$emit('move-up')" class="black--text ml-2" icon small>
+            <v-icon>mdi-arrow-up</v-icon>
+          </v-btn>
+          <v-btn @click="$emit('move-down')" class="black--text ml-2" icon small>
+            <v-icon>mdi-arrow-down</v-icon>
+          </v-btn>
           <v-btn @click="$emit('edit')" class="black--text ml-2" icon small>
             <v-icon>mdi-pencil</v-icon>
           </v-btn>

@@ -24,6 +24,7 @@
 
     <ListCard v-for="g in data" :key="g.channel.id"
               :title="localized(g.channel.name)" :items="g.links" :empty-notice="!fetching && g.links.length === 0" empty-notice-text="Noch keine Links"
+              @move-up="moveUpChannel(g.channel)" @move-down="moveDownChannel(g.channel)"
               @edit="showUpdateGroup(g.channel)" @delete="showDeleteGroup(g.channel)" @create="showCreateLink(g.channel)"
               class="mb-6">
 
@@ -36,7 +37,13 @@
       </template>
 
       <template v-slot:actions="{ item }">
-        <v-btn @click="showUpdateLink(item)" icon small>
+        <v-btn @click="moveUpLink(item)" icon small>
+          <v-icon>mdi-arrow-up</v-icon>
+        </v-btn>
+        <v-btn @click="moveDownLink(item)" class="ml-2" icon small>
+          <v-icon>mdi-arrow-down</v-icon>
+        </v-btn>
+        <v-btn @click="showUpdateLink(item)" class="ml-2" icon small>
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
         <v-btn @click="showDeleteLink(item)" class="ml-2" icon small>
@@ -89,7 +96,14 @@
 </template>
 
 <script>
-import {createLink, createChannel, deleteLink, deleteChannel, getLinksGrouped, updateLink, renameChannel} from "@/api";
+import {
+  createLink, createChannel,
+  deleteLink, deleteChannel,
+  getLinksGrouped,
+  updateLink,
+  renameChannel,
+  moveDownLink, moveUpLink, moveDownChannel, moveUpChannel
+} from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LocaleSelector from "@/components/LocaleSelector";
@@ -189,6 +203,28 @@ export default {
         this.loading = false;
       }
     },
+    moveUpChannel: async function(channel) {
+      try {
+        this.loading = true;
+        await moveUpChannel({id: channel.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveDownChannel: async function(channel) {
+      try {
+        this.loading = true;
+        await moveDownChannel({id: channel.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
     deleteGroup: async function() {
       try {
         this.loading = true;
@@ -227,6 +263,28 @@ export default {
           ...link
         });
         this.dialogLink = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveUpLink: async function(link) {
+      try {
+        this.loading = true;
+        await moveUpLink({id: link.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveDownLink: async function(link) {
+      try {
+        this.loading = true;
+        await moveDownLink({id: link.id});
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');

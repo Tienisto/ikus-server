@@ -6,6 +6,8 @@ import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
+import de.ovgu.ikus.utils.moveDownItem
+import de.ovgu.ikus.utils.moveUpItem
 import de.ovgu.ikus.utils.toDto
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
@@ -21,8 +23,8 @@ class LinkController (
 
     @GetMapping
     suspend fun getAll(): List<LinkGroupDto> {
-        val channels = channelService.findByTypeOrdered(ChannelType.LINK, IkusLocale.EN)
-        val links = linkService.findAllOrdered(IkusLocale.EN)
+        val channels = channelService.findByTypeOrderByPosition(ChannelType.LINK)
+        val links = linkService.findAllOrdered()
 
         return channels.map { channel ->
             val channelDto = channel.toDto()
@@ -66,6 +68,32 @@ class LinkController (
         linkService.save(link)
         logService.log(LogType.UPDATE_LINK, authentication.toUser(), "${link.info} (${link.url})")
         cacheService.triggerUpdateFlag(CacheKey.LINKS)
+    }
+
+    @PostMapping("/move-up")
+    suspend fun moveUp(authentication: Authentication, @RequestBody request: Request.Id) {
+        val link = linkService.findById(request.id) ?: throw ErrorCode(404, "Link not found")
+        val links = linkService
+                .findByChannelId(link.channelId)
+                .moveUpItem(item = link, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (links != null) {
+            linkService.saveAll(links)
+            cacheService.triggerUpdateFlag(CacheKey.LINKS)
+        }
+    }
+
+    @PostMapping("/move-down")
+    suspend fun moveDown(authentication: Authentication, @RequestBody request: Request.Id) {
+        val link = linkService.findById(request.id) ?: throw ErrorCode(404, "Link not found")
+        val links = linkService
+                .findByChannelId(link.channelId)
+                .moveDownItem(item = link, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (links != null) {
+            linkService.saveAll(links)
+            cacheService.triggerUpdateFlag(CacheKey.LINKS)
+        }
     }
 
     @DeleteMapping
