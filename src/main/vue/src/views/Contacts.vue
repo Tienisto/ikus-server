@@ -20,7 +20,7 @@
 
     <v-row>
       <v-col cols="6" v-for="c in contacts" :key="c.id" class="pt-0 pb-6">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
               <span>
