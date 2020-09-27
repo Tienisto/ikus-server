@@ -23,6 +23,7 @@
             title="Es existieren noch keine Gruppen" info="Sie können rechts eine neue Gruppe erstellen" />
 
     <ListCard v-for="g in data" :key="g.channel.id"
+              :loading="loading"
               :title="localized(g.channel.name)" :items="g.links" :empty-notice="!fetching && g.links.length === 0" empty-notice-text="Noch keine Links"
               @move-up="moveUpChannel(g.channel)" @move-down="moveDownChannel(g.channel)"
               @edit="showUpdateGroup(g.channel)" @delete="showDeleteGroup(g.channel)" @create="showCreateLink(g.channel)"
@@ -37,16 +38,16 @@
       </template>
 
       <template v-slot:actions="{ item }">
-        <v-btn @click="moveUpLink(item)" icon small>
+        <v-btn @click="moveUpLink(item)" :disabled="loading" icon small>
           <v-icon>mdi-arrow-up</v-icon>
         </v-btn>
-        <v-btn @click="moveDownLink(item)" class="ml-2" icon small>
+        <v-btn @click="moveDownLink(item)" :disabled="loading" class="ml-2" icon small>
           <v-icon>mdi-arrow-down</v-icon>
         </v-btn>
-        <v-btn @click="showUpdateLink(item)" class="ml-2" icon small>
+        <v-btn @click="showUpdateLink(item)" :disabled="loading" class="ml-2" icon small>
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn @click="showDeleteLink(item)" class="ml-2" icon small>
+        <v-btn @click="showDeleteLink(item)" :disabled="loading" class="ml-2" icon small>
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>

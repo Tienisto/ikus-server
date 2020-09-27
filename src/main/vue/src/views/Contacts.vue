@@ -26,7 +26,7 @@
               <span>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn @click="showUpdateContact(c)" v-bind="attrs" v-on="on" icon small>
+                    <v-btn @click="showUpdateContact(c)" :disabled="loading" v-bind="attrs" v-on="on" icon small>
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                   </template>
@@ -34,7 +34,7 @@
                 </v-tooltip>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn @click="showDeleteContact(c)" class="ml-2" v-bind="attrs" v-on="on" icon small>
+                    <v-btn @click="showDeleteContact(c)" :disabled="loading" class="ml-2" v-bind="attrs" v-on="on" icon small>
                       <v-icon>mdi-delete</v-icon>
                     </v-btn>
                   </template>
