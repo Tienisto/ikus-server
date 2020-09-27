@@ -25,6 +25,7 @@ class DummyService (
         logService.deleteAll()
         channelService.deleteAll()
         postFileService.cleanup(Duration.ZERO) // delete files
+        contactService.deleteAll()
         analyticsService.deleteAll()
         userService.deleteAll()
         userService.repairAdminAccount() // create admin account

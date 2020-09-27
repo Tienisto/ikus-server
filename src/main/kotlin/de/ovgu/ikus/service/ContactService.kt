@@ -35,6 +35,10 @@ class ContactService(
         contactRepo.delete(contact)
     }
 
+    suspend fun deleteAll() {
+        contactRepo.deleteAll()
+    }
+
     /**
      * stores the image to the hard drive and updates the file attribute of the contact
      */
