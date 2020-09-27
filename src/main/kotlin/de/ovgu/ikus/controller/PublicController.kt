@@ -137,7 +137,7 @@ class PublicController(
     suspend fun getContacts(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.CONTACTS, locale) {
             contactService
-                    .findAllOrdered(locale)
+                    .findAllOrdered()
                     .map { contact -> contact.toLocalizedDto(locale) }
         }
     }

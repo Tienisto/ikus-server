@@ -70,7 +70,8 @@ CREATE TABLE contact (
     name TEXT NOT NULL,
     name_de TEXT NOT NULL,
     opening_hours TEXT,
-    opening_hours_de TEXT
+    opening_hours_de TEXT,
+    position INT
 );
 
 CREATE TABLE log (

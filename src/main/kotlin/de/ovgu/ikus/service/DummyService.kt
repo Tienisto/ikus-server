@@ -206,8 +206,8 @@ private object Constants {
     )
 
     val contacts = listOf(
-            Contact(name = "International Office", nameDe = "Akademisches Auslandsamt", place = "G18"),
-            Contact(name = "IKUS", nameDe = "IKUS", email = "ikus@ovgu.de", phoneNumber = "+49 (0)391 - 67 515 75", place = "InterKultiTreff\nWalther-Rathenau-Straße 19\n39106 Magdeburg", openingHours = "Mon 15-17, Thu 17-19", openingHoursDe = "Mo. 15-17, Do. 17-19")
+            Contact(name = "International Office", nameDe = "Akademisches Auslandsamt", place = "G18", position = 0),
+            Contact(name = "IKUS", nameDe = "IKUS", email = "ikus@ovgu.de", phoneNumber = "+49 (0)391 - 67 515 75", place = "InterKultiTreff\nWalther-Rathenau-Straße 19\n39106 Magdeburg", openingHours = "Mon 15-17, Thu 17-19", openingHoursDe = "Mo. 15-17, Do. 17-19", position = 1)
     )
 
     const val userCount = 300

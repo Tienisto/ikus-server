@@ -10,7 +10,6 @@ interface PostRepo : CoroutineCrudRepository<Post, Int> {
 
     suspend fun countByChannelId(channelId: Int): Int
 
-    // TODO: use enum-native solution
     @Query("SELECT MAX(position) FROM post WHERE channel_id = :channelId")
     suspend fun findMaxPositionByChannelId(channelId: Int): Int?
 

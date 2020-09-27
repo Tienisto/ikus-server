@@ -4,13 +4,14 @@ import de.ovgu.ikus.dto.ContactDto
 import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.model.Contact
-import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.CacheKey
 import de.ovgu.ikus.service.CacheService
 import de.ovgu.ikus.service.ContactService
 import de.ovgu.ikus.service.LogService
+import de.ovgu.ikus.utils.moveDownItem
+import de.ovgu.ikus.utils.moveUpItem
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.trimOrNull
 import kotlinx.coroutines.reactive.awaitFirst
@@ -31,16 +32,18 @@ class ContactController (
     @GetMapping
     suspend fun getContacts(): List<ContactDto> {
         return contactService
-                .findAllOrdered(IkusLocale.EN)
+                .findAllOrdered()
                 .map { contact -> contact.toDto() }
     }
 
     @PostMapping
     suspend fun createContact(authentication: Authentication, @RequestBody request: Request.CreateContact): ContactDto {
+        val maxPosition = contactService.findMaxPosition()
         val contact = Contact(
                 email = request.email?.trimOrNull(), phoneNumber = request.phoneNumber?.trimOrNull(), place = request.place?.trimOrNull(),
                 name = request.name.en.trim(), nameDe = request.name.de.trim(),
-                openingHours = request.openingHours?.en?.trimOrNull(), openingHoursDe = request.openingHours?.de?.trimOrNull()
+                openingHours = request.openingHours?.en?.trimOrNull(), openingHoursDe = request.openingHours?.de?.trimOrNull(),
+                position = maxPosition + 1
         )
 
         val savedContact = contactService.save(contact)
@@ -66,6 +69,32 @@ class ContactController (
         contactService.save(contact)
         logService.log(LogType.UPDATE_CONTACT, authentication.toUser(), "${contact.name} (${contact.nameDe})")
         cacheService.triggerUpdateFlag(CacheKey.CONTACTS)
+    }
+
+    @PostMapping("/move-up")
+    suspend fun moveUp(authentication: Authentication, @RequestBody request: Request.Id) {
+        val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
+        val contacts = contactService
+                .findAllOrdered()
+                .moveUpItem(item = contact, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (contacts != null) {
+            contactService.saveAll(contacts)
+            cacheService.triggerUpdateFlag(CacheKey.CONTACTS)
+        }
+    }
+
+    @PostMapping("/move-down")
+    suspend fun moveDown(authentication: Authentication, @RequestBody request: Request.Id) {
+        val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
+        val contacts = contactService
+                .findAllOrdered()
+                .moveDownItem(item = contact, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+
+        if (contacts != null) {
+            contactService.saveAll(contacts)
+            cacheService.triggerUpdateFlag(CacheKey.CONTACTS)
+        }
     }
 
     @DeleteMapping

@@ -440,6 +440,22 @@ export async function updateContact({ id, name, email, phoneNumber, place, openi
     });
 }
 
+export async function moveUpContact({ id }) {
+    return await makeRequest({
+        route: 'contacts/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownContact({ id }) {
+    return await makeRequest({
+        route: 'contacts/move-down',
+        method: 'POST',
+        body: { id }
+    });
+}
+
 export async function deleteContact({ id }) {
     return await makeRequest({
         route: 'contacts',

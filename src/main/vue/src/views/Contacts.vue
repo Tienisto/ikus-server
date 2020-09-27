@@ -15,6 +15,9 @@
       </v-btn>
     </template>
 
+    <Notice v-if="!fetching && contacts.length === 0"
+            title="Es existieren noch keine Kontakte" info="Sie können rechts neue erstellen" />
+
     <v-row>
       <v-col cols="6" v-for="c in contacts" :key="c.id" class="pt-0 pb-6">
         <v-card>
@@ -26,7 +29,23 @@
               <span>
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn @click="showUpdateContact(c)" :disabled="loading" v-bind="attrs" v-on="on" icon small>
+                    <v-btn @click="moveUpContact(c)" :disabled="loading" v-bind="attrs" v-on="on" icon small>
+                      <v-icon>mdi-arrow-up</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Nach oben</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn @click="moveDownContact(c)" :disabled="loading" class="ml-2" v-bind="attrs" v-on="on" icon small>
+                      <v-icon>mdi-arrow-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Nach unten</span>
+                </v-tooltip>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn @click="showUpdateContact(c)" :disabled="loading" class="ml-2" v-bind="attrs" v-on="on" icon small>
                       <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                   </template>
@@ -122,16 +141,24 @@
 </template>
 
 <script>
-import {createContact, updateContact,deleteContact, getContacts} from "@/api";
+import {
+  createContact,
+  updateContact,
+  deleteContact,
+  getContacts,
+  moveUpContact,
+  moveDownContact
+} from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LocaleSelector from "@/components/LocaleSelector";
 import ContactDialog from "@/components/dialog/ContactDialog";
 import GenericDialog from "@/components/dialog/GenericDialog";
+import Notice from "@/components/Notice";
 
 export default {
   name: 'ContactView',
-  components: {GenericDialog, ContactDialog, LocaleSelector, MainContainer},
+  components: {Notice, GenericDialog, ContactDialog, LocaleSelector, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
@@ -192,6 +219,28 @@ export default {
           ...contact
         });
         this.dialogContact = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveUpContact: async function(contact) {
+      try {
+        this.loading = true;
+        await moveUpContact({id: contact.id});
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    moveDownContact: async function(contact) {
+      try {
+        this.loading = true;
+        await moveDownContact({id: contact.id});
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');

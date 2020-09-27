@@ -12,4 +12,5 @@ data class Contact(@Id var id: Int = 0,
                    var name: String = "",
                    var nameDe: String = "",
                    var openingHours: String? = null,
-                   var openingHoursDe: String? = null)
+                   var openingHoursDe: String? = null,
+                   var position: Int = 0)

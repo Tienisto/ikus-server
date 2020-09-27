@@ -9,7 +9,6 @@ interface LinkRepo : CoroutineCrudRepository<Link, Int> {
 
     suspend fun countByChannelId(channelId: Int): Int
 
-    // TODO: use enum-native solution
     @Query("SELECT MAX(position) FROM link WHERE channel_id = :channelId")
     suspend fun findMaxPositionByChannelId(channelId: Int): Int?
 

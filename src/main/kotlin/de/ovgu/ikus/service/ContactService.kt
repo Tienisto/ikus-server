@@ -15,11 +15,8 @@ class ContactService(
         private val imageService: ImageService
 ) {
 
-    suspend fun findAllOrdered(locale: IkusLocale): List<Contact> {
-        return when (locale) {
-            IkusLocale.EN -> contactRepo.findByOrderByName().toList()
-            IkusLocale.DE -> contactRepo.findByOrderByNameDe().toList()
-        }
+    suspend fun findAllOrdered(): List<Contact> {
+        return contactRepo.findByOrderByPosition().toList()
     }
 
     suspend fun findById(id: Int): Contact? {
@@ -30,7 +27,6 @@ class ContactService(
         return contactRepo.save(contact)
     }
 
-    // dummy only
     suspend fun saveAll(files: List<Contact>) {
         contactRepo.saveAll(files).collect()
     }
@@ -69,5 +65,12 @@ class ContactService(
             lowerCase.endsWith(".png") -> "png"
             else -> throw ErrorCode(409, "file type not allowed")
         }
+    }
+
+    // TODO: remove counting when NPE is fixed
+    suspend fun findMaxPosition(): Int {
+        if (contactRepo.count() == 0L)
+            return -1
+        return contactRepo.findMaxPosition() ?: -1
     }
 }
