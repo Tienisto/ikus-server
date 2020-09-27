@@ -51,4 +51,11 @@ class ChannelService (
     suspend fun deleteAll() {
         channelRepo.deleteAll()
     }
+
+    // TODO: remove counting when NPE is fixed
+    suspend fun findMaxPositionByType(type: ChannelType): Int {
+        if (channelRepo.countByType(type) == 0)
+            return -1
+        return channelRepo.findMaxPositionByType(type.toString()) ?: -1
+    }
 }

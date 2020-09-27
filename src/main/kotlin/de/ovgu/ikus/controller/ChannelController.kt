@@ -50,7 +50,8 @@ class ChannelController (
 
     @PostMapping
     suspend fun createChannel(authentication: Authentication, @RequestParam type: ChannelType, @RequestBody request: Request.CreateChannel) {
-        val channel = channelService.save(Channel(type = type, name = request.name.en.trim(), nameDe = request.name.de.trim()))
+        val maxPosition = channelService.findMaxPositionByType(type)
+        val channel = channelService.save(Channel(type = type, name = request.name.en.trim(), nameDe = request.name.de.trim(), position = maxPosition + 1))
         logService.log(LogType.CREATE_CHANNEL, authentication.toUser(), "${channel.name} (${channel.nameDe})")
     }
 

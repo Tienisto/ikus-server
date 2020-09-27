@@ -1,5 +1,6 @@
 package de.ovgu.ikus.service
 
+import de.ovgu.ikus.model.Channel
 import de.ovgu.ikus.model.Link
 import de.ovgu.ikus.repository.LinkRepo
 import kotlinx.coroutines.flow.toList
@@ -33,5 +34,12 @@ class LinkService (
 
     suspend fun delete(link: Link) {
         linkRepo.delete(link)
+    }
+
+    // TODO: remove counting when NPE is fixed
+    suspend fun findMaxPositionByChannel(channel: Channel): Int {
+        if (linkRepo.countByChannelId(channel.id) == 0)
+            return -1
+        return linkRepo.findMaxPositionByChannelId(channel.id) ?: -1
     }
 }

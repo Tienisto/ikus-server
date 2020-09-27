@@ -63,22 +63,23 @@ class DummyService (
 
     suspend fun createChannels(): List<Channel> {
 
-        val news = Constants.channelsNews.map { channel -> Channel(type = ChannelType.NEWS, name = channel, nameDe = channel) }
-        val calendar = Constants.channelsCalendar.map { channel -> Channel(type = ChannelType.CALENDAR, name = channel, nameDe = channel) }
-        val faq = Constants.channelsFAQ.map { channel -> Channel(type = ChannelType.FAQ, name = channel.first, nameDe = channel.second) }
-        val links = Constants.channelsLinks.map { channel -> Channel(type = ChannelType.LINK, name = channel.first, nameDe = channel.second) }
+        val news = Constants.channelsNews.mapIndexed { index, channel -> Channel(type = ChannelType.NEWS, name = channel, nameDe = channel, position = index) }
+        val calendar = Constants.channelsCalendar.mapIndexed { index, channel -> Channel(type = ChannelType.CALENDAR, name = channel, nameDe = channel, position = index) }
+        val faq = Constants.channelsFAQ.mapIndexed { index, channel -> Channel(type = ChannelType.FAQ, name = channel.first, nameDe = channel.second, position = index) }
+        val links = Constants.channelsLinks.mapIndexed { index, channel -> Channel(type = ChannelType.LINK, name = channel.first, nameDe = channel.second, position = index) }
 
         return channelService.saveAll(news + calendar + faq + links)
     }
 
     suspend fun createPosts(channels: List<Channel>, titles: List<Pair<String, String>>, count: Int) {
-        val posts = List(count) {
+        val posts = List(count) { index ->
             val channel = channels.random()
             val date = LocalDate.now().minusDays(Random.nextInt(30).toLong())
             val title = titles.random()
             Post(type = channel.type.toPostType() ?: throw ErrorCode(500, "Forbidden Channel Type"), channelId = channel.id, date = date,
                     title = title.first, titleDe = title.second,
-                    content = Constants.content, contentDe = Constants.content)
+                    content = Constants.content, contentDe = Constants.content,
+                    position = index)
         }
 
         postService.saveAll(posts)
@@ -113,10 +114,10 @@ class DummyService (
     }
 
     suspend fun createLinks(channels: List<Channel>) {
-        val links = List(Constants.linkCount) {
+        val links = List(Constants.linkCount) { index ->
             val channel = channels.random()
             val link = Constants.links.random()
-            Link(channelId = channel.id, url = link.url, urlDe = link.urlDe, info = link.info, infoDe = link.infoDe)
+            Link(channelId = channel.id, url = link.url, urlDe = link.urlDe, info = link.info, infoDe = link.infoDe, position = index)
         }
 
         linkService.saveAll(links)

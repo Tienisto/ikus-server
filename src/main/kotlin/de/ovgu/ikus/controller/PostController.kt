@@ -62,10 +62,12 @@ class PostController (
     suspend fun createPost(authentication: Authentication, @RequestBody request: Request.CreatePost) {
         val channel = channelService.findById(request.channelId) ?: throw ErrorCode(404, "Channel not found")
         val postType = channel.type.toPostType() ?: throw ErrorCode(409, "Wrong Channel Type")
+        val maxPosition = postService.findMaxPositionByChannel(channel)
         val post = Post(
                 type = postType, channelId = channel.id, date = LocalDate.now(),
                 title = request.title.en.trim(), titleDe = request.title.de.trim(),
-                content = request.content.en.trim(), contentDe = request.content.de.trim()
+                content = request.content.en.trim(), contentDe = request.content.de.trim(),
+                position = maxPosition + 1
         )
 
         val files = postFileService.findByIdIn(request.files)

@@ -8,6 +8,12 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface PostRepo : CoroutineCrudRepository<Post, Int> {
 
+    suspend fun countByChannelId(channelId: Int): Int
+
+    // TODO: use enum-native solution
+    @Query("SELECT MAX(position) FROM post WHERE channel_id = :channelId")
+    suspend fun findMaxPositionByChannelId(channelId: Int): Int?
+
     @Query("SELECT * FROM post WHERE type = :type ORDER BY date DESC LIMIT :limit")
     fun findByOrderByDateDesc(type: String, limit: Int): Flow<Post>
 

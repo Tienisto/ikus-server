@@ -42,9 +42,11 @@ class LinkController (
         if (channel.type != ChannelType.LINK)
             throw ErrorCode(409, "Wrong Channel Type")
 
+        val maxPosition = linkService.findMaxPositionByChannel(channel)
         val link = Link(channelId = channel.id,
                         url = request.url.en.trim(), urlDe = request.url.de.trim(),
-                        info = request.info.en.trim(), infoDe = request.info.de.trim())
+                        info = request.info.en.trim(), infoDe = request.info.de.trim(),
+                        position = maxPosition + 1)
 
         linkService.save(link)
         logService.log(LogType.CREATE_LINK, authentication.toUser(), "${link.info} (${link.url})")
