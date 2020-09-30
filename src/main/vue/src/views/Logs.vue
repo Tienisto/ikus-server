@@ -26,6 +26,7 @@
                 { text: 'Zeitstempel', value: 'timestamp', width: '155px' }
             ]"
             :items="logs"
+            :items-per-page="-1"
             loading-text="Lade Daten..."
             no-data-text="Es ist noch nichts passiert"
             hide-default-footer

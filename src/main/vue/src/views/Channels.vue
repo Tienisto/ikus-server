@@ -53,6 +53,7 @@
                 { text: 'Aktionen', value: 'actions' }
             ]"
             :items="currChannels"
+            :items-per-page="-1"
             loading-text="Lade Daten..."
             no-data-text="Keine Kanäle vorhanden"
             hide-default-footer

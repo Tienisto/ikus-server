@@ -71,6 +71,7 @@
                 { text: 'Aktiv', value: 'value' }
             ]"
             :items="status.env"
+            :items-per-page="-1"
             loading-text="Lade Daten..."
             no-data-text="Keine Moderatoren vorhanden"
             hide-default-footer

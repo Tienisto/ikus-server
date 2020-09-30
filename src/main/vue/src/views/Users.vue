@@ -27,6 +27,7 @@
                 { text: 'Aktionen', value: 'actions' }
             ]"
             :items="users"
+            :items-per-page="-1"
             loading-text="Lade Daten..."
             no-data-text="Keine Moderatoren vorhanden"
             hide-default-footer
