@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle">
+  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :persistent="true">
     <template v-slot:content>
       <v-row>
         <v-col cols="6">

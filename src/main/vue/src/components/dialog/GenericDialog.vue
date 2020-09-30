@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="value" @input="$emit('input', $event)" :width="width">
+  <v-dialog :value="value" @input="$emit('input', $event)" :width="width" :persistent="persistent">
     <v-card>
       <v-card-title class="headline">
         {{ title }}
@@ -34,6 +34,10 @@ export default {
     width: {
       type: Number,
       default: 500
+    },
+    persistent: {
+      type: Boolean,
+      default: false
     }
   }
 }
