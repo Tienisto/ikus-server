@@ -24,7 +24,7 @@
           <v-card-text>
             <LoadingIndicator v-if="fetching" />
             <div v-for="(l, index) in dashboard.logs" :key="'l'+index" style="display: flex;">
-              <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+              <span style="flex: 1; max-width: 460px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ l.user ? l.user.name+':' : '' }}</b> {{ typeString(l.type) }}, {{ l.info }}
               </span>
               <span>{{ timeString(l.timestamp) }}</span>
@@ -48,7 +48,7 @@
             <LoadingIndicator v-if="fetching" />
             <Notice v-if="!fetching && dashboard.posts.length === 0" title="Noch keine Posts veröffentlicht."/>
             <div v-for="p in dashboard.posts" :key="'p'+p.id" style="display: flex;">
-              <span style="flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
+              <span style="flex: 1; max-width: 460px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">
                 <b>{{ p.channel.name.de }}:</b> {{ p.title.de }}
               </span>
               <span>{{ timeString(p.date) }}</span>
