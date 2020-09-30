@@ -12,19 +12,13 @@ RUN npm i
 ADD src/main/vue/ .
 RUN npm run build
 
-WORKDIR /build
-
 # build spring
+WORKDIR /build
 ADD . ./
 RUN sh ./gradlew assemble
-RUN mv build/libs/ikus-*.jar /ikus.jar
+RUN mv build/libs/ikus-*.jar /server.jar
 RUN rm -r /build
 
-WORKDIR /
-ADD Procfile /Procfile
-ADD start.sh /start.sh
-RUN chmod +x /start.sh
-
+# deploy
 EXPOSE 8080
-
-ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["java","-jar","/server.jar"]
