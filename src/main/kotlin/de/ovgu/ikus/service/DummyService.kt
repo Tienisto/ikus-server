@@ -6,6 +6,10 @@ import de.ovgu.ikus.utils.toPostType
 import org.springframework.data.geo.Point
 import org.springframework.stereotype.Service
 import java.time.*
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.roundToInt
+import kotlin.math.sin
 import kotlin.random.Random
 
 @Service
@@ -135,6 +139,42 @@ class DummyService (
         }.onEach { start -> start.setNewFlag() }
 
         analyticsService.saveAllAppStartCaches(users)
+
+        var currDate = LocalDate.of(now.year, now.month, 1).minusMonths(Constants.analyticsMonths + 2L)
+        val months = List(Constants.analyticsMonths) { index ->
+            currDate = currDate.plusMonths(1)
+            AppStart(
+                    type = StatsType.MONTHLY,
+                    date = currDate,
+                    android = (Constants.androidFunction(index) * Constants.monthFactor).roundToInt(),
+                    ios = (Constants.iosFunction(index) * Constants.monthFactor).roundToInt()
+            )
+        }
+
+        currDate = LocalDate.now().minusWeeks(Constants.analyticsWeeks + 2L)
+        val weeks = List(Constants.analyticsWeeks) { index ->
+            currDate = currDate.plusWeeks(1)
+            AppStart(
+                    type = StatsType.WEEKLY,
+                    date = currDate,
+                    android = (Constants.androidFunction(index) * Constants.weekFactor).roundToInt(),
+                    ios = (Constants.iosFunction(index) * Constants.weekFactor).roundToInt()
+            )
+        }
+
+        currDate = LocalDate.now().minusDays(Constants.analyticsDays + 2L)
+        val days = List(Constants.analyticsDays) { index ->
+            currDate = currDate.plusDays(1)
+            println(currDate)
+            AppStart(
+                    type = StatsType.DAILY,
+                    date = currDate,
+                    android = (Constants.androidFunction(index) * Constants.dayFactor).roundToInt(),
+                    ios = (Constants.iosFunction(index) * Constants.dayFactor).roundToInt()
+            )
+        }
+
+        analyticsService.saveAllAppStarts(months + weeks + days)
     }
 }
 
@@ -212,4 +252,14 @@ private object Constants {
     )
 
     const val userCount = 300
+    const val analyticsMonths = 24
+    const val analyticsWeeks = 100
+    const val analyticsDays = 600
+
+    val androidFunction = { x: Int -> (x * cos(x.toDouble() * 0.5) + analyticsSpread()).roundToInt().absoluteValue }
+    val iosFunction = { x: Int -> (x/2 * sin(x.toDouble() * 0.5) + analyticsSpread()).roundToInt().absoluteValue }
+    val analyticsSpread = { 0.8 + Random.nextDouble(0.4) } // returns 0.8 - 1.2
+    const val monthFactor = 1.0
+    const val weekFactor = 0.6
+    const val dayFactor = 0.2
 }
