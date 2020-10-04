@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.OffsetDateTime
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.ZoneOffset
+import java.time.temporal.TemporalAdjusters
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -25,10 +27,22 @@ class AnalyticsController (
 
     @GetMapping("/app-starts/curr")
     suspend fun getCurrAppStarts(): CurrentAppStarts {
-        val now = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC)
-        val month = analyticsService.countActiveUsersAfter(now.minusMonths(1))
-        val week = analyticsService.countActiveUsersAfter(now.minusWeeks(1))
-        val day = analyticsService.countActiveUsersAfter(OffsetDateTime.of(now.year, now.monthValue, now.dayOfMonth, 0, 0, 0, 0, ZoneOffset.UTC))
-        return CurrentAppStarts(month, week, day)
+        val today = LocalDate.now(ZoneOffset.UTC)
+        val monthStartTime = today
+                .with(TemporalAdjusters.firstDayOfMonth())
+                .atStartOfDay(ZoneOffset.UTC)
+                .toOffsetDateTime()
+        val weekStartTime = today
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .atStartOfDay(ZoneOffset.UTC)
+                .toOffsetDateTime()
+        val dayStartTime = today
+                .atStartOfDay(ZoneOffset.UTC)
+                .toOffsetDateTime()
+
+        val countMonthly = analyticsService.countActiveUsersAfter(monthStartTime)
+        val countWeekly = analyticsService.countActiveUsersAfter(weekStartTime)
+        val countDaily = analyticsService.countActiveUsersAfter(dayStartTime)
+        return CurrentAppStarts(countMonthly, countWeekly, countDaily)
     }
 }
