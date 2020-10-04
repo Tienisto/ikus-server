@@ -41,7 +41,10 @@ class AnalyticsService (
     }
 
     suspend fun findByType(type: StatsType): List<AppStart> {
-        return appStartRepo.findFirst90ByTypeOrderByDate(type).toList()
+        return appStartRepo
+                .findFirst90ByTypeOrderByDateDesc(type)
+                .toList()
+                .sortedBy { stats -> stats.date }
     }
 
     suspend fun countActiveUsersAfter(timestamp: OffsetDateTime): Int {
