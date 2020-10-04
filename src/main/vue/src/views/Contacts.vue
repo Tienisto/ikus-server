@@ -15,6 +15,8 @@
       </v-btn>
     </template>
 
+    <LoadingIndicator v-if="fetching && contacts.length === 0" />
+
     <Notice v-if="!fetching && contacts.length === 0"
             title="Es existieren noch keine Kontakte" info="Sie können rechts neue erstellen" />
 
@@ -155,10 +157,11 @@ import LocaleSelector from "@/components/LocaleSelector";
 import ContactDialog from "@/components/dialog/ContactDialog";
 import GenericDialog from "@/components/dialog/GenericDialog";
 import Notice from "@/components/Notice";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default {
   name: 'ContactView',
-  components: {Notice, GenericDialog, ContactDialog, LocaleSelector, MainContainer},
+  components: {LoadingIndicator, Notice, GenericDialog, ContactDialog, LocaleSelector, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
