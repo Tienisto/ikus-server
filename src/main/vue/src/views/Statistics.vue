@@ -29,6 +29,15 @@
       <v-divider />
 
       <v-card-actions>
+        <v-btn @click="platform = null" color="primary" :class="!platform ? ['v-btn--active'] : []" text>
+          Alle
+        </v-btn>
+        <v-btn @click="platform = 'ANDROID'" color="primary" :class="platform === 'ANDROID' ? ['v-btn--active'] : []" text>
+          Android
+        </v-btn>
+        <v-btn @click="platform = 'IOS'" color="primary" :class="platform === 'IOS' ? ['v-btn--active'] : []" text>
+          iOS
+        </v-btn>
         <v-spacer />
         <v-btn @click="setChartMode('MONTHLY')" color="primary" :class="mode === 'MONTHLY' ? ['v-btn--active'] : []" text>
           Monat
@@ -64,7 +73,8 @@ export default {
       week: 0,
       day: 0
     },
-    mode: 'DAILY',
+    mode: 'DAILY', // [ MONTHLY, WEEKLY, DAILY ]
+    platform: null, // [ null, android, ios ]
     timerId: null
   }),
   methods: {
@@ -90,7 +100,16 @@ export default {
           }
         }),
         datasets: [{
-          data: this.stats.map((s) => s.android + s.ios),
+          data: this.stats.map((s) => {
+            switch(this.platform) {
+              case 'ANDROID':
+                return s.android;
+              case 'IOS':
+                return s.ios;
+              default:
+                return s.android + s.ios;
+            }
+          }),
           backgroundColor: '#878787'
         }]
       };
