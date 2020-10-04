@@ -66,7 +66,21 @@
         </template>
 
         <template v-if="admin">
-          <v-list-item v-for="p in adminPages" :key="'a-'+p.route" link :to="p.route">
+
+          <v-list-item link to="/users">
+            <v-list-item-icon>
+              <v-icon>mdi-account-multiple</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Moderatoren</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider/>
+          <v-subheader class="ml-2">Analysis</v-subheader>
+
+          <v-list-item v-for="p in adminAnalysisPages" :key="p.route" link :to="p.route">
             <v-list-item-icon>
               <v-icon>{{ p.icon }}</v-icon>
             </v-list-item-icon>
@@ -151,11 +165,11 @@ export default {
         icon: 'mdi-text-subject'
       }
     ],
-    adminPages: [
+    adminAnalysisPages: [
       {
-        route: '/users',
-        label: 'Moderatoren',
-        icon: 'mdi-account-multiple'
+        route: '/statistics',
+        label: 'Statistiken',
+        icon: 'mdi-finance'
       },
       {
         route: '/logs',
