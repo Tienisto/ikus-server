@@ -16,7 +16,7 @@ RUN npm run build
 WORKDIR /build
 ADD . ./
 RUN sh ./gradlew assemble
-RUN mv build/libs/ikus-*.jar /server.jar
+RUN mv build/libs/*.jar /server.jar
 RUN rm -r /build
 
 # deploy
