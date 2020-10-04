@@ -27,19 +27,19 @@ class AnalyticsScheduler (
 
     // sec - min - hour - dayOfMonth - month - dayOfWeek
     // every 00:10 each day
-    @Scheduled(cron = "0 10 0 * * *")
+    @Scheduled(cron = "0 10 0 * * *", zone = "UTC")
     fun tickDaily() {
         countGeneric(StatsType.DAILY, Period.ofDays(1)).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
     // every 00:20 each monday
-    @Scheduled(cron = "0 20 0 * * MON")
+    @Scheduled(cron = "0 20 0 * * MON", zone = "UTC")
     fun tickWeekly() {
         countGeneric(StatsType.WEEKLY, Period.ofWeeks(1)).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
     // every 00:30 each first day of month
-    @Scheduled(cron = "0 30 0 1 * *")
+    @Scheduled(cron = "0 30 0 1 * *", zone = "UTC")
     fun tickMonthly() {
         countGeneric(StatsType.MONTHLY, Period.ofMonths(1), true).subscribeOn(Schedulers.parallel()).subscribe()
     }
