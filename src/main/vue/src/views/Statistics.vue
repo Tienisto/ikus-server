@@ -5,6 +5,8 @@
       Beim Start der Welcome at OVGU - App werden Daten an dem Server gesendet, die im Anschluss anonymisiert abgespeichert werden.
       <br>
       Diese Daten sind hilfreich, damit Sie hier konkrete Zahlen zur App-Nutzung einsehen können.
+      <br>
+      Eine Einheit entspricht ein Nutzer bzw. ein Gerät.
     </template>
 
     <v-row>
