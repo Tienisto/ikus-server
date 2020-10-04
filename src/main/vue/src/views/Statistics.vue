@@ -92,9 +92,9 @@ export default {
         labels: this.stats.map((s) => {
           switch(this.mode) {
             case 'DAILY':
-              return moment(s.date).subtract(1, 'days').format('DD.MM.YYYY');
+              return moment(s.date).subtract(1, 'days').format('DD.MM.');
             case 'WEEKLY':
-              return moment(s.date).subtract(7, 'days').format('DD.MM.YYYY');
+              return moment(s.date).subtract(7, 'days').format('DD.MM.');
             case 'MONTHLY':
               return moment(s.date).subtract(1, 'month').format('MM / YYYY');
           }
