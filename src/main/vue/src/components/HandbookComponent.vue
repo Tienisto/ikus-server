@@ -1,5 +1,6 @@
 <template>
   <div>
+    <LoadingOverlay v-if="uploading" text="Hochladen..." intermediate />
     <v-card>
       <v-card-title>
         <div style="width: 100%; display: flex; align-items: center; justify-content: space-between">
@@ -63,9 +64,10 @@ import FileUpload from "@/components/FileUpload";
 import {getFileUrl, updateBookmarks, uploadHandbook} from "@/api";
 import {showSnackbar, sleep} from "@/utils";
 import SimpleTextArea from "@/components/input/SimpleTextArea";
+import LoadingOverlay from "@/components/LoadingOverlay";
 export default {
   name: 'HandbookComponent',
-  components: {SimpleTextArea, FileUpload},
+  components: {LoadingOverlay, SimpleTextArea, FileUpload},
   props: {
     title: {
       type: String,
@@ -82,12 +84,14 @@ export default {
   },
   data: () => ({
     loading: false,
+    uploading: false,
     showPdf: true,
     bookmarksRaw: ''
   }),
   methods: {
     uploadHandbook: async function(file) {
       try {
+        this.uploading = true;
         await uploadHandbook({ file, locale: this.locale });
         await this.reloadPdf();
       } catch (e) {
@@ -95,6 +99,8 @@ export default {
           showSnackbar('Nur PDF-Dateien erlaubt');
         else
           showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.uploading = false;
       }
     },
     reloadPdf: async function() {

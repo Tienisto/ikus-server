@@ -1,6 +1,7 @@
 <template>
   <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :width="700" :persistent="true">
     <template v-slot:content>
+      <LoadingOverlay v-if="uploading" :text="uploadingText" :percentage="uploadingProgress" :intermediate="uploadIntermediate" />
       <v-row>
         <v-col cols="4">
           <v-select
@@ -56,10 +57,11 @@ import LocaleSelector from "@/components/LocaleSelector";
 import RichEditor from "@/components/RichEditor";
 import ImageList from "@/components/ImageList";
 import {uploadPostFile} from "@/api";
-import {showSnackbar} from "@/utils";
+import {showSnackbar, sleep} from "@/utils";
+import LoadingOverlay from "@/components/LoadingOverlay";
 export default {
   name: 'PostDialog',
-  components: {ImageList, RichEditor, LocaleSelector, GenericDialog},
+  components: {LoadingOverlay, ImageList, RichEditor, LocaleSelector, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -93,7 +95,11 @@ export default {
     titleDe: '',
     contentEn: '',
     contentDe: '',
-    files: []
+    files: [],
+    uploading: false,
+    uploadingText: '',
+    uploadingProgress: 0,
+    uploadIntermediate: false
   }),
   methods: {
     reset: function(channel, locale) {
@@ -128,13 +134,21 @@ export default {
       }, 0);
     },
     uploadFiles: async function(files) {
-      for (const file of files) {
-        try {
-          const uploaded = await uploadPostFile({ file });
+      try {
+        this.uploading = true;
+        this.uploadIntermediate = files.length === 1;
+        for (let i = 0; i < files.length; i++) {
+          this.uploadingText = 'Hochladen (' + (i+1) + ' / ' + files.length + ')';
+          this.uploadingProgress = i / files.length;
+          const uploaded = await uploadPostFile({ file: files[i] });
           this.files.push(uploaded);
-        } catch (e) {
-          showSnackbar('Ein Fehler ist aufgetreten');
         }
+        this.uploadingProgress = 1;
+        await sleep(300);
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.uploading = false;
       }
     },
     deleteFile: async function(file) {
