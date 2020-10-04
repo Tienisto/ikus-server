@@ -9,6 +9,7 @@ import de.ovgu.ikus.repository.AppStartRepo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.time.OffsetDateTime
 
 @Service
@@ -17,16 +18,24 @@ class AnalyticsService (
         private val appStartRepo: AppStartRepo
 ) {
 
+    private val MIN_INTERVAL = Duration.ofMinutes(10)
+
     suspend fun handleAppStart(platform: Platform, deviceId: String) {
         val cached = appStartCacheRepo.findById(deviceId)
         if (cached == null) {
             // create new
-            val newCached = AppStartCache(deviceId, platform, OffsetDateTime.now())
-            newCached.setNewFlag()
-            appStartCacheRepo.save(newCached)
+            val newUser = AppStartCache(deviceId, platform, OffsetDateTime.now())
+            newUser.setNewFlag()
+            appStartCacheRepo.save(newUser)
         } else {
+
+            val now = OffsetDateTime.now()
+
+            if (Duration.between(cached.lastUpdate, now) < MIN_INTERVAL)
+                return // ignore app start if it was too recently
+
             // just update timestamp
-            cached.lastUpdate = OffsetDateTime.now()
+            cached.lastUpdate = now
             appStartCacheRepo.save(cached)
         }
     }
