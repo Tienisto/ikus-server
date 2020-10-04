@@ -9,13 +9,13 @@
 
     <v-row>
       <v-col cols="4">
-        <NumberCard label="Diesen Monat" :number="curr.month" />
+        <NumberCard label="Diesen Monat" :number="curr.month" :animation-duration="3000" />
       </v-col>
       <v-col cols="4">
-        <NumberCard label="Diese Woche" :number="curr.week" />
+        <NumberCard label="Diese Woche" :number="curr.week" :animation-duration="3000" />
       </v-col>
       <v-col cols="4">
-        <NumberCard label="Heute" :number="curr.day" />
+        <NumberCard label="Heute" :number="curr.day" :animation-duration="3000" />
       </v-col>
     </v-row>
 
