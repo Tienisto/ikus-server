@@ -10,7 +10,6 @@ import java.time.OffsetDateTime
 interface AppStartCacheRepo : CoroutineCrudRepository<AppStartCache, String> {
 
     fun findByLastUpdateAfter(timestamp: OffsetDateTime): Flow<AppStartCache>
-    suspend fun countByLastUpdateAfter(timestamp: OffsetDateTime): Int
 
     @Modifying
     @Query("DELETE FROM app_start_cache WHERE last_update < :timestamp")

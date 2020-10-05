@@ -47,10 +47,6 @@ class AnalyticsService (
                 .sortedBy { stats -> stats.date }
     }
 
-    suspend fun countActiveUsersAfter(timestamp: OffsetDateTime): Int {
-        return appStartCacheRepo.countByLastUpdateAfter(timestamp)
-    }
-
     suspend fun findAppStartCacheAfter(timestamp: OffsetDateTime): List<AppStartCache> {
         return appStartCacheRepo.findByLastUpdateAfter(timestamp).toList()
     }
