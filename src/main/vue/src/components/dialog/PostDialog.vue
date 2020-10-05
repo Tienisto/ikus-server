@@ -138,11 +138,12 @@ export default {
         this.uploading = true;
         this.uploadIntermediate = files.length === 1;
         for (let i = 0; i < files.length; i++) {
-          this.uploadingText = 'Hochladen (' + (i+1) + ' / ' + files.length + ')';
+          this.uploadingText = 'Hochladen (' + i + '/' + files.length + ')';
           this.uploadingProgress = i / files.length;
           const uploaded = await uploadPostFile({ file: files[i] });
           this.files.push(uploaded);
         }
+        this.uploadingText = 'Hochladen (' + files.length + '/' + files.length + ')';
         this.uploadingProgress = 1;
         await sleep(300);
       } catch (e) {
