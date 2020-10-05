@@ -1,16 +1,11 @@
 <template>
   <v-row>
     <v-col cols="4" v-for="f in files" :key="f.id">
-      <div style="position: relative; height: 150px">
-        <div style="position: absolute; top: 0; right: 0; z-index: 2">
-          <v-btn color="white" small @click="$emit('delete', f)" tile>
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </div>
-        <div style="position: absolute; top: 0; right: 0">
-          <v-img :src="fileUrl(f)" height="150" width="180" />
-        </div>
-      </div>
+      <ImageWithButton :src="fileUrl(f)" :width="180" :height="150">
+        <v-btn color="white" small @click="$emit('delete', f)" tile>
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </ImageWithButton>
     </v-col>
     <v-col cols="4">
       <div style="height: 100%; display: flex; align-items: center;" :style="files.length !== 0 ? { 'justify-content': 'center' } : {}">
@@ -27,10 +22,11 @@
 <script>
 import FileUpload from "@/components/FileUpload";
 import {getFileUrl} from "@/api";
+import ImageWithButton from "@/components/ImageWithButton";
 
 export default {
   name: 'ImageList',
-  components: {FileUpload},
+  components: {ImageWithButton, FileUpload},
   props: {
     files: {
       type: Array,

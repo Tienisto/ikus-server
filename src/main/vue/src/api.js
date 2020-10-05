@@ -456,6 +456,24 @@ export async function moveDownContact({ id }) {
     });
 }
 
+export async function setContactFile({ contactId, file }) {
+    return await makeRequest({
+        route: 'contacts/file',
+        method: 'PUT',
+        body: { file },
+        params: { contactId },
+        useJSON: false
+    });
+}
+
+export async function deleteContactFile({ contactId }) {
+    return await makeRequest({
+        route: 'contacts/file',
+        method: 'DELETE',
+        params: { contactId }
+    });
+}
+
 export async function deleteContact({ id }) {
     return await makeRequest({
         route: 'contacts',

@@ -2,11 +2,30 @@
   <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :persistent="true">
     <template v-slot:content>
       <v-row>
-        <v-col cols="6">
-          <v-text-field v-model="nameEn" label="Name (englisch)" prepend-icon="mdi-account-circle" :disabled="loading" hide-details />
+        <v-col cols="8">
+          <v-text-field v-model="nameEn" label="Name (englisch)" prepend-icon="mdi-account-circle" :disabled="loading" />
+          <v-text-field v-model="nameDe" label="Name (deutsch)" prepend-icon=" " :disabled="loading" />
         </v-col>
-        <v-col cols="6">
-          <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading" hide-details />
+        <v-col cols="4">
+          <v-card class="secondary" style="height: 100%">
+            <v-card-text class="pa-1" style="height: 100%">
+              <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
+
+                <ImageWithButton v-if="fileSrc" :src="fileSrc" :width="125" :height="125" style="width: 100%">
+                  <v-btn v-if="!loading" color="white" small @click="removeFile" tile>
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </ImageWithButton>
+
+                <FileUpload v-else v-slot:default="{ upload }" @select="setFile">
+                  <v-btn @click="upload" color="primary" fab>
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </FileUpload>
+
+              </div>
+            </v-card-text>
+          </v-card>
         </v-col>
         <v-col cols="12">
           <v-textarea v-model="place" label="Adresse" prepend-icon="mdi-map-marker" :disabled="loading" auto-grow solo hide-details />
@@ -39,12 +58,15 @@
 </template>
 
 <script>
+import {getFileUrl} from "@/api";
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/dialog/GenericDialog";
+import FileUpload from "@/components/FileUpload";
+import ImageWithButton from "@/components/ImageWithButton";
 
 export default {
   name: 'ContactDialog',
-  components: {GenericDialog},
+  components: {ImageWithButton, FileUpload, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -66,7 +88,11 @@ export default {
     email: '',
     phoneNumber: '',
     openingHoursEn: '',
-    openingHoursDe: ''
+    openingHoursDe: '',
+    file: null, // file of dto
+    fileSrc: null, // file which will be displayed
+    uploadingFile: null, // file which will be uploaded in submit
+    deletingFile: false // delete file when submit
   }),
   methods: {
     reset: function() {
@@ -78,6 +104,10 @@ export default {
       this.phoneNumber = '';
       this.openingHoursEn = '';
       this.openingHoursDe = '';
+      this.file = null;
+      this.fileSrc = null;
+      this.uploadingFile = null;
+      this.deletingFile = false;
     },
     load: function(contact) {
       // apply
@@ -88,6 +118,30 @@ export default {
       this.phoneNumber = contact.phoneNumber;
       this.openingHoursEn = contact.openingHours ? contact.openingHours.en : '';
       this.openingHoursDe = contact.openingHours ? contact.openingHours.de : '';
+      this.file = contact.file;
+      if (this.file) {
+        this.fileSrc = getFileUrl(this.file) + '#' + new Date().getTime();
+      }
+    },
+    setFile: function(file) {
+      this.uploadingFile = file;
+      this.deletingFile = false;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.fileSrc = e.target.result;
+      }
+
+      return reader.readAsDataURL(file); // convert to base64 string
+    },
+    removeFile: function() {
+      this.fileSrc = null;
+      if (this.uploadingFile) {
+        // just remove cache
+        this.uploadingFile = null;
+      } else {
+        // delete file when submit
+        this.deletingFile = true;
+      }
     },
     submit: async function() {
 
@@ -107,6 +161,9 @@ export default {
         email: this.email,
         phoneNumber: this.phoneNumber,
         openingHours: { en: this.openingHoursEn, de: this.openingHoursDe }
+      }, {
+        uploadingFile: this.uploadingFile,
+        deletingFile: this.deletingFile
       });
     }
   },

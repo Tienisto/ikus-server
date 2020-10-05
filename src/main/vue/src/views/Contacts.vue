@@ -66,6 +66,15 @@
           </v-card-title>
 
           <v-card-text>
+
+            <div v-if="c.file" class="mb-4" style="display: inline-block">
+              <v-card class="secondary">
+                <v-card-text class="pa-2">
+                  <v-img v-if="c.file" :src="fileUrl(c.file)" :width="100" :height="100" />
+                </v-card-text>
+              </v-card>
+            </div>
+
             <table>
               <colgroup>
                 <col style="width: 40px;">
@@ -144,12 +153,10 @@
 
 <script>
 import {
-  createContact,
-  updateContact,
-  deleteContact,
   getContacts,
-  moveUpContact,
-  moveDownContact
+  createContact, updateContact, deleteContact,
+  moveUpContact, moveDownContact,
+  setContactFile, deleteContactFile, getFileUrl
 } from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
@@ -196,16 +203,17 @@ export default {
       this.selectedContact = contact;
       this.dialogDelete = true;
     },
-    submitContact: async function(contact) {
+    submitContact: async function(contact, options) {
       if (this.dialogUpdating)
-        await this.updateContact(contact);
+        await this.updateContact(contact, options);
       else
-        await this.createContact(contact);
+        await this.createContact(contact, options);
     },
-    createContact: async function(contact) {
+    createContact: async function(contact, options) {
       try {
         this.loading = true;
-        await createContact(contact);
+        const savedContact = await createContact(contact);
+        await this.handleOptions(savedContact.id, options);
         this.dialogContact = false;
         await this.fetchData();
       } catch (e) {
@@ -214,19 +222,27 @@ export default {
         this.loading = false;
       }
     },
-    updateContact: async function(contact) {
+    updateContact: async function(contact, options) {
       try {
         this.loading = true;
         await updateContact({
           id: this.selectedContact.id,
           ...contact
         });
+        await this.handleOptions(this.selectedContact.id, options);
         this.dialogContact = false;
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');
       } finally {
         this.loading = false;
+      }
+    },
+    handleOptions: async function(contactId, options) {
+      if (options.uploadingFile) {
+        await setContactFile({ contactId, file: options.uploadingFile });
+      } else if (options.deletingFile) {
+        await deleteContactFile({ contactId });
       }
     },
     moveUpContact: async function(contact) {
@@ -272,6 +288,9 @@ export default {
       return (contact) => {
         return contact.place.replaceAll('\n','<br>');
       }
+    },
+    fileUrl: function() {
+      return (file) => getFileUrl(file) + '#' + new Date().getTime();
     }
   },
   mounted: async function() {

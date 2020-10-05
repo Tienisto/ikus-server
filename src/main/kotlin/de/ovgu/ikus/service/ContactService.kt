@@ -31,7 +31,11 @@ class ContactService(
         contactRepo.saveAll(files).collect()
     }
 
+    /**
+     * delete the contact and also deletes the image if it exists
+     */
     suspend fun delete(contact: Contact) {
+        deleteFile(contact)
         contactRepo.delete(contact)
     }
 
