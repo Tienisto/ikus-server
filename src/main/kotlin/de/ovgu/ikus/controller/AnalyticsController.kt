@@ -40,9 +40,12 @@ class AnalyticsController (
                 .atStartOfDay(ZoneOffset.UTC)
                 .toOffsetDateTime()
 
-        val countMonthly = analyticsService.countActiveUsersAfter(monthStartTime)
-        val countWeekly = analyticsService.countActiveUsersAfter(weekStartTime)
-        val countDaily = analyticsService.countActiveUsersAfter(dayStartTime)
+        val starts = analyticsService.findAppStartCacheAfter(minOf(monthStartTime, weekStartTime))
+        val weeklyStarts = starts.filter { start -> start.lastUpdate > weekStartTime }
+
+        val countMonthly = starts.count { start -> start.lastUpdate > monthStartTime }
+        val countWeekly = weeklyStarts.size
+        val countDaily = weeklyStarts.count { start -> start.lastUpdate > dayStartTime }
         return CurrentAppStarts(countMonthly, countWeekly, countDaily)
     }
 }

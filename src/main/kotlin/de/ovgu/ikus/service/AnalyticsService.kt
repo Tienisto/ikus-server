@@ -51,6 +51,18 @@ class AnalyticsService (
         return appStartCacheRepo.countByLastUpdateAfter(timestamp)
     }
 
+    suspend fun findAppStartCacheAfter(timestamp: OffsetDateTime): List<AppStartCache> {
+        return appStartCacheRepo.findByLastUpdateAfter(timestamp).toList()
+    }
+
+    suspend fun deleteAppStartCacheOlderThan(timestamp: OffsetDateTime) {
+        appStartCacheRepo.deleteOlderThan(timestamp)
+    }
+
+    suspend fun saveAppStart(appStart: AppStart) {
+        appStartRepo.save(appStart)
+    }
+
     // dummy only
     suspend fun saveAllAppStartCaches(starts: List<AppStartCache>) {
         appStartCacheRepo.saveAll(starts).collect()

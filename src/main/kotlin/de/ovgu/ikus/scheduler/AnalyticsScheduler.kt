@@ -3,9 +3,7 @@ package de.ovgu.ikus.scheduler
 import de.ovgu.ikus.model.AppStart
 import de.ovgu.ikus.model.Platform
 import de.ovgu.ikus.model.StatsType
-import de.ovgu.ikus.repository.AppStartCacheRepo
-import de.ovgu.ikus.repository.AppStartRepo
-import kotlinx.coroutines.flow.toList
+import de.ovgu.ikus.service.AnalyticsService
 import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -19,8 +17,7 @@ import java.time.temporal.TemporalAmount
 
 @Component
 class AnalyticsScheduler (
-        private val appStartCacheRepo: AppStartCacheRepo,
-        private val appStartRepo: AppStartRepo
+        private val analyticsService: AnalyticsService
 ) {
 
     private val logger = LoggerFactory.getLogger(AnalyticsScheduler::class.java)
@@ -48,7 +45,7 @@ class AnalyticsScheduler (
         return mono {
             logger.info("Start counting.")
 
-            val appStarts = appStartCacheRepo.findByLastUpdateAfter(OffsetDateTime.now().minus(time)).toList()
+            val appStarts = analyticsService.findAppStartCacheAfter(OffsetDateTime.now().minus(time))
 
             val android = appStarts.count { start -> start.platform == Platform.ANDROID }
             val ios = appStarts.size - android
@@ -60,11 +57,11 @@ class AnalyticsScheduler (
                     ios = ios
             )
 
-            appStartRepo.save(stats)
+            analyticsService.saveAppStart(stats)
             logger.info(stats.toString())
 
             if (clearUsers) {
-                val deleteCount = appStartCacheRepo.deleteOlderThan(OffsetDateTime.now().minusDays(60))
+                val deleteCount = analyticsService.deleteAppStartCacheOlderThan(OffsetDateTime.now().minusDays(60))
                 logger.info("Deleted inactive users: $deleteCount")
             }
         }
