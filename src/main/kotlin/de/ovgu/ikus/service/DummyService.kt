@@ -6,10 +6,7 @@ import de.ovgu.ikus.utils.toPostType
 import org.springframework.data.geo.Point
 import org.springframework.stereotype.Service
 import java.time.*
-import kotlin.math.absoluteValue
-import kotlin.math.cos
-import kotlin.math.roundToInt
-import kotlin.math.sin
+import kotlin.math.*
 import kotlin.random.Random
 
 @Service
@@ -165,7 +162,6 @@ class DummyService (
         currDate = LocalDate.now().minusDays(Constants.analyticsDays + 2L)
         val days = List(Constants.analyticsDays) { index ->
             currDate = currDate.plusDays(1)
-            println(currDate)
             AppStart(
                     type = StatsType.DAILY,
                     date = currDate,
@@ -256,10 +252,10 @@ private object Constants {
     const val analyticsWeeks = 100
     const val analyticsDays = 600
 
-    val androidFunction = { x: Int -> (x * cos(x.toDouble() * 0.5) + analyticsSpread()).roundToInt().absoluteValue }
-    val iosFunction = { x: Int -> (x/2 * sin(x.toDouble() * 0.5) + analyticsSpread()).roundToInt().absoluteValue }
-    val analyticsSpread = { 0.8 + Random.nextDouble(0.4) } // returns 0.8 - 1.2
-    const val monthFactor = 1.0
-    const val weekFactor = 0.6
-    const val dayFactor = 0.2
+    val androidFunction = { x: Int -> ((x.toDouble().pow(1.5) + x * cos(x.toDouble() * 0.5)) * analyticsSpread()).roundToInt().absoluteValue }
+    val iosFunction = { x: Int -> ((0.5 * x.toDouble().pow(1.5) + x * sin(x.toDouble() * 0.5)) * analyticsSpread()).roundToInt().absoluteValue }
+    val analyticsSpread = { 0.7 + Random.nextDouble(0.6) } // returns 0.8 - 1.2
+    const val monthFactor = 30.0
+    const val weekFactor = 0.5
+    const val dayFactor = 0.01
 }
