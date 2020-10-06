@@ -132,7 +132,7 @@ class DummyService (
     suspend fun createAppStarts() {
         val now = OffsetDateTime.now()
         val users = List(Constants.userCount) { index ->
-            AppStartCache("User $index", Platform.values().random(), now.minusDays(Random.nextInt(30).toLong()))
+            AppStartCache("User $index", Platform.values().random(), now.minusDays(Random.nextInt(15).toLong()))
         }.onEach { start -> start.setNewFlag() }
 
         analyticsService.saveAllAppStartCaches(users)
@@ -247,7 +247,7 @@ private object Constants {
             Contact(name = "IKUS", nameDe = "IKUS", email = "ikus@ovgu.de", phoneNumber = "+49 (0)391 - 67 515 75", place = "InterKultiTreff\nWalther-Rathenau-Straße 19\n39106 Magdeburg", openingHours = "Mon 15-17, Thu 17-19", openingHoursDe = "Mo. 15-17, Do. 17-19", position = 1)
     )
 
-    const val userCount = 300
+    const val userCount = 6000
     const val analyticsMonths = 24
     const val analyticsWeeks = 100
     const val analyticsDays = 600

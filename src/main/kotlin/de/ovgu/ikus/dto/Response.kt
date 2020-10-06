@@ -40,7 +40,7 @@ data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleStrin
 
 // analytics
 data class AppStartDto(val date: String, val android: Int, val ios: Int)
-data class CurrentAppStarts(val month: Int, val week: Int, val day: Int)
+data class CurrentAppStarts(val month: Long, val week: Long, val day: Long)
 
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)

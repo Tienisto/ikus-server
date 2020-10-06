@@ -1,9 +1,11 @@
 package de.ovgu.ikus.service
 
+import de.ovgu.ikus.dto.CurrentAppStarts
 import de.ovgu.ikus.model.AppStart
 import de.ovgu.ikus.model.AppStartCache
 import de.ovgu.ikus.model.Platform
 import de.ovgu.ikus.model.StatsType
+import de.ovgu.ikus.repository.AppStartCacheCountRepo
 import de.ovgu.ikus.repository.AppStartCacheRepo
 import de.ovgu.ikus.repository.AppStartRepo
 import kotlinx.coroutines.flow.collect
@@ -14,6 +16,7 @@ import java.time.OffsetDateTime
 
 @Service
 class AnalyticsService (
+        private val appStartCacheCountRepo: AppStartCacheCountRepo,
         private val appStartCacheRepo: AppStartCacheRepo,
         private val appStartRepo: AppStartRepo
 ) {
@@ -49,6 +52,10 @@ class AnalyticsService (
 
     suspend fun findAppStartCacheAfter(timestamp: OffsetDateTime): List<AppStartCache> {
         return appStartCacheRepo.findByLastUpdateAfter(timestamp).toList()
+    }
+
+    suspend fun countAppStartCache(monthStart: OffsetDateTime, weekStart: OffsetDateTime, dayStart: OffsetDateTime): CurrentAppStarts {
+        return appStartCacheCountRepo.count(monthStart, weekStart, dayStart)
     }
 
     suspend fun deleteAppStartCacheOlderThan(timestamp: OffsetDateTime) {
