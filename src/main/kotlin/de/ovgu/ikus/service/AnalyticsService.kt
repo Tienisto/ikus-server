@@ -18,7 +18,7 @@ class AnalyticsService (
         private val appStartRepo: AppStartRepo
 ) {
 
-    private val MIN_INTERVAL = Duration.ofMinutes(10)
+    private val MIN_INTERVAL = Duration.ofHours(1)
 
     suspend fun handleAppStart(platform: Platform, deviceId: String) {
         val cached = appStartCacheRepo.findById(deviceId)
