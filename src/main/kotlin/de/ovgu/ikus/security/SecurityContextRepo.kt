@@ -20,7 +20,6 @@ class SecurityContextRepo (
     override fun load(exchange: ServerWebExchange): Mono<SecurityContext> {
         val token = exchange.request.cookies["jwt"]?.firstOrNull()?.value
         if(token != null) {
-            // TODO: this mono is called twice
             return mono {
                 val auth = jwtService.getAuthentication(token)
                 if (auth != null)
