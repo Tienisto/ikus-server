@@ -20,6 +20,7 @@ class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : We
                 .httpBasic().disable()
                 .formLogin().disable()
                 .headers().frameOptions().mode(XFrameOptionsServerHttpHeadersWriter.Mode.SAMEORIGIN) // e.g. embed pdf
+                .cache().disable()
                 .and()
                 .authorizeExchange()
                 .pathMatchers("/api/login", "/api/version", "/api/status", "/api/public/**").permitAll()

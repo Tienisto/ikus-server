@@ -6,6 +6,7 @@ import de.ovgu.ikus.utils.getMime
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpStatus
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebExchange
@@ -71,10 +72,21 @@ class FileService (
         }
     }
 
-    fun loadFile(path: String, download: Boolean, webExchange: ServerWebExchange): FileSystemResource {
+    fun loadFile(path: String, download: Boolean, webExchange: ServerWebExchange): FileSystemResource? {
         val resource = FileSystemResource(propsStorage.path + "/" + normalize(path))
         if (!resource.exists())
             throw ErrorCode(404, "File not found")
+
+        val clientLastModified = webExchange.request.headers.ifModifiedSince
+        if (clientLastModified != -1L) {
+            // client has given If-Modified-Since, so lets check
+            val resourceLastModified = (resource.lastModified() / 1000) * 1000 // ignore millis
+            if (resourceLastModified <= clientLastModified) {
+                webExchange.response.statusCode = HttpStatus.NOT_MODIFIED
+                webExchange.response.headers.setDate("Last-Modified", resourceLastModified)
+                return null
+            }
+        }
 
         webExchange.response.headers["Content-Type"] = getMime(path)
         webExchange.response.headers["Content-Disposition"] = if (download) "attachment" else "inline"

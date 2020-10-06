@@ -30,7 +30,7 @@ class PublicController(
 ) {
 
     @GetMapping("/file/{folder}/{name}")
-    fun getImage(@PathVariable folder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource {
+    fun getImage(@PathVariable folder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource? {
         return fileService.loadFile("$folder/$name", download == true, webExchange)
     }
 
