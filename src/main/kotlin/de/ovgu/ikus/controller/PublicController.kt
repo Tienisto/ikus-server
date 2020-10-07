@@ -153,6 +153,6 @@ class PublicController(
         if (request.platform == null || request.deviceId == null)
             return
 
-        analyticsService.handleAppStart(request.platform, request.deviceId)
+        analyticsService.saveAppStartCache(request.platform, request.deviceId)
     }
 }
