@@ -17,4 +17,5 @@ data class Post(@Id var id: Int = 0,
                 var titleDe: String = "",
                 var content: String = "",
                 var contentDe: String = "",
-                var position: Int = 0)
+                var position: Int = 0,
+                var pinned: Boolean = false)
