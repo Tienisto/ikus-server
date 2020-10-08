@@ -424,19 +424,19 @@ export async function getContacts() {
     });
 }
 
-export async function createContact({ name, email, phoneNumber, place, openingHours }) {
+export async function createContact({ name, email, phoneNumber, place, openingHours, links }) {
     return await makeRequest({
         route: 'contacts',
         method: 'POST',
-        body: { name, email, phoneNumber, place, openingHours }
+        body: { name, email, phoneNumber, place, openingHours, links }
     });
 }
 
-export async function updateContact({ id, name, email, phoneNumber, place, openingHours }) {
+export async function updateContact({ id, name, email, phoneNumber, place, openingHours, links }) {
     return await makeRequest({
         route: 'contacts',
         method: 'PUT',
-        body: { id, name, email, phoneNumber, place, openingHours }
+        body: { id, name, email, phoneNumber, place, openingHours, links }
     });
 }
 

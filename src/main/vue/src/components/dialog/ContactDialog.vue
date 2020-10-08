@@ -28,7 +28,7 @@
           </v-card>
         </v-col>
         <v-col cols="12">
-          <v-textarea v-model="place" label="Adresse" prepend-icon="mdi-map-marker" :disabled="loading" auto-grow solo hide-details />
+          <v-textarea v-model="place" label="Adresse" prepend-icon="mdi-map-marker" :disabled="loading" outlined auto-grow hide-details />
         </v-col>
         <v-col cols="6">
           <v-text-field v-model="email" label="E-Mail" prepend-icon="mdi-email" :disabled="loading" hide-details />
@@ -41,6 +41,9 @@
         </v-col>
         <v-col cols="6">
           <v-text-field v-model="openingHoursDe" label="Öffnungszeiten (de)" :disabled="loading" hide-details />
+        </v-col>
+        <v-col cols="12" class="input--links">
+          <v-textarea v-model="linksText" label="Links" hint="1 Zeile = 1 Link" prepend-icon="mdi-web" :disabled="loading" outlined />
         </v-col>
       </v-row>
     </template>
@@ -89,6 +92,8 @@ export default {
     phoneNumber: '',
     openingHoursEn: '',
     openingHoursDe: '',
+    links: [],
+    linksText: '',
     file: null, // file of dto
     fileSrc: null, // file which will be displayed
     uploadingFile: null, // file which will be uploaded in submit
@@ -104,6 +109,8 @@ export default {
       this.phoneNumber = '';
       this.openingHoursEn = '';
       this.openingHoursDe = '';
+      this.links = [];
+      this.linksText = '';
       this.file = null;
       this.fileSrc = null;
       this.uploadingFile = null;
@@ -118,6 +125,8 @@ export default {
       this.phoneNumber = contact.phoneNumber;
       this.openingHoursEn = contact.openingHours ? contact.openingHours.en : '';
       this.openingHoursDe = contact.openingHours ? contact.openingHours.de : '';
+      this.links = contact.links;
+      this.linksText = contact.links.join('\n');
       this.file = contact.file;
       if (this.file) {
         this.fileSrc = getFileUrl(this.file) + '#' + new Date().getTime();
@@ -160,7 +169,8 @@ export default {
         place: this.place,
         email: this.email,
         phoneNumber: this.phoneNumber,
-        openingHours: { en: this.openingHoursEn, de: this.openingHoursDe }
+        openingHours: { en: this.openingHoursEn, de: this.openingHoursDe },
+        links: this.linksText.split('\n')
       }, {
         uploadingFile: this.uploadingFile,
         deletingFile: this.deletingFile
@@ -180,3 +190,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .input--links >>> textarea {
+    white-space: pre;
+    overflow: auto;
+  }
+</style>

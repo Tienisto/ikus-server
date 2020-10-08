@@ -115,6 +115,17 @@
                     {{ localized(c.openingHours) }}
                   </td>
                 </tr>
+
+                <tr v-if="c.links.length !== 0">
+                  <td>
+                    <v-icon>mdi-web</v-icon>
+                  </td>
+                  <td>
+                    <div v-for="(l, index) in c.links" :key="'l' + index">
+                      <a :href="l" target="_blank" style="text-decoration: none">{{ l }}</a>
+                    </div>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </v-card-text>
