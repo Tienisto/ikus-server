@@ -43,6 +43,7 @@ class ContactController (
                 email = request.email?.trimOrNull(), phoneNumber = request.phoneNumber?.trimOrNull(), place = request.place?.trimOrNull(),
                 name = request.name.en.trim(), nameDe = request.name.de.trim(),
                 openingHours = request.openingHours?.en?.trimOrNull(), openingHoursDe = request.openingHours?.de?.trimOrNull(),
+                links = request.links.mapNotNull { link -> link.trimOrNull() },
                 position = maxPosition + 1
         )
 
@@ -65,6 +66,7 @@ class ContactController (
         contact.nameDe = request.name.de.trim()
         contact.openingHours = request.openingHours?.en?.trimOrNull()
         contact.openingHoursDe = request.openingHours?.de?.trimOrNull()
+        contact.links = request.links.mapNotNull { link -> link.trimOrNull() }
 
         contactService.save(contact)
         logService.log(LogType.UPDATE_CONTACT, authentication.toUser(), "${contact.name} (${contact.nameDe})")
@@ -98,7 +100,7 @@ class ContactController (
     }
 
     @DeleteMapping
-    suspend fun deletePost(authentication: Authentication, @RequestBody request: Request.Id) {
+    suspend fun deleteContact(authentication: Authentication, @RequestBody request: Request.Id) {
         val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
         contactService.delete(contact)
         logService.log(LogType.DELETE_CONTACT, authentication.toUser(), "${contact.name} (${contact.nameDe})")

@@ -36,7 +36,7 @@ data class LinkGroupDto(val channel: ChannelDto, val links: List<LinkDto>)
 data class HandbookBookmarkDto(val page: Int, val name: String)
 
 // contacts
-data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?)
+data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?, val links: List<String>)
 
 // analytics
 data class AppStartDto(val date: String, val android: Int, val ios: Int)
@@ -47,7 +47,7 @@ data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
 data class LocalizedLinkDto(val id: Int, val channel: LocalizedChannelDto, val url: String, val info: String)
-data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?)
+data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?, val links: List<String>)
 data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
 data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
 data class LocalizedMenuInfoDto(val name: Mensa, val menus: List<LocalizedMenuDto>) // as array
