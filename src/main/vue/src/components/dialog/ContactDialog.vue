@@ -43,7 +43,7 @@
           <v-text-field v-model="openingHoursDe" label="Öffnungszeiten (de)" :disabled="loading" hide-details />
         </v-col>
         <v-col cols="12" class="input--links">
-          <v-textarea v-model="linksText" label="Links" hint="1 Zeile = 1 Link" prepend-icon="mdi-web" :disabled="loading" outlined />
+          <v-textarea v-model="linksText" label="Links" placeholder="https://example.com" hint="1 Zeile = 1 Link" prepend-icon="mdi-web" :rows="2" :disabled="loading" outlined />
         </v-col>
       </v-row>
     </template>
