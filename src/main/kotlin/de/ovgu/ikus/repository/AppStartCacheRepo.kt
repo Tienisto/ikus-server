@@ -21,7 +21,7 @@ class AppStartCacheRepo(
 
     suspend fun findAfter(timestamp: OffsetDateTime): List<AppStartCache> {
         return client.sql("SELECT * FROM app_start_cache WHERE last_update > :timestamp")
-                .bind("last_update", timestamp)
+                .bind("timestamp", timestamp)
                 .fetch()
                 .all()
                 .cast<AppStartCache>()
