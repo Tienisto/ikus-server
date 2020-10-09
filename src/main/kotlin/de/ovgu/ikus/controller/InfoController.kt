@@ -4,10 +4,7 @@ import de.ovgu.ikus.BuildInfo
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.PostType
-import de.ovgu.ikus.properties.AdminProperties
-import de.ovgu.ikus.properties.DBProperties
-import de.ovgu.ikus.properties.JwtProperties
-import de.ovgu.ikus.properties.StorageProperties
+import de.ovgu.ikus.properties.*
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
@@ -25,6 +22,7 @@ class InfoController (
         private val propsAdmin: AdminProperties,
         private val propsJwt: JwtProperties,
         private val propsStorage: StorageProperties,
+        private val propsRoutes: RoutesProperties,
         private val logService: LogService,
         private val postService: PostService,
         private val postFileService: PostFileService,
@@ -60,7 +58,8 @@ class InfoController (
                         EnvDto("admin.password", "Passwort des Admin-Accounts", BuildInfo.DEFAULT_PROPS["admin.password"] as String, "*********"),
                         EnvDto("jwt.website", "Privatschlüssel für die Webseite", BuildInfo.DEFAULT_PROPS["jwt.website"] as String, "*********"),
                         EnvDto("jwt.app", "Privatschlüssel für die App", BuildInfo.DEFAULT_PROPS["jwt.app"] as String, "*********"),
-                        EnvDto("jwt.timeout", "Lebensdauer des JWT in Millisekunden", BuildInfo.DEFAULT_PROPS["jwt.timeout"] as String, propsJwt.timeout.toString())
+                        EnvDto("jwt.timeout", "Lebensdauer des JWT in Millisekunden", BuildInfo.DEFAULT_PROPS["jwt.timeout"] as String, propsJwt.timeout.toString()),
+                        EnvDto("routes.dev", "Dev API erlauben", BuildInfo.DEFAULT_PROPS["routes.dev"] as String, propsRoutes.dev.toString())
                 )
             }
             else -> null
