@@ -1,5 +1,6 @@
 package de.ovgu.ikus.security
 
+import de.ovgu.ikus.properties.RoutesProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -11,7 +12,10 @@ import reactor.core.publisher.Mono
 
 
 @EnableWebFluxSecurity
-class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : WebFluxConfigurer {
+class SecurityConfig (
+        private val routesProps: RoutesProperties,
+        private val securityContextRepo: SecurityContextRepo
+) : WebFluxConfigurer {
 
     @Bean
     fun securityWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
@@ -23,9 +27,13 @@ class SecurityConfig (private val securityContextRepo: SecurityContextRepo) : We
                 .cache().disable()
                 .and()
                 .authorizeExchange()
-                .pathMatchers("/api/login", "/api/version", "/api/status", "/api/public/**").permitAll()
-                .pathMatchers("/api/**").authenticated()
-                .pathMatchers("/**").permitAll()
+                .apply {
+                    if (!routesProps.dev)
+                        pathMatchers("/api/dev/**").denyAll() // dev API
+                }
+                .pathMatchers("/api/login", "/api/version", "/api/status", "/api/public/**").permitAll() // public API
+                .pathMatchers("/api/**").authenticated() // internal API
+                .pathMatchers("/**").permitAll() // static files
                 .and()
                 .securityContextRepository(securityContextRepo)
                 .exceptionHandling().authenticationEntryPoint { exchange, _ ->

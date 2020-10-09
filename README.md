@@ -21,7 +21,7 @@ Let's run this server on your (local) machine.
 
 Rename if you set it via (docker) environment variables. E.g. `storage.path` will be `STORAGE_PATH`.
 
-Otherwise, leave the keys as is: `java -jar ikus-0.9.0.jar --storage.path="/my/path"`
+Otherwise, leave the keys as is: `java -jar server.jar --storage.path="/my/path"`
 
 Key|Description|Default
 ---|---|---
@@ -32,3 +32,4 @@ Key|Description|Default
 `admin.password`|Password of the admin account|`123`
 `jwt.website`|JWT private key for server-website communication|`the jwt private key which is longer than 255 bits`
 `jwt.app`|JWT private key for server-app communication|`the jwt private key which is longer than 255 bits`
+`routes.dev`|Allow dev routes|`false`
