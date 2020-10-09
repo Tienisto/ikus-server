@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :width="550" :persistent="true">
+  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :persistent="true">
     <template v-slot:content>
 
       <v-row>
@@ -26,7 +26,7 @@
         </v-card-text>
       </v-card>
 
-      <v-row class="mt-2">
+      <v-row class="mt-4">
         <v-col cols="5">
           <DatePicker v-model="date" label="Datum*" icon="mdi-calendar"/>
         </v-col>
@@ -48,9 +48,7 @@
         </v-col>
       </v-row>
 
-      <br>
-
-      <v-btn v-if="updating" @click="$emit('delete')" color="primary" :disabled="loading" text>
+      <v-btn v-if="updating" @click="$emit('delete')" class="mt-4" color="primary" :disabled="loading" text>
         <v-icon left>mdi-delete</v-icon>
         Event Löschen
       </v-btn>

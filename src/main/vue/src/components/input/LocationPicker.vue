@@ -1,5 +1,5 @@
 <template>
-  <v-dialog ref="dialog" v-model="dialog" width="570px">
+  <v-dialog ref="dialog" v-model="dialog" width="550px">
     <template v-slot:activator="{ on, attrs }">
       <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly
                     :append-icon="valueExisting ? 'mdi-delete' : null"
