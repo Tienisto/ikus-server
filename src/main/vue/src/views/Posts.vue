@@ -69,7 +69,7 @@
       </v-card-text>
     </v-card>
 
-    <PostListDialog v-model="dialogPinnedList" title="Angepinnte Beiträge" info="Sie können wichtige Beiträge anpinnen, so dass diese ganz oben angezeigt werden. Die Anzahl sollte nicht größer als 2-3 sein."
+    <PostListDialog v-model="dialogPinnedList" title="Angepinnte Beiträge" info="Sie können wichtige Beiträge anpinnen, so dass diese ganz oben angezeigt werden. Es sollten nicht mehr als 2 sein."
                     :posts="pinned" :loading="loading"
                     @delete="togglePin"/>
 
