@@ -3,7 +3,7 @@
 
     <v-card style="display: inline-block">
       <v-card-title>
-        Welcome at OVGU
+        Welcome to OVGU
       </v-card-title>
       <v-card-text class="text-body-2">
         <br>
@@ -21,7 +21,7 @@
         E-Mail: anne-katrin.behnert@ovgu.de
         <br><br>
         <p class="font-weight-bold">Verarbeitetende Daten</p>
-        Die Welcome at OVGU - App sammelt, speichert oder verteilt keinerlei persönliche Informationen.
+        Die Welcome to OVGU - App sammelt, speichert oder verteilt keinerlei persönliche Informationen.
       </v-card-text>
     </v-card>
 

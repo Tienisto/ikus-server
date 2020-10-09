@@ -2,7 +2,7 @@
   <MainContainer title="Statistiken" icon="mdi-finance">
 
     <template v-slot:intro>
-      Beim Start der Welcome at OVGU - App werden Daten an dem Server gesendet, die im Anschluss anonymisiert abgespeichert werden.
+      Beim Start der Welcome to OVGU - App werden Daten an dem Server gesendet, die im Anschluss anonymisiert abgespeichert werden.
       <br>
       Diese Daten sind hilfreich, damit Sie hier konkrete Zahlen zur App-Nutzung einsehen können.
       <br>

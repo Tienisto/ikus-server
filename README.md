@@ -1,5 +1,5 @@
-# Welcome at OVGU
-The server for the Welcome at OVGU app written in Vue and Spring
+# Welcome to OVGU
+The server for the Welcome to OVGU app written in Vue and Spring
 
 ## Getting Started
 
