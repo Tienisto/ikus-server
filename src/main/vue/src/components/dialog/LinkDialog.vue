@@ -13,19 +13,19 @@
         </v-col>
         <v-col cols="6"></v-col>
         <v-col cols="6">
-          <v-text-field v-model="infoEn" label="Beschreibung (englisch)" :disabled="loading" hide-details />
+          <v-text-field v-model="infoEn" label="Beschreibung (EN)" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="infoDe" label="Beschreibung (deutsch)" :disabled="loading" hide-details />
+          <v-text-field v-model="infoDe" label="Beschreibung (DE)" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="12">
-          <v-text-field v-model="urlEn" :label="urlEnLabel" placeholder="https://example.com" :disabled="loading" hide-details />
+          <v-text-field v-model="urlEn" :label="urlEnLabel" placeholder="https://example.com" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="12">
           <v-checkbox v-model="sameUrl" label="deutsche Seite = englische Seite" :disabled="loading" hide-details />
         </v-col>
         <v-col cols="12">
-          <v-text-field v-show="!sameUrl" v-model="urlDe" label="Adresse (deutsch)" placeholder="https://example.com" :disabled="loading || sameUrl" />
+          <v-text-field v-show="!sameUrl" v-model="urlDe" label="Adresse (DE)" placeholder="https://example.com" filled :disabled="loading || sameUrl" hide-details />
         </v-col>
       </v-row>
     </template>
@@ -136,7 +136,7 @@ export default {
       return this.updating ? 'Link bearbeiten' : 'Neuer Link';
     },
     urlEnLabel: function() {
-      return this.sameUrl ? 'Adresse' : 'Adresse (englisch)';
+      return this.sameUrl ? 'Adresse' : 'Adresse (EN)';
     },
     submitText: function() {
       return this.updating ? 'Speichern' : 'Erstellen';

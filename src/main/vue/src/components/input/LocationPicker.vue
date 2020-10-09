@@ -1,9 +1,9 @@
 <template>
-  <v-dialog ref="dialog" v-model="dialog" width="550px">
+  <v-dialog ref="dialog" v-model="dialog" width="570px">
     <template v-slot:activator="{ on, attrs }">
       <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly
-                    :append-outer-icon="valueExisting ? 'mdi-delete' : null"
-                    @click:append-outer="reset"></v-text-field>
+                    :append-icon="valueExisting ? 'mdi-delete' : null"
+                    @click:append="reset" filled></v-text-field>
     </template>
 
     <v-card>
@@ -80,7 +80,7 @@ export default {
       if (this.valueExisting)
         return '('+ this.value.x.toFixed(5) + ', ' + this.value.y.toFixed(5) + ')';
       else
-        return '';
+        return '-';
     }
   },
   watch: {

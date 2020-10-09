@@ -3,8 +3,8 @@
     <template v-slot:content>
       <v-row>
         <v-col cols="8">
-          <v-text-field v-model="nameEn" label="Name (englisch)" prepend-icon="mdi-account-circle" :disabled="loading" filled />
-          <v-text-field v-model="nameDe" label="Name (deutsch)" prepend-icon=" " :disabled="loading" hide-details filled />
+          <v-text-field v-model="nameEn" label="Name* (englisch)" prepend-icon="mdi-account-circle" :disabled="loading" filled />
+          <v-text-field v-model="nameDe" label="Name* (deutsch)" prepend-icon=" " :disabled="loading" hide-details filled />
         </v-col>
         <v-col cols="4">
           <v-card class="secondary" style="height: 100%">
@@ -18,9 +18,14 @@
                 </ImageWithButton>
 
                 <FileUpload v-else v-slot:default="{ upload }" @select="setFile">
-                  <v-btn @click="upload" color="primary" fab>
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn @click="upload" color="primary" v-bind="attrs" v-on="on" fab>
+                        <v-icon>mdi-plus</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Bild hochladen</span>
+                  </v-tooltip>
                 </FileUpload>
 
               </div>
@@ -37,13 +42,13 @@
           <v-text-field v-model="phoneNumber" label="Telefon" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="openingHoursEn" label="Öffnungszeiten (en)" prepend-icon="mdi-clock-outline" :disabled="loading" filled hide-details />
+          <v-text-field v-model="openingHoursEn" label="Öffnungszeit (EN)" prepend-icon="mdi-clock-outline" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="openingHoursDe" label="Öffnungszeiten (de)" :disabled="loading" filled hide-details />
+          <v-text-field v-model="openingHoursDe" label="Öffnungszeit (DE)" :disabled="loading" filled hide-details />
         </v-col>
         <v-col cols="12" class="input--links">
-          <v-textarea v-model="linksText" label="Links" placeholder="https://example.com" hint="1 Zeile = 1 Link" prepend-icon="mdi-web" :rows="2" :disabled="loading" filled />
+          <v-textarea v-model="linksText" label="Links" placeholder="https://example.com" hint="1 Zeile = 1 Link" prepend-icon="mdi-web" :rows="2" :disabled="loading" filled hide-details/>
         </v-col>
       </v-row>
     </template>

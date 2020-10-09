@@ -3,10 +3,10 @@
     <template v-slot:content>
       <v-row>
         <v-col cols="6">
-          <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading"></v-text-field>
+          <v-text-field v-model="nameEn" label="Name (englisch)" :disabled="loading" filled hide-details></v-text-field>
         </v-col>
         <v-col cols="6">
-          <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading"></v-text-field>
+          <v-text-field v-model="nameDe" label="Name (deutsch)" :disabled="loading" filled hide-details></v-text-field>
         </v-col>
       </v-row>
     </template>

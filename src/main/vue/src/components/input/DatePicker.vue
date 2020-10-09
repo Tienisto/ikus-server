@@ -1,7 +1,7 @@
 <template>
   <v-dialog ref="dialog" v-model="dialog" width="290px">
     <template v-slot:activator="{ on, attrs }">
-      <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly></v-text-field>
+      <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly filled></v-text-field>
     </template>
     <v-date-picker :value="value" @input="$emit('input', $event)" locale="de" :first-day-of-week="1" scrollable>
       <v-spacer></v-spacer>

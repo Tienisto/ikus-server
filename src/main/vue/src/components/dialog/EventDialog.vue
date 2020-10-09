@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :persistent="true">
+  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :width="550" :persistent="true">
     <template v-slot:content>
 
       <v-row>
@@ -19,28 +19,32 @@
 
       <v-card color="secondary">
         <v-card-text>
-          <SimpleTextField v-show="locale === 'EN'" v-model="nameEn" placeholder="Name (englisch)" :big="true"/>
-          <SimpleTextField v-show="locale === 'DE'" v-model="nameDe" placeholder="Name (deutsch)" :big="true"/>
+          <SimpleTextField v-show="locale === 'EN'" v-model="nameEn" placeholder="Name* (englisch)" :big="true"/>
+          <SimpleTextField v-show="locale === 'DE'" v-model="nameDe" placeholder="Name* (deutsch)" :big="true"/>
           <SimpleTextArea  v-show="locale === 'EN'" v-model="infoEn" placeholder="Zusatzinfo (englisch)" class="mt-2" style="height: 100px"/>
           <SimpleTextArea  v-show="locale === 'DE'" v-model="infoDe" placeholder="Zusatzinfo (deutsch)"  class="mt-2" style="height: 100px"/>
         </v-card-text>
       </v-card>
 
       <v-row class="mt-2">
-        <v-col cols="4">
-          <DatePicker v-model="date" label="Datum" icon="mdi-calendar"/>
+        <v-col cols="5">
+          <DatePicker v-model="date" label="Datum*" icon="mdi-calendar"/>
         </v-col>
-        <v-col cols="4">
-          <TimePicker v-model="startTime" label="Von (optional)"/>
-        </v-col>
-        <v-col cols="4">
-          <TimePicker v-model="endTime" label="Bis (optional)"/>
+        <v-col cols="7">
+          <v-row no-gutters>
+            <v-col cols="6">
+              <TimePicker v-model="startTime" icon="mdi-clock-outline" label="Von"/>
+            </v-col>
+            <v-col cols="6" class="pl-5">
+              <TimePicker v-model="endTime" label="Bis"/>
+            </v-col>
+          </v-row>
         </v-col>
         <v-col cols="12">
-          <v-text-field v-model="place" label="Ort (optional)" prepend-icon="mdi-map" hide-details/>
+          <v-text-field v-model="place" label="Ort" prepend-icon="mdi-map" filled hide-details/>
         </v-col>
         <v-col cols="12">
-          <LocationPicker v-model="coords" label="Koordinaten (optional)" icon="mdi-map-marker" />
+          <LocationPicker v-model="coords" label="Koordinaten" icon="mdi-map-marker" />
         </v-col>
       </v-row>
 
