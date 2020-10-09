@@ -21,7 +21,8 @@ data class AllChannelDto(val post: List<ChannelDto>, val event: List<ChannelDto>
 
 // post
 data class PostFileDto(val id: Int, val fileName: String)
-data class PostDto(val id: Int, val channel: ChannelDto, val date: String, val title: MultiLocaleString, val content: MultiLocaleString, val files: List<PostFileDto>)
+data class PostDto(val id: Int, val channel: ChannelDto, val date: String, val title: MultiLocaleString, val content: MultiLocaleString, val pinned: Boolean, val files: List<PostFileDto>)
+data class NewsDto(val posts: List<PostDto>, val pinned: List<PostDto>)
 data class PostGroupDto(val channel: ChannelDto, val posts: List<PostDto>)
 
 // event
@@ -44,7 +45,7 @@ data class CurrentAppStarts(val month: Long, val week: Long, val day: Long)
 
 // public routes
 data class LocalizedChannelDto(val id: Int, val name: String)
-data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val files: List<PostFileDto>)
+data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val pinned: Boolean, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
 data class LocalizedLinkDto(val id: Int, val channel: LocalizedChannelDto, val url: String, val info: String)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?, val links: List<String>)

@@ -21,12 +21,11 @@ export function logTypeString(type) {
         case 'CREATE_POST': return 'Beitrag erstellt';
         case 'UPDATE_POST': return 'Beitrag geändert';
         case 'DELETE_POST': return 'Beitrag gelöscht';
+        case 'PIN_POST': return 'Beitrag angepinnt';
+        case 'UNPIN_POST': return 'Beitrag-Pin entfernt'
         case 'CREATE_EVENT': return 'Event erstellt';
         case 'UPDATE_EVENT': return 'Event geändert';
         case 'DELETE_EVENT': return 'Event gelöscht';
-        case 'CREATE_LINK_GROUP': return 'Linkgruppe erstellt';
-        case 'UPDATE_LINK_GROUP': return 'Linkgruppe geändert';
-        case 'DELETE_LINK_GROUP': return 'Linkgruppe gelöscht';
         case 'CREATE_LINK': return 'Link erstellt';
         case 'UPDATE_LINK': return 'Link geändert';
         case 'DELETE_LINK': return 'Link gelöscht';

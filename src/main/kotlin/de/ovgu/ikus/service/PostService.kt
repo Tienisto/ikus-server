@@ -14,6 +14,10 @@ class PostService (
         private val postFileService: PostFileService
 ) {
 
+    suspend fun findPinnedOrderByDate(): List<Post> {
+        return postRepo.findByPinnedOrderByDateDesc(true).toList()
+    }
+
     suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
         return postRepo.findByOrderByDateDesc(type.name, limit).toList()
     }
@@ -22,8 +26,8 @@ class PostService (
         return postRepo.findByTypeOrderByPosition(type).toList()
     }
 
-    suspend fun findByChannelOrderByDate(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel.id).toList()
+    suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
+        return postRepo.findByChannelIdOrderByPinnedDescDateDesc(channel.id).toList()
     }
 
     suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
@@ -57,6 +61,10 @@ class PostService (
         postFileService.saveAll(allFiles)
         postFileService.cleanup()
         return saved
+    }
+
+    suspend fun saveSimple(post: Post) {
+        postRepo.save(post)
     }
 
     // dummy only or when changing order

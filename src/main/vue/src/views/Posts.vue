@@ -20,36 +20,22 @@
 
       <br>
 
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <span class="mr-4">Angepinnt: </span>
+        <v-btn @click="dialogPinnedList = true" text outlined>
+          {{ pinned.length }}
+        </v-btn>
+      </div>
+
+      <br>
+
       <v-btn @click="showCreateDialog" color="primary" block :disabled="loading || channels.length === 0">
         <v-icon left>mdi-plus</v-icon>
         Neuer Post
       </v-btn>
     </template>
 
-    <template v-if="!fetching">
-      <v-card v-for="p in posts" :key="'p-'+p.id" class="mb-4">
-        <v-card-text>
-          <div style="display: flex; align-items: center">
-            <div style="flex: 1">
-              <span class="font-weight-bold">{{ localized(p.title) }}</span>
-              <br>
-              <span>{{ timeString(p.date) }}</span>
-            </div>
-            <div style="display: flex">
-              <v-btn @click="showUpdateDialog(p)" color="primary">
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-
-              <v-btn @click="showDeleteDialog(p)" color="primary" class="ml-4">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
-    </template>
-
-    <LoadingIndicator v-if="fetching" />
+    <LoadingIndicator v-if="fetching && posts.length === 0" />
 
     <Notice v-if="!fetching && channels.length === 0 && posts.length === 0"
             title="Es gibt noch keine Kanäle" info="Bitte erstellen Sie zuerst Kanäle, bevor Sie Posts verfassen." />
@@ -57,9 +43,39 @@
     <Notice v-if="!fetching && channels.length !== 0 && posts.length === 0"
             title="Schön leer hier..." info="Sie können rechts ein neuen Post erstellen" />
 
+    <v-card v-for="p in posts" :key="'p-'+p.id" class="mb-4">
+      <v-card-text>
+        <div style="display: flex; align-items: center">
+          <div style="flex: 1">
+            <span class="font-weight-bold">{{ localized(p.title) }}</span>
+            <br>
+            <span>{{ timeString(p.date) }}</span>
+          </div>
+          <div style="display: flex">
+
+            <v-btn @click="togglePin(p)" icon :disabled="loading">
+              <v-icon>{{ p.pinned ? 'mdi-pin' : 'mdi-pin-outline' }}</v-icon>
+            </v-btn>
+
+            <v-btn @click="showUpdateDialog(p)" class="ml-4" icon :disabled="loading">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+
+            <v-btn @click="showDeleteDialog(p)" class="ml-4" icon :disabled="loading">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </div>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <PostListDialog v-model="dialogPinnedList" title="Angepinnte Beiträge" info="Sie können wichtige Beiträge anpinnen, so dass diese ganz oben angezeigt werden. Die Anzahl sollte nicht größer als 2-3 sein."
+                    :posts="pinned" :loading="loading"
+                    @delete="togglePin"/>
+
     <PostDialog ref="postDialog" v-model="dialogPost" post-type="NEWS" :channels="channels" :locales="locales"
                 :updating="dialogUpdating" :loading="loading"
-                @submit="createOrUpdate"/>
+                @submit="submitPost"/>
 
     <GenericDialog v-model="dialogDelete" title="Post löschen">
       <template v-slot:content>
@@ -88,7 +104,7 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, getChannels, getPosts, updatePost} from "@/api";
+import {createPost, deletePost, getChannels, getNews, togglePinPost, updatePost} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
 import GenericDialog from "@/components/dialog/GenericDialog";
@@ -96,18 +112,21 @@ import LocaleSelector from "@/components/LocaleSelector";
 import {localizedString, showSnackbar} from "@/utils";
 import PostDialog from "@/components/dialog/PostDialog";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import PostListDialog from "@/components/dialog/PostListDialog";
 
 export default {
   name: 'PostsView',
-  components: {LoadingIndicator, PostDialog, LocaleSelector, GenericDialog, Notice, MainContainer},
+  components: {PostListDialog, LoadingIndicator, PostDialog, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
     channels: [],
     channel: {},
     posts: [],
+    pinned: [],
     locales: ['EN', 'DE'],
     locale: 'EN',
+    dialogPinnedList: false,
     dialogPost: false,
     dialogUpdating: false, // true if dialog is used for updating a post
     dialogDelete: false,
@@ -122,7 +141,9 @@ export default {
       }
 
       if (this.channel.id) {
-        this.posts = await getPosts({ channelId: this.channel.id });
+        const response = await getNews({ channelId: this.channel.id });
+        this.posts = response.posts;
+        this.pinned = response.pinned;
       }
 
       this.fetching = false;
@@ -147,13 +168,13 @@ export default {
       this.selectedPost = post;
       this.dialogDelete = true;
     },
-    createOrUpdate: async function(post) {
+    submitPost: async function(post) {
       if (this.dialogUpdating)
-        await this.update(post);
+        await this.updatePost(post);
       else
-        await this.create(post);
+        await this.createPost(post);
     },
-    create: async function(post) {
+    createPost: async function(post) {
       try {
         this.loading = true;
         await createPost(post);
@@ -165,7 +186,7 @@ export default {
         this.loading = false;
       }
     },
-    update: async function(post) {
+    updatePost: async function(post) {
       try {
         this.loading = true;
         await updatePost({
@@ -173,6 +194,17 @@ export default {
           ...post
         });
         this.dialogPost = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
+    },
+    togglePin: async function(post) {
+      try {
+        this.loading = true;
+        await togglePinPost({ postId: post.id });
         await this.fetchData();
       } catch (e) {
         showSnackbar('Ein Fehler ist aufgetreten');

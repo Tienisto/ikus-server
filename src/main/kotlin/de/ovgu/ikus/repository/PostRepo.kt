@@ -19,7 +19,8 @@ interface PostRepo : CoroutineCrudRepository<Post, Int> {
     @Query("SELECT * FROM post WHERE channel_id = :channelId ORDER BY date DESC LIMIT :limit")
     fun findByChannelIdOrderByDateDesc(channelId: Int, limit: Int): Flow<Post>
 
-    fun findByChannelIdOrderByDateDesc(channelId: Int): Flow<Post>
+    fun findByPinnedOrderByDateDesc(pinned: Boolean): Flow<Post>
+    fun findByChannelIdOrderByPinnedDescDateDesc(channelId: Int): Flow<Post>
     fun findByChannelIdOrderByPosition(channelId: Int): Flow<Post>
     fun findByTypeOrderByPosition(type: PostType): Flow<Post>
 }

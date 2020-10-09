@@ -23,19 +23,27 @@ class PostController (
         private val postFileService: PostFileService
 ) {
 
-    @GetMapping
-    suspend fun getByChannel(@RequestParam channelId: Int): List<PostDto> {
-        val channel = channelService.findById(channelId) ?: throw ErrorCode(404, "Channel not found")
-        val channelDto = channel.toDto()
+    @GetMapping("/news")
+    suspend fun getNewsInfo(@RequestParam channelId: Int): NewsDto {
+        val channels = channelService.findByType(ChannelType.NEWS)
+        val channel = channels.firstOrNull { channel -> channel.id == channelId } ?: throw ErrorCode(404, "Channel not found")
 
-        return postService
-                .findByChannelOrderByDate(channel)
+        val posts = postService
+                .findByChannelOrderByPinnedDescDateDesc(channel)
                 .map { post ->
                     val files = postFileService
                             .findByPost(post)
                             .map { file -> file.toDto() }
-                    post.toDto(channelDto, files)
+                    post.toDto(channel.toDto(), files)
                 }
+
+        val pinned = postService.findPinnedOrderByDate().map { post ->
+            val currChannel = channels.first { channel -> channel.id == post.channelId }.toDto()
+            val files = postFileService.findByPost(post).map { file -> file.toDto() }
+            post.toDto(currChannel, files)
+        }
+
+        return NewsDto(posts, pinned)
     }
 
     @GetMapping("/grouped-order-position")
@@ -94,6 +102,18 @@ class PostController (
 
         postService.save(post, files)
         logService.log(LogType.UPDATE_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+        triggerUpdateFlag(post.type)
+    }
+
+    @PostMapping("/toggle-pin")
+    suspend fun togglePin(authentication: Authentication, @RequestParam postId: Int) {
+        val post = postService.findById(postId) ?: throw ErrorCode(404, "Post not found")
+        if (post.type != PostType.NEWS)
+            throw ErrorCode(409, "Wrong Type")
+
+        post.pinned = !post.pinned
+        postService.saveSimple(post)
+        logService.log(if (post.pinned) LogType.PIN_POST else LogType.UNPIN_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
         triggerUpdateFlag(post.type)
     }
 

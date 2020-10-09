@@ -177,9 +177,9 @@ export async function getDashboard() {
     });
 }
 
-export async function getPosts({ channelId }) {
+export async function getNews({ channelId }) {
     return await makeRequest({
-        route: 'posts',
+        route: 'posts/news',
         method: 'GET',
         params: { channelId }
     });
@@ -206,6 +206,14 @@ export async function updatePost({ id, channelId, title, content, files }) {
         route: 'posts',
         method: 'PUT',
         body: { id, channelId, title, content, files }
+    });
+}
+
+export async function togglePinPost({ postId }) {
+    return await makeRequest({
+        route: 'posts/toggle-pin',
+        method: 'POST',
+        params: { postId }
     });
 }
 

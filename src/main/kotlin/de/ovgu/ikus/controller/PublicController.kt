@@ -29,13 +29,15 @@ class PublicController(
         private val mensaService: MensaService
 ) {
 
+    private val newsComparator = compareByDescending<LocalizedPostDto> { it.pinned }.thenByDescending { it.date }
+
     @GetMapping("/file/{folder}/{name}")
     fun getImage(@PathVariable folder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource? {
         return fileService.loadFile("$folder/$name", download == true, webExchange)
     }
 
     @GetMapping("/news")
-    suspend fun getPosts(@RequestParam locale: IkusLocale): String {
+    suspend fun getNews(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
             val channels = channelService.findByTypeOrderByName(ChannelType.NEWS, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
@@ -50,7 +52,7 @@ class PublicController(
                                 .map { file -> file.toDto() }
                         post.toLocalizedDto(locale, channelsDtoMap[post.channelId] ?: LocalizedChannelDto(0, "Error"), currFiles)
                     }
-                    .sortedByDescending { post -> post.date }
+                    .sortedWith(newsComparator)
 
             PublicPostDto(channelsDtoMap.values.toList(), posts)
         }
