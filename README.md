@@ -17,15 +17,6 @@ Let's run this server on your (local) machine.
     1. `cd <project root>/build/libs`
     2. `java -jar ikus-0.9.0.jar --db.url="the url to the db"`
     
-## Build the Docker Image
-
-1. Build the vue frontend (see step 2 of [Getting Started](#getting-started))
-2. `./gradle bootBuildImage` or `gradlew.bat bootBuildImage`
-
-One-Liner:
-
-`cd <project root>/src/main/vue && npm i && npm run build && cd <project root> && ./gradle bootBuildImage`
-    
 ## Environment Variables
 
 Rename if you set it via (docker) environment variables. E.g. `storage.path` will be `STORAGE_PATH`.
