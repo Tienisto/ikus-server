@@ -31,5 +31,8 @@ object Request {
     data class CreateContact(val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?, val links: List<String>)
     data class UpdateContact(val id: Int, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?, val links: List<String>)
 
+    data class CreateFeature(val name: MultiLocaleString, val icon: String, val postId: Int?, val linkId: Int?)
+    data class UpdateFeature(val id: Int, val name: MultiLocaleString, val icon: String, val postId: Int?, val linkId: Int?)
+
     data class AppStartSignal(val token: String?, val platform: Platform?, val deviceId: String?)
 }

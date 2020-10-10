@@ -25,6 +25,7 @@ class PublicController(
         private val linkService: LinkService,
         private val handbookService: HandbookService,
         private val contactService: ContactService,
+        private val featureService: FeatureService,
         private val analyticsService: AnalyticsService,
         private val mensaService: MensaService
 ) {
@@ -141,6 +142,39 @@ class PublicController(
             contactService
                     .findAllOrdered()
                     .map { contact -> contact.toLocalizedDto(locale) }
+        }
+    }
+
+    @GetMapping("/app-config")
+    suspend fun getAppConfig(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.APP_CONFIG, locale) {
+            val features = featureService
+                    .findAllOrderByPosition()
+                    .map { feature ->
+                        val postDto = when (val postId = feature.postId) {
+                            null -> null
+                            else -> when (val post = postService.findById(postId)) {
+                                null -> null
+                                else -> when (val channel = channelService.findById(post.channelId)?.toLocalizedDto(locale)) {
+                                    null -> null
+                                    else -> post.toLocalizedDto(locale, channel, postFileService.findByPost(post).map { file -> file.toDto() })
+                                }
+                            }
+                        }
+                        val linkDto = when (val linkId = feature.linkId) {
+                            null -> null
+                            else -> when (val link = linkService.findById(linkId)) {
+                                null -> null
+                                else -> when (val channel = channelService.findById(link.channelId)?.toLocalizedDto(locale)) {
+                                    null -> null
+                                    else -> link.toLocalizedDto(locale, channel)
+                                }
+                            }
+                        }
+                        feature.toLocalizedDto(locale, postDto, linkDto)
+                    }
+
+            PublicConfigDto(features)
         }
     }
 

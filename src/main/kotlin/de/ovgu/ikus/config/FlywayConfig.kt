@@ -1,6 +1,7 @@
 package de.ovgu.ikus.config
 
 import de.ovgu.ikus.properties.DBProperties
+import de.ovgu.ikus.service.FeatureService
 import de.ovgu.ikus.service.UserService
 import kotlinx.coroutines.runBlocking
 import org.flywaydb.core.Flyway
@@ -14,7 +15,8 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class FlywayConfig (
         private val propsDB: DBProperties,
-        private val userService: UserService
+        private val userService: UserService,
+        private val featureService: FeatureService
 ) {
 
     @Bean(initMethod = "migrate")
@@ -29,8 +31,8 @@ class FlywayConfig (
 
                     override fun handle(event: Event, context: Context) {
                         runBlocking {
-                            // ensure that there is an admin user
-                            userService.repairAdminAccount()
+                            userService.repairAdminAccount() // ensure that there is an admin user
+                            featureService.repairNativeFeatures() // ensure that there are all native features
                         }
                     }
                 })

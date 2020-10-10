@@ -13,7 +13,8 @@ enum class CacheKey {
     LINKS,
     HANDBOOK_BOOKMARKS,
     FAQ,
-    CONTACTS
+    CONTACTS,
+    APP_CONFIG
 }
 private val lifeTime = Duration.ofMinutes(5).toMillis()
 data class CachedData(var json: String?, var needUpdate: Boolean, var expires: Long)

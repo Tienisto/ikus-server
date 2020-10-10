@@ -3,8 +3,14 @@ package de.ovgu.ikus.model
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
-enum class NativeFeature {
-    MAP, MY_EVENTS, MENSA, LINKS, HANDBOOK, FAQ, CONTACT
+enum class NativeFeature (val favorite: Boolean) {
+    MAP(true),
+    MY_EVENTS(false),
+    MENSA(true),
+    LINKS(true),
+    HANDBOOK(false),
+    FAQ(false),
+    CONTACT(false)
 }
 
 @Table

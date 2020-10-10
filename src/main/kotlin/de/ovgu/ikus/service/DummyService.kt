@@ -19,6 +19,7 @@ class DummyService (
         private val eventService: EventService,
         private val linkService: LinkService,
         private val contactService: ContactService,
+        private val featureService: FeatureService,
         private val analyticsService: AnalyticsService
 ) {
 
@@ -29,7 +30,9 @@ class DummyService (
         contactService.deleteAll()
         analyticsService.deleteAll()
         userService.deleteAll()
+        featureService.deleteAll()
         userService.repairAdminAccount() // create admin account
+        featureService.repairNativeFeatures() // create native features
     }
 
     suspend fun create() {

@@ -125,6 +125,23 @@ fun Contact.toLocalizedDto(locale: IkusLocale): LocalizedContactDto {
     }
 }
 
+fun Feature.toDto(post: PostDto?, link: LinkDto?): FeatureDto {
+    val tempNameEn = name
+    val tempNameDe = nameDe
+    val nameMultiLocale = when {
+        tempNameEn != null && tempNameDe != null -> MultiLocaleString(en = tempNameEn, de = tempNameDe)
+        else -> null
+    }
+    return FeatureDto(id, favorite, nameMultiLocale, icon, nativeFeature, post, link)
+}
+
+fun Feature.toLocalizedDto(locale: IkusLocale, post: LocalizedPostDto?, link: LocalizedLinkDto?): LocalizedFeatureDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedFeatureDto(id, favorite, name, icon, nativeFeature, post, link)
+        IkusLocale.DE -> LocalizedFeatureDto(id, favorite, nameDe, icon, nativeFeature, post, link)
+    }
+}
+
 fun AppStart.toDto(): AppStartDto {
     return AppStartDto(date.toString(), android, ios)
 }

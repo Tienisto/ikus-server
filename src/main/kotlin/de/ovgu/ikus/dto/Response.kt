@@ -3,6 +3,7 @@ package de.ovgu.ikus.dto
 import de.ovgu.ikus.model.FoodTag
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.model.Mensa
+import de.ovgu.ikus.model.NativeFeature
 import de.ovgu.ikus.security.JwtStatus
 import java.time.OffsetDateTime
 
@@ -39,6 +40,9 @@ data class HandbookBookmarkDto(val page: Int, val name: String)
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?, val links: List<String>)
 
+// features
+data class FeatureDto(val id: Int, val favorite: Boolean, val name: MultiLocaleString?, val icon: String?, val nativeFeature: NativeFeature?, val post: PostDto?, val link: LinkDto?)
+
 // analytics
 data class AppStartDto(val date: String, val android: Int, val ios: Int)
 data class CurrentAppStarts(val month: Long, val week: Long, val day: Long)
@@ -52,8 +56,10 @@ data class LocalizedContactDto(val id: Int, val file: String?, val name: String,
 data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
 data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
 data class LocalizedMenuInfoDto(val name: Mensa, val menus: List<LocalizedMenuDto>) // as array
+data class LocalizedFeatureDto(val id: Int, val favorite: Boolean, val name: String?, val icon: String?, val nativeFeature: NativeFeature?, val post: LocalizedPostDto?, val link: LocalizedLinkDto?)
 
 data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: List<LocalizedPostDto>)
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
 data class PublicLinkDto(val channel: LocalizedChannelDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array
+data class PublicConfigDto(val features: List<LocalizedFeatureDto>)
