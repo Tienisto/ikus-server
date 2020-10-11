@@ -10,7 +10,7 @@ enum class NativeFeature (val favorite: Boolean) {
     LINKS(true),
     HANDBOOK(false),
     FAQ(false),
-    CONTACT(false)
+    CONTACTS(false)
 }
 
 @Table

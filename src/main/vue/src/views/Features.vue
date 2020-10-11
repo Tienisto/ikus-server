@@ -229,7 +229,7 @@ export default {
             case 'LINKS': return 'language';
             case 'HANDBOOK': return 'book';
             case 'FAQ': return 'help';
-            case 'CONTACT': return 'person';
+            case 'CONTACTS': return 'person';
             default: return '';
           }
         } else {
@@ -262,7 +262,7 @@ export default {
             case 'LINKS': stringObj = { 'en': 'Links', 'de': 'Links' }; break;
             case 'HANDBOOK': stringObj = { 'en': 'Handbook', 'de': 'Handbuch' }; break;
             case 'FAQ': stringObj = { 'en': 'FAQ', 'de': 'FAQ' }; break;
-            case 'CONTACT': stringObj = { 'en': 'Contacts', 'de': 'Kontakte' }; break;
+            case 'CONTACTS': stringObj = { 'en': 'Contacts', 'de': 'Kontakte' }; break;
           }
           return localizedString(stringObj, this.locale);
         } else {
