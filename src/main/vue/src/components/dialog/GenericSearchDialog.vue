@@ -7,22 +7,25 @@
 
       <br>
 
-      <Notice v-if="items.length === 0" class="mt-6 mb-6" title="Keine Ergebnisse." />
+      <LoadingIndicator v-if="loading" />
+      <Notice v-if="!loading && items.length === 0" class="mt-6 mb-6" title="Keine Ergebnisse." />
 
-      <div v-for="(item, index) in items" :key="index">
-        <v-card class="secondary mb-4">
-          <v-card-text>
-            <div style="display: flex; align-items: center;">
-              <div style="flex: 1">
-                <slot :item="item"></slot>
+      <template v-if="!loading">
+        <div v-for="(item, index) in items" :key="index">
+          <v-card class="secondary mb-4">
+            <v-card-text>
+              <div style="display: flex; align-items: center;">
+                <div style="flex: 1">
+                  <slot :item="item"></slot>
+                </div>
+                <v-btn @click="$emit('select', item)" icon>
+                  <v-icon>mdi-check-circle</v-icon>
+                </v-btn>
               </div>
-              <v-btn @click="$emit('select', item)" icon>
-                <v-icon>mdi-check-circle</v-icon>
-              </v-btn>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
+            </v-card-text>
+          </v-card>
+        </div>
+      </template>
 
     </template>
 
@@ -38,10 +41,11 @@
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/dialog/GenericDialog";
 import Notice from "@/components/Notice";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default {
   name: 'GenericSearchDialog',
-  components: {Notice, GenericDialog},
+  components: {LoadingIndicator, Notice, GenericDialog},
   props: {
     value: {
       type: Boolean,
