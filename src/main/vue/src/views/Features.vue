@@ -5,6 +5,8 @@
       Hier können Sie die Liste der Features verwalten.
       <br>
       Neben den voreingestellten Features können Sie Verknüpfungen zu Posts oder Links hinzufügen.
+      <br>
+      Sie können wichtige Features mit einem Herzchen versehen. Diese Einstellung wird bei <b>neuen</b> Installationen übernommen.
     </template>
 
     <template v-slot:meta>
