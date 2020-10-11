@@ -5,6 +5,8 @@
       Der Eintrag wird mit einem Post oder Link verknüpft.
       <br>
       Diesen müssen Sie <b>vorher</b> erstellen.
+      <br>
+      Beachten Sie, dass der Name kurz sein muss!
       <br><br>
 
       <v-row>
@@ -16,9 +18,8 @@
         <v-col cols="6">
           <v-card class="secondary" style="height: 100%">
             <v-card-text style="height: 100%">
-              <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center">
-                <i class="material-icons" style="font-size: 40px">{{ icon }}</i>
-                <v-btn @click="showIconChooser" class="mt-4" text>Icon ändern</v-btn>
+              <div style="height: 100%; display: flex; align-items: center; justify-content: center">
+                <i @click="showIconChooser" class="material-icons" style="font-size: 70px; cursor: pointer">{{ icon }}</i>
               </div>
             </v-card-text>
           </v-card>

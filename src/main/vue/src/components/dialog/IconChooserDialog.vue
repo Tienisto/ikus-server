@@ -17,16 +17,20 @@
 
       <Notice v-if="icons.length === 0" class="mt-6 mb-6" title="Keine Ergebnisse." />
 
-      <v-virtual-scroll :items="icons" height="350" item-height="100" :bench="2">
-        <template v-slot="{ item }">
-          <div style="display: flex;">
-            <div style="text-align: center; width: 110px;" v-for="(icon, index) in item" :key="index">
-              <i @click="$emit('select', icon)" class="material-icons" style="cursor: pointer; font-size: 40px;">{{ icon }}</i>
-              <div @click="$emit('select', icon)" style="cursor: pointer;">{{ icon }}</div>
-            </div>
-          </div>
-        </template>
-      </v-virtual-scroll>
+      <v-card v-if="icons.length !== 0" class="secondary">
+        <v-card-text class="pl-2 pt-6">
+          <v-virtual-scroll :items="icons" height="350" item-height="100" :bench="2">
+            <template v-slot="{ item }">
+              <div style="display: flex;">
+                <div style="text-align: center; width: 110px;" v-for="(icon, index) in item" :key="index">
+                  <i @click="$emit('select', icon)" class="material-icons" style="cursor: pointer; font-size: 40px;">{{ icon }}</i>
+                  <div @click="$emit('select', icon)" style="cursor: pointer;">{{ icon }}</div>
+                </div>
+              </div>
+            </template>
+          </v-virtual-scroll>
+        </v-card-text>
+      </v-card>
     </template>
 
     <template v-slot:actions>
@@ -61,7 +65,7 @@ export default {
     reset: function() {
       // reset input
       this.query = '';
-      this.icons = this.groupN(allIcons);
+      this.icons = [];
     },
     search: async function() {
       try {
@@ -93,6 +97,20 @@ export default {
       }
 
       return result;
+    }
+  },
+  watch: {
+    value: {
+      immediate: false,
+      handler: function(val) {
+        if (val) {
+          // virtual scroller somehow needs to be rerendered
+          // otherwise it stays blank at 2nd dialog opening
+          this.$nextTick(() => {
+            this.icons = this.groupN(allIcons);
+          });
+        }
+      }
     }
   }
 }
