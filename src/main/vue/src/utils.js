@@ -48,9 +48,3 @@ export function logTypeString(type) {
         default: return 'unbekannt';
     }
 }
-
-export const ICONS = {
-    'mdi-virus': 'coronavirus',
-    'mdi-text-subject': 'subject',
-    'mdi-school': 'school'
-}

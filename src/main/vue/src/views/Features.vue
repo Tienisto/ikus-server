@@ -27,9 +27,7 @@
         <div style="display: flex; align-items: center">
           <div style="flex: 1">
             <div style="display: flex; align-items: center">
-              <span>
-                <v-icon x-large>{{ featureIcon(f) }}</v-icon>
-              </span>
+              <i class="material-icons" style="font-size: 40px">{{ featureIcon(f) }}</i>
 
               <span style="flex: 1" class="pl-4">
                 <span>{{ featureBadge(f) }}</span>
@@ -90,7 +88,7 @@ import {
   moveUpFeature,
   toggleFeatureFavorite, updateFeature
 } from "@/api";
-import {ICONS, localizedString, showSnackbar} from "@/utils";
+import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import LocaleSelector from "@/components/LocaleSelector";
@@ -223,17 +221,17 @@ export default {
       return (feature) => {
         if (feature.nativeFeature) {
           switch(feature.nativeFeature) {
-            case 'MAP': return 'mdi-map';
-            case 'MY_EVENTS': return 'mdi-calendar';
-            case 'MENSA': return 'mdi-silverware-fork-knife';
-            case 'LINKS': return 'mdi-web';
-            case 'HANDBOOK': return 'mdi-book';
-            case 'FAQ': return 'mdi-help-circle';
-            case 'CONTACT': return 'mdi-account';
+            case 'MAP': return 'map';
+            case 'MY_EVENTS': return 'today';
+            case 'MENSA': return 'restaurant';
+            case 'LINKS': return 'language';
+            case 'HANDBOOK': return 'book';
+            case 'FAQ': return 'help';
+            case 'CONTACT': return 'person';
             default: return '';
           }
         } else {
-          return Object.keys(ICONS).find(k => ICONS[k] === feature.icon) || 'mdi-text-subject';
+          return feature.icon || 'mdi-text-subject';
         }
       }
     },

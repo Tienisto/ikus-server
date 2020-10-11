@@ -17,8 +17,8 @@
           <v-card class="secondary" style="height: 100%">
             <v-card-text style="height: 100%">
               <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center">
-                <v-icon x-large>{{ icon }}</v-icon>
-                <v-btn class="mt-4" text>Icon ändern</v-btn>
+                <i class="material-icons" style="font-size: 40px">{{ icon }}</i>
+                <v-btn @click="showIconChooser" class="mt-4" text>Icon ändern</v-btn>
               </div>
             </v-card-text>
           </v-card>
@@ -59,6 +59,7 @@
         </v-card>
       </div>
 
+      <IconChooserDialog ref="iconChooserDialog" v-model="dialogIconChooser" @select="selectIcon" />
       <SearchPostDialog ref="searchPostDialog" v-model="dialogSearchPost" @select="selectPost" />
       <SearchLinkDialog ref="searchLinkDialog" v-model="dialogSearchLink" @select="selectLink" />
 
@@ -78,14 +79,15 @@
 
 <script>
 import GenericDialog from "@/components/dialog/GenericDialog";
-import {ICONS, showSnackbar} from "@/utils";
+import {showSnackbar} from "@/utils";
 import SearchPostDialog from "@/components/dialog/SearchPostDialog";
 import moment from "moment";
 import SearchLinkDialog from "@/components/dialog/SearchLinkDialog";
+import IconChooserDialog from "@/components/dialog/IconChooserDialog";
 
 export default {
   name: 'FeatureDialog',
-  components: {SearchLinkDialog, SearchPostDialog, GenericDialog},
+  components: {IconChooserDialog, SearchLinkDialog, SearchPostDialog, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -106,10 +108,15 @@ export default {
     icon: '',
     post: null,
     link: null,
+    dialogIconChooser: false,
     dialogSearchPost: false,
     dialogSearchLink: false
   }),
   methods: {
+    showIconChooser: function() {
+      this.$refs.iconChooserDialog.reset();
+      this.dialogIconChooser = true;
+    },
     showSearchPost: function() {
       this.$refs.searchPostDialog.reset();
       this.dialogSearchPost = true;
@@ -117,6 +124,10 @@ export default {
     showSearchLink: function() {
       this.$refs.searchLinkDialog.reset();
       this.dialogSearchLink = true;
+    },
+    selectIcon: function(icon) {
+      this.icon = icon;
+      this.dialogIconChooser = false;
     },
     selectPost: function(post) {
       this.post = post;
@@ -134,7 +145,7 @@ export default {
       // reset input
       this.nameEn = '';
       this.nameDe = '';
-      this.icon = 'mdi-virus';
+      this.icon = 'description';
       this.post = null;
       this.link = null;
     },
@@ -142,7 +153,7 @@ export default {
       // apply
       this.nameEn = feature.name.en;
       this.nameDe = feature.name.de;
-      this.icon = Object.keys(ICONS).find(k => ICONS[k] === feature.icon) || 'mdi-text-subject';
+      this.icon = feature.icon;
       this.post = feature.post;
       this.link = feature.link;
     },
@@ -163,7 +174,7 @@ export default {
           en: this.nameEn,
           de: this.nameDe
         },
-        icon: ICONS[this.icon],
+        icon: this.icon,
         postId: this.post ? this.post.id : null,
         linkId: this.link ? this.link.id : null
       });
