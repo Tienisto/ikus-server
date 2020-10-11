@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.ResponseBody
 import java.net.URI
 
 @Controller
-class HtmlController (
+class VueController (
         private val propsAdmin: AdminProperties,
         private val jwtService: JwtService
 ) {
 
-    @GetMapping("/" , "/privacy", "/status", "/users", "/logs", "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contacts", "/statistics")
+    @GetMapping("/" , "/privacy", "/status",
+            "/users", "/statistics", "/logs",
+            "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contacts", "/features")
     @ResponseBody
     suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
 
