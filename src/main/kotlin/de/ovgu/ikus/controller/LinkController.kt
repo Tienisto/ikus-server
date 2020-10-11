@@ -1,8 +1,6 @@
 package de.ovgu.ikus.controller
 
-import de.ovgu.ikus.dto.ErrorCode
-import de.ovgu.ikus.dto.LinkGroupDto
-import de.ovgu.ikus.dto.Request
+import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
@@ -33,6 +31,18 @@ class LinkController (
                     .map { link -> link.toDto(channelDto) }
 
             LinkGroupDto(channelDto, currLinks)
+        }
+    }
+
+    @GetMapping("/search")
+    suspend fun getBySearch(@RequestParam query: String): List<LinkDto> {
+        val channels = channelService.findByType(ChannelType.LINK)
+        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val links = linkService.search(query)
+
+        return links.map { link ->
+            val channel = channelsDtoMap[link.channelId] ?: ChannelDto(0, MultiLocaleString("ERROR", "ERROR"))
+            link.toDto(channel)
         }
     }
 

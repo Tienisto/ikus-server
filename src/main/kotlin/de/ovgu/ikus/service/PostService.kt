@@ -38,7 +38,7 @@ class PostService (
         return postRepo.findByChannelIdOrderByPosition(channelId).toList()
     }
 
-    suspend fun findByTitleIgnoreCase(title: String): List<Post> {
+    suspend fun search(title: String): List<Post> {
         return postRepo.findByTitleIgnoreCase("%$title%").toList()
     }
 

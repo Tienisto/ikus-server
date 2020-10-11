@@ -79,7 +79,7 @@ class PostController (
     suspend fun getBySearch(@RequestParam query: String): List<PostDto> {
         val channels = channelService.findByType(ChannelType.NEWS)
         val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
-        val posts = postService.findByTitleIgnoreCase(query)
+        val posts = postService.search(query)
         val files = postFileService.findByPostIn(posts)
 
         return posts.map { post ->

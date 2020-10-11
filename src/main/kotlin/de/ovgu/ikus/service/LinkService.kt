@@ -19,6 +19,10 @@ class LinkService (
         return linkRepo.findByChannelIdOrderByPosition(channelId).toList()
     }
 
+    suspend fun search(title: String): List<Link> {
+        return linkRepo.findByInfoIgnoreCase("%$title%").toList()
+    }
+
     suspend fun findById(id: Int): Link? {
         return linkRepo.findById(id)
     }
