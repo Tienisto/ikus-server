@@ -91,7 +91,7 @@ class InfoController (
                 .findByType(ChannelType.NEWS)
                 .map { channel -> channel.id to channel.toDto() }
                 .toMap()
-        val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 7).map { post ->
+        val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 6).map { post ->
             val channel = postChannelMap[post.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))
 
             val files = postFileService
