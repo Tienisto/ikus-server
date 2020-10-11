@@ -75,6 +75,22 @@ class PostController (
         }
     }
 
+    @GetMapping("/search")
+    suspend fun getBySearch(@RequestParam query: String): List<PostDto> {
+        val channels = channelService.findByType(ChannelType.NEWS)
+        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val posts = postService.findByTitleIgnoreCase(query)
+        val files = postFileService.findByPostIn(posts)
+
+        return posts.map { post ->
+            val currFiles = files
+                    .filter { file -> file.postId == post.id }
+                    .map { file -> file.toDto() }
+            val channel = channelsDtoMap[post.channelId] ?: ChannelDto(0, MultiLocaleString("ERROR", "ERROR"))
+            post.toDto(channel, currFiles)
+        }
+    }
+
     @PostMapping
     suspend fun createPost(authentication: Authentication, @RequestBody request: Request.CreatePost) {
         val channel = channelService.findById(request.channelId) ?: throw ErrorCode(404, "Channel not found")
