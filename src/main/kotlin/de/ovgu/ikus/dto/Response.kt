@@ -62,4 +62,4 @@ data class PublicPostDto(val channels: List<LocalizedChannelDto>, val posts: Lis
 data class PublicEventDto(val channels: List<LocalizedChannelDto>, val events: List<LocalizedEventDto>)
 data class PublicLinkDto(val channel: LocalizedChannelDto, val links: List<LocalizedLinkDto>) // as array
 data class PublicFAQDto(val channel: LocalizedChannelDto, val posts: List<LocalizedPostDto>) // as array
-data class PublicConfigDto(val features: List<LocalizedFeatureDto>)
+data class PublicConfigDto(val version: Int, val features: List<LocalizedFeatureDto>)

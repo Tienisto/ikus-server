@@ -174,7 +174,7 @@ class PublicController(
                         feature.toLocalizedDto(locale, postDto, linkDto)
                     }
 
-            PublicConfigDto(features)
+            PublicConfigDto(1, features)
         }
     }
 
