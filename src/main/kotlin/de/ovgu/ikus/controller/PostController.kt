@@ -27,23 +27,32 @@ class PostController (
     suspend fun getNewsInfo(@RequestParam channelId: Int): NewsDto {
         val channels = channelService.findByType(ChannelType.NEWS)
         val channel = channels.firstOrNull { channel -> channel.id == channelId } ?: throw ErrorCode(404, "Channel not found")
+        val posts = postService.findByChannelOrderByPinnedDescDateDesc(channel)
+        val files = postFileService.findByPostIn(posts)
 
-        val posts = postService
-                .findByChannelOrderByPinnedDescDateDesc(channel)
-                .map { post ->
-                    val files = postFileService
-                            .findByPost(post)
-                            .map { file -> file.toDto() }
-                    post.toDto(channel.toDto(), files)
-                }
-
-        val pinned = postService.findPinnedOrderByDate().map { post ->
-            val currChannel = channels.first { channel -> channel.id == post.channelId }.toDto()
-            val files = postFileService.findByPost(post).map { file -> file.toDto() }
-            post.toDto(currChannel, files)
+        val postsDto = posts.map { post ->
+            val currFiles = files
+                    .filter { file -> file.postId == post.id }
+                    .map { file -> file.toDto() }
+            post.toDto(channel.toDto(), currFiles)
         }
 
-        return NewsDto(posts, pinned)
+        val pinned = postService.findPinnedOrderByDate().map { post ->
+            when (val digestedPost = postsDto.firstOrNull { postDto -> postDto.id == post.id }) {
+                null -> {
+                    // fetch from database
+                    val currChannel = channels.first { channel -> channel.id == post.channelId }.toDto()
+                    val currFiles = postFileService.findByPost(post).map { file -> file.toDto() }
+                    post.toDto(currChannel, currFiles)
+                }
+                else -> {
+                    // use finished post
+                    digestedPost
+                }
+            }
+        }
+
+        return NewsDto(postsDto, pinned)
     }
 
     @GetMapping("/grouped-order-position")
