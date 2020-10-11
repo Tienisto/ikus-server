@@ -65,7 +65,7 @@ class FeatureController (
         )
 
         featureService.save(feature)
-        logService.log(LogType.CREATE_FEATURE, authentication.toUser(), "${feature.name} (${feature.nameDe})")
+        logService.log(LogType.CREATE_FEATURE, authentication.toUser(), label(feature))
         cacheService.triggerUpdateFlag(CacheKey.APP_CONFIG)
     }
 
@@ -81,7 +81,7 @@ class FeatureController (
         feature.linkId = request.linkId
 
         featureService.save(feature)
-        logService.log(LogType.UPDATE_FEATURE, authentication.toUser(), "${feature.name} (${feature.nameDe})")
+        logService.log(LogType.UPDATE_FEATURE, authentication.toUser(), label(feature))
         cacheService.triggerUpdateFlag(CacheKey.APP_CONFIG)
     }
 
@@ -91,7 +91,7 @@ class FeatureController (
 
         feature.favorite = !feature.favorite
         featureService.save(feature)
-        logService.log(LogType.UPDATE_FEATURE, authentication.toUser(), "${feature.name} (${feature.nameDe})")
+        logService.log(LogType.UPDATE_FEATURE, authentication.toUser(), label(feature))
         cacheService.triggerUpdateFlag(CacheKey.APP_CONFIG)
     }
 
@@ -128,7 +128,7 @@ class FeatureController (
             throw ErrorCode(409, "Native Features cannot be deleted")
 
         featureService.delete(feature)
-        logService.log(LogType.DELETE_FEATURE, authentication.toUser(), "${feature.name} (${feature.nameDe})")
+        logService.log(LogType.DELETE_FEATURE, authentication.toUser(), label(feature))
         cacheService.triggerUpdateFlag(CacheKey.APP_CONFIG)
     }
 
@@ -145,5 +145,13 @@ class FeatureController (
 
         if (linkId != null && linkService.findById(linkId) == null)
             throw ErrorCode(404, "Link not found")
+    }
+
+    private fun label(feature: Feature): String {
+        if (feature.nativeFeature != null) {
+            return feature.nativeFeature.toString()
+        }
+
+        return "${feature.name} (${feature.nameDe})"
     }
 }

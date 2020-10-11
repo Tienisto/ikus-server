@@ -193,6 +193,14 @@ export async function getPostsGrouped({ type }) {
     });
 }
 
+export async function searchPosts({ query }) {
+    return await makeRequest({
+        route: 'posts/search',
+        method: 'GET',
+        params: { query }
+    });
+}
+
 export async function createPost({ channelId, title, content, files }) {
     return await makeRequest({
         route: 'posts',
@@ -352,6 +360,14 @@ export async function getLinksGrouped() {
     });
 }
 
+export async function searchLinks({ query }) {
+    return await makeRequest({
+        route: 'links/search',
+        method: 'GET',
+        params: { query }
+    });
+}
+
 export async function createLink({ channelId, url, info }) {
     return await makeRequest({
         route: 'links',
@@ -487,6 +503,61 @@ export async function deleteContact({ id }) {
         route: 'contacts',
         method: 'DELETE',
         body: { id }
+    });
+}
+
+export async function getFeatures() {
+    return await makeRequest({
+        route: 'features',
+        method: 'GET'
+    });
+}
+
+export async function createFeature({ name, icon, postId, linkId }) {
+    return await makeRequest({
+        route: 'features',
+        method: 'POST',
+        body: { name, icon, postId, linkId }
+    });
+}
+
+export async function updateFeature({ id, name, icon, postId, linkId }) {
+    return await makeRequest({
+        route: 'features',
+        method: 'PUT',
+        body: { id, name, icon, postId, linkId }
+    });
+}
+
+export async function toggleFeatureFavorite({ featureId }) {
+    return await makeRequest({
+        route: 'features/toggle-favorite',
+        method: 'POST',
+        params: { featureId }
+    });
+}
+
+export async function moveUpFeature({ featureId }) {
+    return await makeRequest({
+        route: 'features/move-up',
+        method: 'POST',
+        params: { featureId }
+    });
+}
+
+export async function moveDownFeature({ featureId }) {
+    return await makeRequest({
+        route: 'features/move-down',
+        method: 'POST',
+        params: { featureId }
+    });
+}
+
+export async function deleteFeature({ featureId }) {
+    return await makeRequest({
+        route: 'features',
+        method: 'DELETE',
+        params: { featureId }
     });
 }
 

@@ -14,6 +14,7 @@ import Contacts from "@/views/Contacts";
 import Statistics from "@/views/Statistics";
 import Status from "@/views/Status";
 import Privacy from "@/views/Privacy";
+import Features from "@/views/Features";
 
 Vue.use(VueRouter)
 
@@ -77,6 +78,11 @@ Vue.use(VueRouter)
     path: '/contacts',
     name: 'Contacts',
     component: Contacts
+  },
+  {
+    path: '/features',
+    name: 'Features',
+    component: Features
   },
   {
     path: '/channels',

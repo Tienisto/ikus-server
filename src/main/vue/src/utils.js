@@ -9,6 +9,14 @@ export function showSnackbar(text) {
     snackbarFunc(text);
 }
 
+export function localizedString(obj, locale) {
+    return locale === 'EN' ? obj.en : obj.de;
+}
+
+export function sleep(millis) {
+    return new Promise(resolve => setTimeout(resolve, millis));
+}
+
 export function logTypeString(type) {
     switch(type) {
         case 'CREATE_USER': return 'Moderator/in erstellt';
@@ -34,14 +42,15 @@ export function logTypeString(type) {
         case 'CREATE_CONTACT': return 'Neue Kontaktdaten';
         case 'UPDATE_CONTACT': return 'Kontaktdaten geändert';
         case 'DELETE_CONTACT': return 'Kontaktdaten gelöscht';
+        case 'CREATE_FEATURE': return 'Feature erstellt';
+        case 'UPDATE_FEATURE': return 'Feature geändert';
+        case 'DELETE_FEATURE': return 'Feature gelöscht';
         default: return 'unbekannt';
     }
 }
 
-export function localizedString(obj, locale) {
-    return locale === 'EN' ? obj.en : obj.de;
-}
-
-export function sleep(millis) {
-    return new Promise(resolve => setTimeout(resolve, millis));
+export const ICONS = {
+    'mdi-virus': 'coronavirus',
+    'mdi-text-subject': 'subject',
+    'mdi-school': 'school'
 }

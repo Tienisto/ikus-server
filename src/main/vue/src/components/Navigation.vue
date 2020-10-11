@@ -152,6 +152,11 @@ export default {
         label: 'Kontakte',
         icon: 'mdi-card-account-mail'
       },
+      {
+        route: '/features',
+        label: 'Features',
+        icon: 'mdi-format-list-bulleted-square'
+      }
     ],
     analysisPages: [
       {

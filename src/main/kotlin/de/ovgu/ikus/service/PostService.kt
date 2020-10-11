@@ -15,7 +15,7 @@ class PostService (
 ) {
 
     suspend fun findPinnedOrderByDate(): List<Post> {
-        return postRepo.findByPinnedOrderByDateDesc(true).toList()
+        return postRepo.findByPinnedOrderByDateDescIdDesc(true).toList()
     }
 
     suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
@@ -27,7 +27,7 @@ class PostService (
     }
 
     suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByPinnedDescDateDesc(channel.id).toList()
+        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id).toList()
     }
 
     suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
@@ -38,8 +38,8 @@ class PostService (
         return postRepo.findByChannelIdOrderByPosition(channelId).toList()
     }
 
-    suspend fun search(title: String): List<Post> {
-        return postRepo.findByTitleIgnoreCase("%$title%").toList()
+    suspend fun search(title: String, type: PostType): List<Post> {
+        return postRepo.findByTypeAndTitleIgnoreCaseOrderByDate("%$title%", type.toString()).toList()
     }
 
     suspend fun findById(id: Int): Post? {
