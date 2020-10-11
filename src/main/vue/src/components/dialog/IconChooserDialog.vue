@@ -17,7 +17,7 @@
 
       <Notice v-if="icons.length === 0" class="mt-6 mb-6" title="Keine Ergebnisse." />
 
-      <v-virtual-scroll :items="icons" height="350" item-height="100">
+      <v-virtual-scroll :items="icons" height="350" item-height="100" :bench="2">
         <template v-slot="{ item }">
           <div style="display: flex;">
             <div style="text-align: center; width: 110px;" v-for="(icon, index) in item" :key="index">
