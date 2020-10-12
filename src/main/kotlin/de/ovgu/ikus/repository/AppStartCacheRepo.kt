@@ -2,15 +2,15 @@ package de.ovgu.ikus.repository
 
 import de.ovgu.ikus.dto.CurrentAppStarts
 import de.ovgu.ikus.model.AppStartCache
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.flow.toList
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.springframework.r2dbc.core.awaitFirst
 import org.springframework.r2dbc.core.awaitRowsUpdated
 import org.springframework.stereotype.Repository
-import reactor.kotlin.core.publisher.cast
 import java.time.OffsetDateTime
 
 @Repository
@@ -20,15 +20,8 @@ class AppStartCacheRepo(
 ) {
 
     suspend fun findAfter(timestamp: OffsetDateTime): List<AppStartCache> {
-        return client.sql("SELECT * FROM app_start_cache WHERE last_update > :timestamp")
-                .bind("timestamp", timestamp)
-                .fetch()
-                .all()
-                .cast<AppStartCache>()
-                .collectList()
-                .awaitFirst()
+        return crudRepo.findByLastUpdateAfter(timestamp).toList()
     }
-
 
     suspend fun count(monthStart: OffsetDateTime, weekStart: OffsetDateTime, dayStart: OffsetDateTime): CurrentAppStarts {
         val result = client.sql("""
@@ -80,4 +73,7 @@ class AppStartCacheRepo(
     }
 }
 
-interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String>
+interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String> {
+
+    fun findByLastUpdateAfter(timestamp: OffsetDateTime): Flow<AppStartCache>
+}
