@@ -23,7 +23,14 @@ class AppStartCacheRepo(
         return crudRepo.findByLastUpdateAfter(timestamp).toList()
     }
 
+    // TODO: use database client when fixed
     suspend fun count(monthStart: OffsetDateTime, weekStart: OffsetDateTime, dayStart: OffsetDateTime): CurrentAppStarts {
+        return CurrentAppStarts(
+                month = crudRepo.countByLastUpdateAfter(monthStart).toLong(),
+                week = crudRepo.countByLastUpdateAfter(weekStart).toLong(),
+                day = crudRepo.countByLastUpdateAfter(dayStart).toLong()
+        )
+        /*
         val result = client.sql("""
                     SELECT
                         (SELECT COUNT(*) FROM app_start_cache WHERE last_update > :monthStart) as month,
@@ -38,6 +45,7 @@ class AppStartCacheRepo(
                 .awaitFirst()
 
         return CurrentAppStarts(result["month"] as Long, result["week"] as Long, result["day"] as Long)
+         */
     }
 
     suspend fun save(appStart: AppStartCache) {
@@ -76,4 +84,5 @@ class AppStartCacheRepo(
 interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String> {
 
     fun findByLastUpdateAfter(timestamp: OffsetDateTime): Flow<AppStartCache>
+    suspend fun countByLastUpdateAfter(timestamp: OffsetDateTime): Int
 }
