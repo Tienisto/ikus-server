@@ -29,7 +29,7 @@
         <div style="display: flex; align-items: center">
           <div style="flex: 1">
             <div style="display: flex; align-items: center">
-              <i class="material-icons" style="font-size: 40px">{{ featureIcon(f) }}</i>
+              <m-icon :icon="featureIcon(f)" style="font-size: 40px" />
 
               <span style="flex: 1" class="pl-4">
                 <span>{{ featureBadge(f) }}</span>
@@ -96,10 +96,11 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import LocaleSelector from "@/components/LocaleSelector";
 import FeatureDialog from "@/components/dialog/FeatureDialog";
 import GenericDeleteDialog from "@/components/dialog/GenericDeleteDialog";
+import MIcon from "@/components/MIcon";
 
 export default {
   name: 'FeaturesView',
-  components: {GenericDeleteDialog, FeatureDialog, LocaleSelector, LoadingIndicator, MainContainer},
+  components: {MIcon, GenericDeleteDialog, FeatureDialog, LocaleSelector, LoadingIndicator, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,

@@ -19,7 +19,7 @@
           <v-card class="secondary" style="height: 100%">
             <v-card-text style="height: 100%">
               <div style="height: 100%; display: flex; align-items: center; justify-content: center">
-                <i @click="showIconChooser" class="material-icons" style="font-size: 70px; cursor: pointer">{{ icon }}</i>
+                <m-icon @click="showIconChooser" :icon="icon" style="font-size: 70px; cursor: pointer" />
               </div>
             </v-card-text>
           </v-card>
@@ -85,10 +85,11 @@ import SearchPostDialog from "@/components/dialog/SearchPostDialog";
 import moment from "moment";
 import SearchLinkDialog from "@/components/dialog/SearchLinkDialog";
 import IconChooserDialog from "@/components/dialog/IconChooserDialog";
+import MIcon from "@/components/MIcon";
 
 export default {
   name: 'FeatureDialog',
-  components: {IconChooserDialog, SearchLinkDialog, SearchPostDialog, GenericDialog},
+  components: {MIcon, IconChooserDialog, SearchLinkDialog, SearchPostDialog, GenericDialog},
   props: {
     value: {
       type: Boolean,

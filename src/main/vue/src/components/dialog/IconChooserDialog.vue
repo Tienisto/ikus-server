@@ -23,7 +23,7 @@
             <template v-slot="{ item }">
               <div style="display: flex;">
                 <div style="text-align: center; width: 110px;" v-for="(icon, index) in item" :key="index">
-                  <i @click="$emit('select', icon)" class="material-icons" style="cursor: pointer; font-size: 40px;">{{ icon }}</i>
+                  <m-icon @click="$emit('select', icon)" :icon="icon" style="cursor: pointer; font-size: 40px;" />
                   <div @click="$emit('select', icon)" style="cursor: pointer;">{{ icon }}</div>
                 </div>
               </div>
@@ -46,10 +46,11 @@ import allIcons from "@/material-icons.json";
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/dialog/GenericDialog";
 import Notice from "@/components/Notice";
+import MIcon from "@/components/MIcon";
 
 export default {
   name: 'IconChooserDialog',
-  components: {Notice, GenericDialog},
+  components: {MIcon, Notice, GenericDialog},
   props: {
     value: {
       type: Boolean,
