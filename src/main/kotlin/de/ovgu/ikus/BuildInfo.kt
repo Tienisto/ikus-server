@@ -4,6 +4,7 @@ import org.springframework.core.io.ClassPathResource
 import java.util.*
 
 object BuildInfo {
+    const val API_LEVEL = 1
     val VERSION: String
     val BUILD_DATE: String
     val DEFAULT_PROPS: Properties

@@ -1,5 +1,6 @@
 package de.ovgu.ikus.controller
 
+import de.ovgu.ikus.BuildInfo
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
@@ -174,7 +175,10 @@ class PublicController(
                         feature.toLocalizedDto(locale, postDto, linkDto)
                     }
 
-            PublicConfigDto(1, features)
+            PublicConfigDto(
+                    version = BuildInfo.API_LEVEL,
+                    features = features
+            )
         }
     }
 
