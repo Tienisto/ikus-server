@@ -28,6 +28,9 @@ class MensaService (
         return menuCache
     }
 
+    /**
+     * updates the mensa cache
+     */
     suspend fun updateMenu() {
         menuCache = Mensa.values()
                 .mapNotNull { location ->
@@ -47,41 +50,47 @@ class MensaService (
 
     private suspend fun scrapeUniCampusDown(): MensaInfo {
         return scrapeStudentenwerk(
-                name = Mensa.UNI_CAMPUS_DOWN,
+                mensa = Mensa.UNI_CAMPUS_DOWN,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/"
         )
     }
 
     private suspend fun scrapeUniCampusUp(): MensaInfo {
         return scrapeStudentenwerk(
-                name = Mensa.UNI_CAMPUS_UP,
+                mensa = Mensa.UNI_CAMPUS_UP,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/"
         )
     }
 
     private suspend fun scrapeZschokke(): MensaInfo {
         return scrapeStudentenwerk(
-                name = Mensa.ZSCHOKKE,
+                mensa = Mensa.ZSCHOKKE,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/"
         )
     }
 
     private suspend fun scrapeHerrenkrug(): MensaInfo {
         return scrapeStudentenwerk(
-                name = Mensa.HERRENKRUG,
+                mensa = Mensa.HERRENKRUG,
                 url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/"
         )
     }
 
-    private suspend fun scrapeStudentenwerk(name: Mensa, url: String): MensaInfo {
-        val doc = getDocument(url) ?: return MensaInfo(name, emptyList())
+    /**
+     * common method which can be used for all studentenwerk websites because they share the same structure
+     * @param mensa used for creation of the [MensaInfo] object, it has no effect in the scraping process
+     * @param url the address of the website to be scraped
+     * @return the menu
+     */
+    private suspend fun scrapeStudentenwerk(mensa: Mensa, url: String): MensaInfo {
+        val doc = getDocument(url) ?: return MensaInfo(mensa, emptyList())
         val menus = doc.select(".mensa table")
                 .map { table ->
                     val date = getDateFromTable(table)
                     val food = getFoodFromTable(table)
                     Menu(date, food)
                 }
-        return MensaInfo(name, menus)
+        return MensaInfo(mensa, menus)
     }
 
     private fun getDateFromTable(table: Element): LocalDate {
@@ -96,8 +105,7 @@ class MensaService (
 
     private fun getFoodFromTable(table: Element): List<Food> {
         return try {
-            val trList = table.select("tbody tr")
-            trList.mapNotNull { tr ->
+            table.select("tbody tr").mapNotNull { tr ->
 
                 if (tr.children().size != 2)
                     return@mapNotNull null
@@ -147,6 +155,10 @@ class MensaService (
         }
     }
 
+    /**
+     * fetches the website in [url]
+     * @return the parsed document
+     */
     private suspend fun getDocument(url: String): Document? {
         val response = client.get()
                 .uri(url)
