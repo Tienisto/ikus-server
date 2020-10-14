@@ -24,6 +24,7 @@ interface PostRepo : CoroutineCrudRepository<Post, Int> {
 
     fun findByPinnedOrderByDateDescIdDesc(pinned: Boolean): Flow<Post>
     fun findByChannelIdOrderByPinnedDescDateDescIdDesc(channelId: Int): Flow<Post>
+    fun findByTypeOrderByPinnedDescDateDescIdDesc(type: PostType): Flow<Post>
     fun findByChannelIdOrderByPosition(channelId: Int): Flow<Post>
     fun findByTypeOrderByPosition(type: PostType): Flow<Post>
 }

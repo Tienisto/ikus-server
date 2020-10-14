@@ -23,6 +23,26 @@ class PostController (
         private val postFileService: PostFileService
 ) {
 
+    @GetMapping("/news/all")
+    suspend fun getAllNews(): NewsDto {
+        val channels = channelService.findByType(ChannelType.NEWS)
+        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val posts = postService.findByTypeOrderByPinnedDescDateDesc(PostType.NEWS)
+        val files = postFileService.findByPostIn(posts)
+
+        val postsDto = posts.map { post ->
+            val channel = channelsDtoMap[post.channelId] ?: throw ErrorCode(500, "channel not found in cache map")
+            val currFiles = files
+                    .filter { file -> file.postId == post.id }
+                    .map { file -> file.toDto() }
+            post.toDto(channel, currFiles)
+        }
+
+        val pinned = postsDto.filter { post -> post.pinned }
+
+        return NewsDto(postsDto, pinned)
+    }
+
     @GetMapping("/news")
     suspend fun getNewsInfo(@RequestParam channelId: Int): NewsDto {
         val channels = channelService.findByType(ChannelType.NEWS)

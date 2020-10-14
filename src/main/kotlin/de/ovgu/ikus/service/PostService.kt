@@ -14,6 +14,20 @@ class PostService (
         private val postFileService: PostFileService
 ) {
 
+    // news (order by pinned > date > id)
+
+    suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
+        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit).toList()
+    }
+
+    suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
+        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id).toList()
+    }
+
+    suspend fun findByTypeOrderByPinnedDescDateDesc(type: PostType): List<Post> {
+        return postRepo.findByTypeOrderByPinnedDescDateDescIdDesc(type).toList()
+    }
+
     suspend fun findPinnedOrderByDate(): List<Post> {
         return postRepo.findByPinnedOrderByDateDescIdDesc(true).toList()
     }
@@ -22,17 +36,12 @@ class PostService (
         return postRepo.findByOrderByDateDesc(type.name, limit).toList()
     }
 
+    // faq (order by position)
+
     suspend fun findByTypeOrderByPosition(type: PostType): List<Post> {
         return postRepo.findByTypeOrderByPosition(type).toList()
     }
 
-    suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id).toList()
-    }
-
-    suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit).toList()
-    }
 
     suspend fun findByChannelIdOrderByPosition(channelId: Int): List<Post> {
         return postRepo.findByChannelIdOrderByPosition(channelId).toList()

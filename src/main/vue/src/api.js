@@ -177,6 +177,13 @@ export async function getDashboard() {
     });
 }
 
+export async function getAllNews() {
+    return await makeRequest({
+        route: 'posts/news/all',
+        method: 'GET'
+    });
+}
+
 export async function getNews({ channelId }) {
     return await makeRequest({
         route: 'posts/news',

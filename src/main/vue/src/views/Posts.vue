@@ -12,7 +12,7 @@
       <v-select
           label="Kanal" style="width: 250px"
           v-model="channel" @change="updateChannel"
-          :items="channels" item-text="name.en" item-value="id"
+          :items="channelsWithAll" item-text="name.en" item-value="id"
           return-object
       />
 
@@ -104,7 +104,7 @@
 
 <script>
 import moment from "moment"
-import {createPost, deletePost, getChannels, getNews, togglePinPost, updatePost} from "@/api";
+import {createPost, deletePost, getAllNews, getChannels, getNews, togglePinPost, updatePost} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
 import Notice from "@/components/Notice";
 import GenericDialog from "@/components/dialog/GenericDialog";
@@ -114,12 +114,15 @@ import PostDialog from "@/components/dialog/PostDialog";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import PostListDialog from "@/components/dialog/PostListDialog";
 
+const channelAll = { id: -1, name: { en: 'Alle', de: 'Alle' } };
+
 export default {
   name: 'PostsView',
   components: {PostListDialog, LoadingIndicator, PostDialog, LocaleSelector, GenericDialog, Notice, MainContainer},
   data: () => ({
     fetching: true,
     loading: false,
+    channelsWithAll: [],
     channels: [],
     channel: {},
     posts: [],
@@ -136,15 +139,21 @@ export default {
     fetchData: async function() {
       this.fetching = true;
       this.channels = await getChannels({ type: 'NEWS' });
-      if (!this.channel.id && this.channels.length !== 0) {
-        this.channel = this.channels[0];
+      this.channelsWithAll = [ channelAll, ...this.channels ];
+      if (!this.channel.id) {
+        // init
+        this.channel = channelAll;
       }
 
-      if (this.channel.id) {
-        const response = await getNews({ channelId: this.channel.id });
-        this.posts = response.posts;
-        this.pinned = response.pinned;
+      let response;
+      if (this.channel.id === channelAll.id) {
+        response = await getAllNews();
+      } else {
+        response = await getNews({ channelId: this.channel.id });
       }
+
+      this.posts = response.posts;
+      this.pinned = response.pinned;
 
       this.fetching = false;
     },
@@ -159,7 +168,7 @@ export default {
     showUpdateDialog: function(post) {
       // apply post
       this.selectedPost = post;
-      this.$refs.postDialog.reset(this.channel, this.locale);
+      this.$refs.postDialog.reset(post.channel, this.locale);
       this.$refs.postDialog.load(post);
       this.dialogUpdating = true;
       this.dialogPost = true;
