@@ -66,7 +66,8 @@
       </v-card-text>
     </v-card>
 
-    <FeatureDialog ref="featureDialog" v-model="dialogFeature" :updating="dialogUpdating" :loading="loading" @submit="submitFeature" />
+    <FeatureDialog ref="featureDialog" v-model="dialogFeature" :updating="dialogUpdating" :loading="loading" :locales="locales"
+                   @submit="submitFeature" />
 
     <GenericDeleteDialog v-model="dialogDelete" dialog-title="Eintrag löschen"
                          @delete="deleteFeature" :loading="loading">
@@ -124,14 +125,14 @@ export default {
       }
     },
     showCreateDialog: function() {
-      this.$refs.featureDialog.reset();
+      this.$refs.featureDialog.reset(this.locale);
       this.dialogUpdating = false;
       this.dialogFeature = true;
     },
     showUpdateDialog: function(feature) {
       // apply post
       this.selectedFeature = feature;
-      this.$refs.featureDialog.reset();
+      this.$refs.featureDialog.reset(this.locale);
       this.$refs.featureDialog.load(feature);
       this.dialogUpdating = true;
       this.dialogFeature = true;

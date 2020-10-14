@@ -26,7 +26,10 @@
         </v-col>
       </v-row>
 
-      <p class="text-h6 mt-6">Verknüpft mit</p>
+      <div style="display: flex; align-items: center; justify-content: space-between">
+        <p class="text-h6 mt-6">Verknüpft mit</p>
+        <LocaleSelector v-model="locale" :locales="locales" />
+      </div>
       <div v-if="!post && !link" class="mt-6 mb-4" style="display: flex; align-items: center; justify-content: space-evenly">
         <v-btn @click="showSearchPost" rounded>
           <v-icon left>mdi-pencil</v-icon>
@@ -43,14 +46,14 @@
           <v-card-text>
             <div style="display: flex; align-items: center;">
               <div v-if="post" style="flex: 1">
-                <span class="font-weight-bold">{{ post.title.en }}</span>
+                <span class="font-weight-bold">{{ localized(post.title) }}</span>
                 <br>
-                <span>{{ timeString(post.date) }} / {{ post.channel.name.en }}</span>
+                <span>{{ timeString(post.date) }} / {{ localized(post.channel.name) }}</span>
               </div>
               <div v-else style="flex: 1">
-                <span class="font-weight-bold">{{ link.info.en }}</span>
+                <span class="font-weight-bold">{{ localized(link.info) }}</span>
                 <br>
-                <span>{{ link.url.en }}</span>
+                <span>{{ localized(link.url) }}</span>
               </div>
               <v-btn @click="resetConnection" icon>
                 <v-icon>mdi-close</v-icon>
@@ -61,8 +64,10 @@
       </div>
 
       <IconChooserDialog ref="iconChooserDialog" v-model="dialogIconChooser" @select="selectIcon" />
-      <SearchPostDialog ref="searchPostDialog" v-model="dialogSearchPost" @select="selectPost" />
-      <SearchLinkDialog ref="searchLinkDialog" v-model="dialogSearchLink" @select="selectLink" />
+      <SearchPostDialog ref="searchPostDialog" v-model="dialogSearchPost" :locale="locale"
+                        @select="selectPost" />
+      <SearchLinkDialog ref="searchLinkDialog" v-model="dialogSearchLink" :locale="locale"
+                        @select="selectLink" />
 
     </template>
 
@@ -80,16 +85,17 @@
 
 <script>
 import GenericDialog from "@/components/dialog/GenericDialog";
-import {showSnackbar} from "@/utils";
+import {localizedString, showSnackbar} from "@/utils";
 import SearchPostDialog from "@/components/dialog/SearchPostDialog";
 import moment from "moment";
 import SearchLinkDialog from "@/components/dialog/SearchLinkDialog";
 import IconChooserDialog from "@/components/dialog/IconChooserDialog";
 import MIcon from "@/components/MIcon";
+import LocaleSelector from "@/components/LocaleSelector";
 
 export default {
   name: 'FeatureDialog',
-  components: {MIcon, IconChooserDialog, SearchLinkDialog, SearchPostDialog, GenericDialog},
+  components: {LocaleSelector, MIcon, IconChooserDialog, SearchLinkDialog, SearchPostDialog, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -103,8 +109,13 @@ export default {
       type: Boolean,
       required: true
     },
+    locales: {
+      type: Array,
+      required: true
+    }
   },
   data: () => ({
+    locale: 'EN',
     nameEn: '',
     nameDe: '',
     icon: '',
@@ -143,13 +154,16 @@ export default {
       this.post = null;
       this.link = null;
     },
-    reset: function() {
+    reset: function(locale) {
       // reset input
       this.nameEn = '';
       this.nameDe = '';
       this.icon = 'description';
       this.post = null;
       this.link = null;
+
+      // apply preset
+      this.locale = locale;
     },
     load: function(feature) {
       // apply
@@ -194,6 +208,9 @@ export default {
     },
     timeString: function() {
       return (time) => moment(time).format('ddd, DD.MM.YYYY');
+    },
+    localized: function() {
+      return (obj) => localizedString(obj, this.locale);
     }
   }
 }

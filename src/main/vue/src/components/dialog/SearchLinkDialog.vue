@@ -23,6 +23,10 @@ export default {
     value: {
       type: Boolean,
       required: true
+    },
+    locale: {
+      type: String,
+      required: true
     }
   },
   data: () => ({
@@ -36,7 +40,7 @@ export default {
   },
   computed: {
     localized: function() {
-      return (obj) => localizedString(obj, 'EN');
+      return (obj) => localizedString(obj, this.locale);
     }
   }
 }
