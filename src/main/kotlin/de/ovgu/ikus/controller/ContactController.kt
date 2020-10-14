@@ -78,7 +78,7 @@ class ContactController (
         val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
         val contacts = contactService
                 .findAllOrdered()
-                .moveUpItem(item = contact, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveUpItem(item = contact, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (contacts != null) {
             contactService.saveAll(contacts)
@@ -91,7 +91,7 @@ class ContactController (
         val contact = contactService.findById(request.id) ?: throw ErrorCode(404, "Contact not found")
         val contacts = contactService
                 .findAllOrdered()
-                .moveDownItem(item = contact, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveDownItem(item = contact, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (contacts != null) {
             contactService.saveAll(contacts)

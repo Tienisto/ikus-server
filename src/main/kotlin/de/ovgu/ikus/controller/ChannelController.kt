@@ -70,7 +70,7 @@ class ChannelController (
         val channel = channelService.findById(request.id) ?: throw ErrorCode(404, "Channel not found")
         val channels = channelService
                 .findByTypeOrderByPosition(channel.type)
-                .moveUpItem(item = channel, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveUpItem(item = channel, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (channels != null) {
             channelService.saveAll(channels)
@@ -83,7 +83,7 @@ class ChannelController (
         val channel = channelService.findById(request.id) ?: throw ErrorCode(404, "Channel not found")
         val channels = channelService
                 .findByTypeOrderByPosition(channel.type)
-                .moveDownItem(item = channel, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveDownItem(item = channel, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (channels != null) {
             channelService.saveAll(channels)

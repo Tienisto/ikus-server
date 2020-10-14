@@ -87,7 +87,7 @@ class LinkController (
         val link = linkService.findById(request.id) ?: throw ErrorCode(404, "Link not found")
         val links = linkService
                 .findByChannelId(link.channelId)
-                .moveUpItem(item = link, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveUpItem(item = link, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (links != null) {
             linkService.saveAll(links)
@@ -100,7 +100,7 @@ class LinkController (
         val link = linkService.findById(request.id) ?: throw ErrorCode(404, "Link not found")
         val links = linkService
                 .findByChannelId(link.channelId)
-                .moveDownItem(item = link, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveDownItem(item = link, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (links != null) {
             linkService.saveAll(links)

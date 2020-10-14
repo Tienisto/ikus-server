@@ -100,7 +100,7 @@ class FeatureController (
         val feature = featureService.findById(featureId) ?: throw ErrorCode(404, "Feature not found")
         val features = featureService
                 .findAllOrderByPosition()
-                .moveUpItem(item = feature, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveUpItem(item = feature, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (features != null) {
             featureService.saveAll(features)
@@ -113,7 +113,7 @@ class FeatureController (
         val feature = featureService.findById(featureId) ?: throw ErrorCode(404, "Feature not found")
         val features = featureService
                 .findAllOrderByPosition()
-                .moveDownItem(item = feature, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveDownItem(item = feature, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (features != null) {
             featureService.saveAll(features)

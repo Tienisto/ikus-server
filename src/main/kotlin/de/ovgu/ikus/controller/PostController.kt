@@ -147,7 +147,7 @@ class PostController (
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
         val posts = postService
                 .findByChannelIdOrderByPosition(post.channelId)
-                .moveUpItem(item = post, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveUpItem(item = post, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (posts != null) {
             postService.saveAll(posts)
@@ -160,7 +160,7 @@ class PostController (
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
         val posts = postService
                 .findByChannelIdOrderByPosition(post.channelId)
-                .moveDownItem(item = post, getId = { item -> item.id }, setIndex = { item, index -> item.position = index })
+                .moveDownItem(item = post, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (posts != null) {
             postService.saveAll(posts)
