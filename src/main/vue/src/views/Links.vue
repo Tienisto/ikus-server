@@ -9,7 +9,7 @@
 
     <template v-slot:meta>
       <p class="text-h6">Optionen</p>
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale" />
       <br>
       <v-btn @click="showCreateGroup" color="primary" block :disabled="loading">
         <v-icon left>mdi-plus</v-icon>
@@ -124,7 +124,6 @@ export default {
     loading: false,
     data: [],
     channels: [],
-    locales: ['EN', 'DE'],
     locale: 'EN',
     dialogLink: false,
     dialogUpdating: false, // true if dialog is used for updating a link OR a group

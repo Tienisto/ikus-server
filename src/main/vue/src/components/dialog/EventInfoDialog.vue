@@ -8,7 +8,7 @@
           <br>
           {{ eventChannel }}
         </div>
-        <LocaleSelector v-model="locale" :locales="locales" />
+        <LocaleSelector v-model="locale" />
       </div>
       <br>
       <b>Information:</b>
@@ -50,10 +50,6 @@ export default {
     },
     event: {
       type: Object,
-      required: true
-    },
-    locales: {
-      type: Array,
       required: true
     }
   },

@@ -7,7 +7,7 @@
 
     <template v-slot:meta>
       <p class="text-h6">Optionen</p>
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale" />
       <br>
       <v-btn @click="showCreateContact" color="primary" block :disabled="loading">
         <v-icon left>mdi-plus</v-icon>
@@ -184,7 +184,6 @@ export default {
     fetching: true,
     loading: false,
     contacts: [],
-    locales: ['EN', 'DE'],
     locale: 'EN',
     dialogContact: false,
     dialogUpdating: false,

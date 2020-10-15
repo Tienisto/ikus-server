@@ -100,7 +100,7 @@
       </v-col>
     </v-row>
 
-    <EventInfoDialog v-model="dialogEvent" :event="event" :locales="locales" />
+    <EventInfoDialog v-model="dialogEvent" :event="event" />
 
     <GenericDialog v-model="dialogMoreEvents" title="Events" :width="350">
       <template v-slot:content>
@@ -176,7 +176,6 @@ export default {
       posts: [],
       events: []
     },
-    locales: ['EN', 'DE'],
     dialogAccount: false,
     dialogEvent: false,
     dialogMoreEvents: false,

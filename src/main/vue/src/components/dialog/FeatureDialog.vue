@@ -28,7 +28,7 @@
 
       <div style="display: flex; align-items: center; justify-content: space-between">
         <p class="text-h6 mt-6">Verknüpft mit</p>
-        <LocaleSelector v-model="locale" :locales="locales" />
+        <LocaleSelector v-model="locale" />
       </div>
       <div v-if="!post && !link" class="mt-6 mb-4" style="display: flex; align-items: center; justify-content: space-evenly">
         <v-btn @click="showSearchPost" rounded>
@@ -107,10 +107,6 @@ export default {
     },
     loading: {
       type: Boolean,
-      required: true
-    },
-    locales: {
-      type: Array,
       required: true
     }
   },

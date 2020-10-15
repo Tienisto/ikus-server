@@ -16,7 +16,7 @@
           return-object
       />
 
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale"/>
 
       <br>
 
@@ -47,7 +47,7 @@
       </v-card-text>
     </v-card>
 
-    <EventDialog ref="eventDialog" v-model="dialogEvent" :channels="channels" :locales="locales" :updating="dialogUpdating" :loading="loading"
+    <EventDialog ref="eventDialog" v-model="dialogEvent" :channels="channels" :updating="dialogUpdating" :loading="loading"
                   @submit="submit" @delete="showDeleteDialog"/>
 
     <GenericDialog v-model="dialogDelete" title="Event löschen">
@@ -104,7 +104,6 @@ export default {
     channelsWithAll: [],
     channels: [],
     channel: {},
-    locales: ['EN', 'DE'],
     locale: 'EN',
     events: [],
     dialogEvent: false,

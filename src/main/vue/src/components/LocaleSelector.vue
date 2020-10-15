@@ -16,11 +16,10 @@ export default {
     value: {
       type: String,
       default: 'EN'
-    },
-    locales: {
-      type: Array,
-      default: () => ['EN', 'DE']
     }
-  }
+  },
+  data: () => ({
+    locales: ['EN', 'DE']
+  })
 }
 </script>

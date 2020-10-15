@@ -13,7 +13,7 @@
         </v-col>
         <v-col cols="8" style="display: flex; align-items: center">
           <div style="flex: 1"></div>
-          <LocaleSelector v-model="locale" :locales="locales" />
+          <LocaleSelector v-model="locale" />
         </v-col>
       </v-row>
 
@@ -80,10 +80,6 @@ export default {
       required: true
     },
     channels: {
-      type: Array,
-      required: true
-    },
-    locales: {
       type: Array,
       required: true
     }

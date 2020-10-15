@@ -12,7 +12,7 @@
     <template v-slot:meta>
       <p class="text-h6">Optionen</p>
 
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale" />
 
       <br>
 
@@ -66,7 +66,7 @@
       </v-card-text>
     </v-card>
 
-    <FeatureDialog ref="featureDialog" v-model="dialogFeature" :updating="dialogUpdating" :loading="loading" :locales="locales"
+    <FeatureDialog ref="featureDialog" v-model="dialogFeature" :updating="dialogUpdating" :loading="loading"
                    @submit="submitFeature" />
 
     <GenericDeleteDialog v-model="dialogDelete" dialog-title="Eintrag löschen"
@@ -106,7 +106,6 @@ export default {
     fetching: true,
     loading: false,
     features: [],
-    locales: ['EN', 'DE'],
     locale: 'EN',
     dialogFeature: false,
     dialogUpdating: false, // true if dialog is used for updating a feature

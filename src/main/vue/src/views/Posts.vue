@@ -16,7 +16,7 @@
           return-object
       />
 
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale" />
 
       <br>
 
@@ -73,7 +73,7 @@
                     :posts="pinned" :loading="loading"
                     @delete="togglePin"/>
 
-    <PostDialog ref="postDialog" v-model="dialogPost" post-type="NEWS" :channels="channels" :locales="locales"
+    <PostDialog ref="postDialog" v-model="dialogPost" post-type="NEWS" :channels="channels"
                 :updating="dialogUpdating" :loading="loading"
                 @submit="submitPost"/>
 
@@ -127,7 +127,6 @@ export default {
     channel: {},
     posts: [],
     pinned: [],
-    locales: ['EN', 'DE'],
     locale: 'EN',
     dialogPinnedList: false,
     dialogPost: false,

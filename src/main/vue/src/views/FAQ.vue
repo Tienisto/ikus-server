@@ -9,7 +9,7 @@
 
     <template v-slot:meta>
       <p class="text-h6">Optionen</p>
-      <LocaleSelector v-model="locale" :locales="locales"/>
+      <LocaleSelector v-model="locale" />
       <br>
       <v-btn @click="showCreateChannel" color="primary" block :disabled="loading">
         <v-icon left>mdi-plus</v-icon>
@@ -51,7 +51,7 @@
 
     <!-- DIALOGS -->
 
-    <PostDialog ref="postDialog" v-model="dialogPost" post-type="FAQ" :channels="channels" :locales="locales"
+    <PostDialog ref="postDialog" v-model="dialogPost" post-type="FAQ" :channels="channels"
                 :updating="dialogUpdating" :loading="loading"
                 @submit="submitPost"/>
 
@@ -122,7 +122,6 @@ export default {
     loading: false,
     groups: [],
     channels: [],
-    locales: ['EN', 'DE'],
     locale: 'EN',
     dialogPost: false,
     dialogUpdating: false, // true if dialog is used for updating a post OR a channel
