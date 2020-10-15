@@ -153,6 +153,11 @@ export default {
     },
     submit: async function() {
 
+      if (!this.channel.id || this.channel.id < 0) {
+        showSnackbar('Bitte Kanal auswählen');
+        return;
+      }
+
       if (!this.titleEn) {
         showSnackbar('Englische Überschrift fehlt');
         return false;
