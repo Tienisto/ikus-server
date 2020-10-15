@@ -50,6 +50,7 @@
             <span class="font-weight-bold">{{ localized(p.title) }}</span>
             <br>
             <span>{{ timeString(p.date) }}</span>
+            <span v-if="isAllMode"> / {{ localized(p.channel.name) }}</span>
           </div>
           <div style="display: flex">
 
@@ -240,6 +241,9 @@ export default {
     timeString: function() {
       return (time) => moment(time).format('ddd, DD.MM.YYYY');
     },
+    isAllMode: function() {
+      return this.channel.id === channelAll.id;
+    }
   },
   mounted: async function() {
     await this.fetchData();
