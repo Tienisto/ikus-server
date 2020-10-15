@@ -2,7 +2,6 @@ package de.ovgu.ikus.repository
 
 import de.ovgu.ikus.model.Channel
 import de.ovgu.ikus.model.ChannelType
-import kotlinx.coroutines.flow.Flow
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
@@ -11,9 +10,9 @@ interface ChannelRepo : CoroutineCrudRepository<Channel, Int> {
     @Query("SELECT MAX(position) FROM channel WHERE type = :type")
     suspend fun findMaxPositionByType(type: ChannelType): Int?
 
-    fun findByOrderByPosition(): Flow<Channel>
-    fun findByType(type: ChannelType): Flow<Channel>
-    fun findByTypeOrderByPosition(type: ChannelType): Flow<Channel>
-    fun findByTypeOrderByName(type: ChannelType): Flow<Channel>
-    fun findByTypeOrderByNameDe(type: ChannelType): Flow<Channel>
+    suspend fun findByOrderByPosition(): List<Channel>
+    suspend fun findByType(type: ChannelType): List<Channel>
+    suspend fun findByTypeOrderByPosition(type: ChannelType): List<Channel>
+    suspend fun findByTypeOrderByName(type: ChannelType): List<Channel>
+    suspend fun findByTypeOrderByNameDe(type: ChannelType): List<Channel>
 }

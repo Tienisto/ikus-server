@@ -12,15 +12,15 @@ class LinkService (
 ) {
 
     suspend fun findAllOrdered(): List<Link> {
-        return linkRepo.findByOrderByPosition().toList()
+        return linkRepo.findByOrderByPosition()
     }
 
     suspend fun findByChannelId(channelId: Int): List<Link> {
-        return linkRepo.findByChannelIdOrderByPosition(channelId).toList()
+        return linkRepo.findByChannelIdOrderByPosition(channelId)
     }
 
     suspend fun search(title: String): List<Link> {
-        return linkRepo.findByInfoIgnoreCase("%$title%").toList()
+        return linkRepo.findByInfoIgnoreCase("%$title%")
     }
 
     suspend fun findById(id: Int): Link? {

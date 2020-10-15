@@ -8,7 +8,6 @@ import de.ovgu.ikus.model.StatsType
 import de.ovgu.ikus.repository.AppStartCacheRepo
 import de.ovgu.ikus.repository.AppStartRepo
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import java.time.OffsetDateTime
 
@@ -26,7 +25,6 @@ class AnalyticsService (
     suspend fun findByType(type: StatsType): List<AppStart> {
         return appStartRepo
                 .findFirst90ByTypeOrderByDateDesc(type)
-                .toList()
                 .sortedBy { stats -> stats.date }
     }
 

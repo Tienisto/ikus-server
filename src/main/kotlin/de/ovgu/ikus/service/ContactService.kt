@@ -4,7 +4,6 @@ import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.model.*
 import de.ovgu.ikus.repository.ContactRepo
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 
@@ -16,7 +15,7 @@ class ContactService(
 ) {
 
     suspend fun findAllOrdered(): List<Contact> {
-        return contactRepo.findByOrderByPosition().toList()
+        return contactRepo.findByOrderByPosition()
     }
 
     suspend fun findById(id: Int): Contact? {

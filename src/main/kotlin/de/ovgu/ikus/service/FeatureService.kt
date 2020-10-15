@@ -4,7 +4,6 @@ import de.ovgu.ikus.model.Feature
 import de.ovgu.ikus.model.NativeFeature
 import de.ovgu.ikus.repository.FeatureRepo
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,7 +32,7 @@ class FeatureService (
     }
 
     suspend fun findAllOrderByPosition(): List<Feature> {
-        return featureRepo.findByOrderByPosition().toList()
+        return featureRepo.findByOrderByPosition()
     }
 
     suspend fun save(feature: Feature): Feature {

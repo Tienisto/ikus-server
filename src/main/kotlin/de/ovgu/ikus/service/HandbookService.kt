@@ -5,7 +5,6 @@ import de.ovgu.ikus.model.HandbookBookmark
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.repository.HandbookBookmarkRepo
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 
@@ -28,11 +27,11 @@ class HandbookService (
     }
 
     suspend fun findAllOrdered(): List<HandbookBookmark> {
-        return handbookBookmarkRepo.findByOrderByPage().toList()
+        return handbookBookmarkRepo.findByOrderByPage()
     }
 
     suspend fun findByLocaleOrdered(locale: IkusLocale): List<HandbookBookmark> {
-        return handbookBookmarkRepo.findByLocaleOrderByPage(locale).toList()
+        return handbookBookmarkRepo.findByLocaleOrderByPage(locale)
     }
 
     suspend fun updateBookmarks(bookmarks: List<HandbookBookmark>, locale: IkusLocale) {

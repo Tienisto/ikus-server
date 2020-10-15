@@ -5,7 +5,6 @@ import de.ovgu.ikus.model.Post
 import de.ovgu.ikus.model.PostFile
 import de.ovgu.ikus.repository.PostFileRepo
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -24,20 +23,20 @@ class PostFileService(
 
     suspend fun findByIdIn(ids: List<Int>): List<PostFile> {
         return when (ids.isNotEmpty()) {
-            true -> postFileRepo.findByIdIn(ids).toList()
+            true -> postFileRepo.findByIdIn(ids)
             false -> emptyList()
         }
     }
 
     suspend fun findByPostIn(posts: List<Post>): List<PostFile> {
         return when (posts.isNotEmpty()) {
-            true -> postFileRepo.findByPostIdIn(posts.map { post -> post.id }).toList()
+            true -> postFileRepo.findByPostIdIn(posts.map { post -> post.id })
             false -> emptyList()
         }
     }
 
     suspend fun findByPost(post: Post): List<PostFile> {
-        return postFileRepo.findByPostId(post.id).toList()
+        return postFileRepo.findByPostId(post.id)
     }
 
     suspend fun saveAll(files: List<PostFile>) {
@@ -68,7 +67,6 @@ class PostFileService(
         val now = OffsetDateTime.now()
         postFileRepo
                 .findUnusedFiles()
-                .toList()
                 .filter { file -> Duration.between(file.timestamp, now) > maxAge }
                 .forEach { file ->
                     postFileRepo.delete(file)

@@ -17,38 +17,38 @@ class PostService (
     // news (order by pinned > date > id)
 
     suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit).toList()
+        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit)
     }
 
     suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id).toList()
+        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id)
     }
 
     suspend fun findByTypeOrderByPinnedDescDateDesc(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByPinnedDescDateDescIdDesc(type).toList()
+        return postRepo.findByTypeOrderByPinnedDescDateDescIdDesc(type)
     }
 
     suspend fun findPinnedOrderByDate(): List<Post> {
-        return postRepo.findByPinnedOrderByDateDescIdDesc(true).toList()
+        return postRepo.findByPinnedOrderByDateDescIdDesc(true)
     }
 
     suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
-        return postRepo.findByOrderByDateDesc(type, limit).toList()
+        return postRepo.findByOrderByDateDesc(type, limit)
     }
 
     // faq (order by position)
 
     suspend fun findByTypeOrderByPosition(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByPosition(type).toList()
+        return postRepo.findByTypeOrderByPosition(type)
     }
 
 
     suspend fun findByChannelIdOrderByPosition(channelId: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByPosition(channelId).toList()
+        return postRepo.findByChannelIdOrderByPosition(channelId)
     }
 
     suspend fun search(title: String, type: PostType): List<Post> {
-        return postRepo.findByTypeAndTitleIgnoreCaseOrderByDate("%$title%", type).toList()
+        return postRepo.findByTypeAndTitleIgnoreCaseOrderByDate("%$title%", type)
     }
 
     suspend fun findById(id: Int): Post? {

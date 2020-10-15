@@ -5,8 +5,6 @@ import de.ovgu.ikus.model.User
 import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.repository.UserRepo
 import de.ovgu.ikus.security.HashService
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.toList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -45,7 +43,6 @@ class UserService (
         return userRepo
                 .findByOrderByName()
                 .filter { user -> user.name != propsAdmin.name }
-                .toList()
     }
 
     suspend fun addUser(name: String, password: String): User {

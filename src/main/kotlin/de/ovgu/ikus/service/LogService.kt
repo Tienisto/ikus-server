@@ -15,7 +15,7 @@ class LogService (
 ) {
 
     suspend fun findAll(limit: Int): List<LogDto> {
-        val logs = logRepo.findAllWithLimit(limit).toList()
+        val logs = logRepo.findAllWithLimit(limit)
         val users = userRepo.findAll().toList()
         return logs.map { log ->
             val user = users.firstOrNull { user -> log.userId == user.id }?.toDto()

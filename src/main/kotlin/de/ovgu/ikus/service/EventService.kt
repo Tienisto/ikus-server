@@ -12,11 +12,11 @@ class EventService (
 ) {
 
     suspend fun findAllOrdered(): List<Event> {
-        return eventRepo.findByOrderByStartTime().toList()
+        return eventRepo.findByOrderByStartTime()
     }
 
     suspend fun findByChannelOrdered(channel: Channel): List<Event> {
-        return eventRepo.findByChannelIdOrderByStartTime(channel).toList()
+        return eventRepo.findByChannelIdOrderByStartTime(channel)
     }
 
     suspend fun findById(id: Int): Event? {

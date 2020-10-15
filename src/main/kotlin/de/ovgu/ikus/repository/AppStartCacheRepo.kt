@@ -2,9 +2,7 @@ package de.ovgu.ikus.repository
 
 import de.ovgu.ikus.dto.CurrentAppStarts
 import de.ovgu.ikus.model.AppStartCache
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
@@ -19,7 +17,7 @@ class AppStartCacheRepo(
 ) {
 
     suspend fun findAfter(timestamp: OffsetDateTime): List<AppStartCache> {
-        return crudRepo.findByLastUpdateAfter(timestamp).toList()
+        return crudRepo.findByLastUpdateAfter(timestamp)
     }
 
     // TODO: use database client when fixed
@@ -82,6 +80,6 @@ class AppStartCacheRepo(
 
 interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String> {
 
-    fun findByLastUpdateAfter(timestamp: OffsetDateTime): Flow<AppStartCache>
+    suspend fun findByLastUpdateAfter(timestamp: OffsetDateTime): List<AppStartCache>
     suspend fun countByLastUpdateAfter(timestamp: OffsetDateTime): Int
 }

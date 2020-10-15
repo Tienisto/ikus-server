@@ -13,21 +13,21 @@ class ChannelService (
 ) {
 
     suspend fun findAllOrderByPosition(): List<Channel> {
-        return channelRepo.findByOrderByPosition().toList()
+        return channelRepo.findByOrderByPosition()
     }
 
     suspend fun findByType(type: ChannelType): List<Channel> {
-        return channelRepo.findByType(type).toList()
+        return channelRepo.findByType(type)
     }
 
     suspend fun findByTypeOrderByPosition(type: ChannelType): List<Channel> {
-        return channelRepo.findByTypeOrderByPosition(type).toList()
+        return channelRepo.findByTypeOrderByPosition(type)
     }
 
     suspend fun findByTypeOrderByName(type: ChannelType, locale: IkusLocale): List<Channel> {
         return when (locale) {
-            IkusLocale.EN -> channelRepo.findByTypeOrderByName(type).toList()
-            IkusLocale.DE -> channelRepo.findByTypeOrderByNameDe(type).toList()
+            IkusLocale.EN -> channelRepo.findByTypeOrderByName(type)
+            IkusLocale.DE -> channelRepo.findByTypeOrderByNameDe(type)
         }
     }
 
