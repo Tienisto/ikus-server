@@ -33,7 +33,7 @@ class PostService (
     }
 
     suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
-        return postRepo.findByOrderByDateDesc(type.name, limit).toList()
+        return postRepo.findByOrderByDateDesc(type, limit).toList()
     }
 
     // faq (order by position)
@@ -48,11 +48,15 @@ class PostService (
     }
 
     suspend fun search(title: String, type: PostType): List<Post> {
-        return postRepo.findByTypeAndTitleIgnoreCaseOrderByDate("%$title%", type.toString()).toList()
+        return postRepo.findByTypeAndTitleIgnoreCaseOrderByDate("%$title%", type).toList()
     }
 
     suspend fun findById(id: Int): Post? {
         return postRepo.findById(id)
+    }
+
+    suspend fun existsById(id: Int): Boolean {
+        return postRepo.existsById(id)
     }
 
     suspend fun save(post: Post, files: List<PostFile>): Post {

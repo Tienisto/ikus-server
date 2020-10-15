@@ -12,13 +12,13 @@ interface PostRepo : CoroutineCrudRepository<Post, Int> {
     suspend fun findMaxPositionByChannelId(channelId: Int): Int?
 
     @Query("SELECT * FROM post WHERE type = :type ORDER BY date DESC, id DESC LIMIT :limit")
-    fun findByOrderByDateDesc(type: String, limit: Int): Flow<Post>
+    fun findByOrderByDateDesc(type: PostType, limit: Int): Flow<Post>
 
     @Query("SELECT * FROM post WHERE channel_id = :channelId ORDER BY date DESC, id DESC LIMIT :limit")
     fun findByChannelIdOrderByDateDesc(channelId: Int, limit: Int): Flow<Post>
 
     @Query("SELECT * FROM post WHERE type = :type AND (title ILIKE :title OR title_de ILIKE :title) ORDER BY date DESC, id DESC")
-    fun findByTypeAndTitleIgnoreCaseOrderByDate(title: String, type: String): Flow<Post>
+    fun findByTypeAndTitleIgnoreCaseOrderByDate(title: String, type: PostType): Flow<Post>
 
     fun findByPinnedOrderByDateDescIdDesc(pinned: Boolean): Flow<Post>
     fun findByChannelIdOrderByPinnedDescDateDescIdDesc(channelId: Int): Flow<Post>

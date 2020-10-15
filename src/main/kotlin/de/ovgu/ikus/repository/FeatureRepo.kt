@@ -13,7 +13,6 @@ interface FeatureRepo : CoroutineCrudRepository<Feature, Int> {
     @Query("SELECT MAX(position) FROM feature")
     suspend fun findMaxPosition(): Int?
 
-    // TODO: use existsBy when it is fixed
-    suspend fun countByNativeFeature(feature: NativeFeature): Int
+    suspend fun existsByNativeFeature(feature: NativeFeature): Boolean
     fun findByOrderByPosition(): Flow<Feature>
 }

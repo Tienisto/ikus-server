@@ -17,7 +17,7 @@ class FeatureService (
      */
     suspend fun repairNativeFeatures() {
         NativeFeature.values().forEach { feature ->
-            if (featureRepo.countByNativeFeature(feature) == 0) {
+            if (!featureRepo.existsByNativeFeature(feature)) {
                 // add missing native feature
                 val maxPosition = findMaxPosition()
                 featureRepo.save(Feature(

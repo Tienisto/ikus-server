@@ -139,11 +139,10 @@ class FeatureController (
         if (postId != null && linkId != null)
             throw ErrorCode(409, "Only define one, not both post and link")
 
-        // TODO: use existsBy if fixed
-        if (postId != null && postService.findById(postId) == null)
+        if (postId != null && !postService.existsById(postId))
             throw ErrorCode(404, "Post not found")
 
-        if (linkId != null && linkService.findById(linkId) == null)
+        if (linkId != null && !linkService.existsById(linkId))
             throw ErrorCode(404, "Link not found")
     }
 

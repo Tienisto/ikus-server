@@ -27,6 +27,10 @@ class LinkService (
         return linkRepo.findById(id)
     }
 
+    suspend fun existsById(id: Int): Boolean {
+        return linkRepo.existsById(id)
+    }
+
     suspend fun save(link: Link): Link {
         return linkRepo.save(link)
     }
