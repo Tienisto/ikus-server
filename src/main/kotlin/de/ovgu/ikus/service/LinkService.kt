@@ -40,10 +40,7 @@ class LinkService (
         linkRepo.delete(link)
     }
 
-    // TODO: remove counting when NPE is fixed
     suspend fun findMaxPositionByChannel(channel: Channel): Int {
-        if (linkRepo.countByChannelId(channel.id) == 0)
-            return -1
         return linkRepo.findMaxPositionByChannelId(channel.id) ?: -1
     }
 }

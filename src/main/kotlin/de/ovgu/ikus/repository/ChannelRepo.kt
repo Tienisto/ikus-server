@@ -8,11 +8,8 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface ChannelRepo : CoroutineCrudRepository<Channel, Int> {
 
-    suspend fun countByType(type: ChannelType): Int
-
-    // TODO: use enum-native solution
     @Query("SELECT MAX(position) FROM channel WHERE type = :type")
-    suspend fun findMaxPositionByType(type: String): Int?
+    suspend fun findMaxPositionByType(type: ChannelType): Int?
 
     fun findByOrderByPosition(): Flow<Channel>
     fun findByType(type: ChannelType): Flow<Channel>

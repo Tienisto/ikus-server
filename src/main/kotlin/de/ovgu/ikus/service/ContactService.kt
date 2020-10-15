@@ -75,10 +75,7 @@ class ContactService(
         }
     }
 
-    // TODO: remove counting when NPE is fixed
     suspend fun findMaxPosition(): Int {
-        if (contactRepo.count() == 0L)
-            return -1
         return contactRepo.findMaxPosition() ?: -1
     }
 }

@@ -89,10 +89,7 @@ class PostService (
         postRepo.delete(post)
     }
 
-    // TODO: remove counting when NPE is fixed
     suspend fun findMaxPositionByChannel(channel: Channel): Int {
-        if (postRepo.countByChannelId(channel.id) == 0)
-            return -1
         return postRepo.findMaxPositionByChannelId(channel.id) ?: -1
     }
 }

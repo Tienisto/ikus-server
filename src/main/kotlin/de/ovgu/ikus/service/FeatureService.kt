@@ -52,10 +52,7 @@ class FeatureService (
         featureRepo.deleteAll()
     }
 
-    // TODO: remove counting when NPE is fixed
     suspend fun findMaxPosition(): Int {
-        if (featureRepo.count() == 0L)
-            return -1
         return featureRepo.findMaxPosition() ?: -1
     }
 }

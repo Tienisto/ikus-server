@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
-import org.springframework.r2dbc.core.awaitFirst
 import org.springframework.r2dbc.core.awaitRowsUpdated
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime

@@ -8,8 +8,6 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface PostRepo : CoroutineCrudRepository<Post, Int> {
 
-    suspend fun countByChannelId(channelId: Int): Int
-
     @Query("SELECT MAX(position) FROM post WHERE channel_id = :channelId")
     suspend fun findMaxPositionByChannelId(channelId: Int): Int?
 
