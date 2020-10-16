@@ -86,7 +86,7 @@ class PublicController(
                             val food = menu.food.map { food -> food.toLocalizedDto(locale) }
                             menu.toLocalizedDto(food)
                         }
-                        menuInfo.toLocalizedDto(menus)
+                        menuInfo.toLocalizedDto(locale, menus)
                     }
         }
     }

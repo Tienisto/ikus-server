@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import org.springframework.data.geo.Point
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -49,48 +50,62 @@ class MensaService (
     }
 
     private suspend fun scrapeUniCampusDown(): MensaInfo {
-        return scrapeStudentenwerk(
-                mensa = Mensa.UNI_CAMPUS_DOWN,
-                url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/"
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/")
+        return MensaInfo(
+                name = Mensa.UNI_CAMPUS_DOWN,
+                openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
+                openingHoursDe = "Mo - Fr, 10:45 - 14:00",
+                coords = Point(52.13944, 11.64725),
+                menus = menus
         )
     }
 
     private suspend fun scrapeUniCampusUp(): MensaInfo {
-        return scrapeStudentenwerk(
-                mensa = Mensa.UNI_CAMPUS_UP,
-                url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/"
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/")
+        return MensaInfo(
+                name = Mensa.UNI_CAMPUS_UP,
+                openingHours = "closed",
+                openingHoursDe = "geschlossen",
+                coords = Point(52.13944, 11.64725),
+                menus = menus
         )
     }
 
     private suspend fun scrapeZschokke(): MensaInfo {
-        return scrapeStudentenwerk(
-                mensa = Mensa.ZSCHOKKE,
-                url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/"
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/")
+        return MensaInfo(
+                name = Mensa.ZSCHOKKE,
+                openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
+                openingHoursDe = "Mo - Fr, 10:45 - 14:00",
+                coords = Point(52.13799, 11.63387),
+                menus = menus
         )
     }
 
     private suspend fun scrapeHerrenkrug(): MensaInfo {
-        return scrapeStudentenwerk(
-                mensa = Mensa.HERRENKRUG,
-                url = "https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/"
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/")
+        return MensaInfo(
+                name = Mensa.HERRENKRUG,
+                openingHours = "Mon - Fri, 11:00 AM - 2:15 PM",
+                openingHoursDe = "Mo - Fr, 11:00 - 14:15",
+                coords = Point(52.13975, 11.67615),
+                menus = menus
         )
     }
 
     /**
      * common method which can be used for all studentenwerk websites because they share the same structure
-     * @param mensa used for creation of the [MensaInfo] object, it has no effect in the scraping process
      * @param url the address of the website to be scraped
      * @return the menu
      */
-    private suspend fun scrapeStudentenwerk(mensa: Mensa, url: String): MensaInfo {
-        val doc = getDocument(url) ?: return MensaInfo(mensa, emptyList())
-        val menus = doc.select(".mensa table")
+    private suspend fun scrapeStudentenwerk(url: String): List<Menu> {
+        val doc = getDocument(url) ?: return emptyList()
+        return doc.select(".mensa table")
                 .map { table ->
                     val date = getDateFromTable(table)
                     val food = getFoodFromTable(table)
                     Menu(date, food)
                 }
-        return MensaInfo(mensa, menus)
     }
 
     private fun getDateFromTable(table: Element): LocalDate {

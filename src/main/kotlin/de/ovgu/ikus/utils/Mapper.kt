@@ -89,8 +89,11 @@ fun Menu.toLocalizedDto(food: List<LocalizedFoodDto>): LocalizedMenuDto {
     return LocalizedMenuDto(date.toString(), food)
 }
 
-fun MensaInfo.toLocalizedDto(menus: List<LocalizedMenuDto>): LocalizedMenuInfoDto {
-    return LocalizedMenuInfoDto(name, menus)
+fun MensaInfo.toLocalizedDto(locale: IkusLocale, menus: List<LocalizedMenuDto>): LocalizedMenuInfoDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedMenuInfoDto(name, openingHours, coords.toCoordsDto(), menus)
+        IkusLocale.DE -> LocalizedMenuInfoDto(name, openingHoursDe, coords.toCoordsDto(), menus)
+    }
 }
 
 fun Link.toDto(channel: ChannelDto): LinkDto {
