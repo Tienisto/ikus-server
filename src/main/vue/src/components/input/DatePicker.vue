@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly filled></v-text-field>
     </template>
-    <v-date-picker :value="currValue" @input="currValue = $event" locale="de" :first-day-of-week="1" scrollable>
+    <v-date-picker :value="internalValue" @input="internalValue = $event" locale="de" :first-day-of-week="1" scrollable>
       <v-spacer></v-spacer>
       <v-btn @click="dialog = false" color="black" text>
         Abbrechen
@@ -36,11 +36,11 @@ export default {
   },
   data: () => ({
     dialog: false,
-    currValue: null
+    internalValue: null
   }),
   methods: {
     save: function() {
-      this.$emit('input', this.currValue);
+      this.$emit('input', this.internalValue);
       this.dialog = false;
     }
   },
@@ -52,7 +52,7 @@ export default {
   watch: {
     dialog: function(newVal) {
       if (newVal) {
-        this.currValue = this.value;
+        this.internalValue = this.value;
       }
     }
   }

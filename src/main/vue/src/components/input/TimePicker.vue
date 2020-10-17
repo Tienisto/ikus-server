@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-text-field :value="value" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly filled></v-text-field>
     </template>
-    <v-time-picker v-if="dialog" :value="currValue" @input="currValue = $event" format="24hr" full-width>
+    <v-time-picker v-if="dialog" :value="internalValue" @input="internalValue = $event" format="24hr" full-width>
       <v-spacer></v-spacer>
       <v-btn @click="dialog = false" color="black" text>
         Abbrechen
@@ -35,18 +35,18 @@ export default {
   },
   data: () => ({
     dialog: false,
-    currValue: null
+    internalValue: null
   }),
   methods: {
     save: function() {
-      this.$emit('input', this.currValue);
+      this.$emit('input', this.internalValue);
       this.dialog = false;
     }
   },
   watch: {
     dialog: function(newVal) {
       if (newVal) {
-        this.currValue = this.value;
+        this.internalValue = this.value;
       }
     }
   }

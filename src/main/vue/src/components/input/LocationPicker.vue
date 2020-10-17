@@ -9,11 +9,11 @@
     <v-card>
 
       <v-card-title>Koordinaten</v-card-title>
-      <v-card-subtitle>{{ valueFormatted(currValue) }}</v-card-subtitle>
+      <v-card-subtitle>{{ valueFormatted(internalValue) }}</v-card-subtitle>
 
       <v-card-text>
         <vl-map :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" style="height: 400px">
-          <vl-view :zoom.sync="zoom" :center="valueToVirtual" @update:center="currValue = virtualToValue($event)"></vl-view>
+          <vl-view :zoom.sync="zoom" :center="valueToVirtual" @update:center="internalValue = virtualToValue($event)"></vl-view>
 
           <vl-layer-tile id="osm">
             <vl-source-osm></vl-source-osm>
@@ -60,7 +60,7 @@ export default {
   },
   data: () => ({
     dialog: false,
-    currValue: defaultLocation,
+    internalValue: defaultLocation,
     zoom: 16
   }),
   methods: {
@@ -68,13 +68,13 @@ export default {
       this.$emit('input', null);
     },
     save: function() {
-      this.$emit('input', this.currValue);
+      this.$emit('input', this.internalValue);
       this.dialog = false;
     }
   },
   computed: {
     valueToVirtual: function() {
-      return [this.currValue.y, this.currValue.x];
+      return [this.internalValue.y, this.internalValue.x];
     },
     virtualToValue: function() {
       return (center) => ({
@@ -95,9 +95,9 @@ export default {
     dialog: function(newVal) {
       if (newVal) {
         if (!this.value) {
-          this.currValue = defaultLocation;
+          this.internalValue = defaultLocation;
         } else {
-          this.currValue = this.value;
+          this.internalValue = this.value;
         }
       }
     },
