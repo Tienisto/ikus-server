@@ -1,19 +1,19 @@
 <template>
   <v-dialog ref="dialog" v-model="dialog" width="550px">
     <template v-slot:activator="{ on, attrs }">
-      <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly
-                    :append-icon="valueExisting ? 'mdi-delete' : null"
+      <v-text-field :value="valueFormatted(value)" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly
+                    :append-icon="value ? 'mdi-delete' : null"
                     @click:append="reset" filled></v-text-field>
     </template>
 
     <v-card>
 
       <v-card-title>Koordinaten</v-card-title>
-      <v-card-subtitle>{{ valueFormatted }}</v-card-subtitle>
+      <v-card-subtitle>{{ valueFormatted(currValue) }}</v-card-subtitle>
 
       <v-card-text>
         <vl-map :load-tiles-while-animating="true" :load-tiles-while-interacting="true" data-projection="EPSG:4326" style="height: 400px">
-          <vl-view :zoom.sync="zoom" :center="valueToCenter" @update:center="$emit('input', centerToValue($event))"></vl-view>
+          <vl-view :zoom.sync="zoom" :center="valueToVirtual" @update:center="currValue = virtualToValue($event)"></vl-view>
 
           <vl-layer-tile id="osm">
             <vl-source-osm></vl-source-osm>
@@ -26,7 +26,13 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text color="primary" @click="dialog = false">Schließen</v-btn>
+        <v-btn @click="dialog = false" color="black" text>
+          Abbrechen
+        </v-btn>
+        <v-btn @click="save" color="primary">
+          <v-icon left>mdi-content-save</v-icon>
+          Speichern
+        </v-btn>
       </v-card-actions>
     </v-card>
 
@@ -35,12 +41,14 @@
 
 <script>
 
+const defaultLocation = { x: 52.13960, y: 11.64531 };
+
 export default {
   name: 'LocationPicker',
   props: {
     value: {
-      type: Object,
-      required: true
+      required: true,
+      validator: v => typeof v === 'object' || v === null
     },
     label: {
       type: String,
@@ -52,41 +60,47 @@ export default {
   },
   data: () => ({
     dialog: false,
-    zoom: 16,
-    prevCenter: [11.64531, 52.13960]
+    currValue: defaultLocation,
+    zoom: 16
   }),
   methods: {
     reset: function() {
-      this.$emit('input', {});
+      this.$emit('input', null);
+    },
+    save: function() {
+      this.$emit('input', this.currValue);
+      this.dialog = false;
     }
   },
   computed: {
-    valueExisting: function() {
-      return this.value && this.value.x && this.value.y;
+    valueToVirtual: function() {
+      return [this.currValue.y, this.currValue.x];
     },
-    valueToCenter: function() {
-      if (this.valueExisting)
-        return [this.value.y, this.value.x];
-      else
-        return this.prevCenter;
-    },
-    centerToValue: function() {
+    virtualToValue: function() {
       return (center) => ({
         x: center[1],
         y: center[0]
       })
     },
     valueFormatted: function() {
-      if (this.valueExisting)
-        return '('+ this.value.x.toFixed(5) + ', ' + this.value.y.toFixed(5) + ')';
-      else
-        return '-';
+      return (value) => {
+        if (value)
+          return '('+ value.x.toFixed(5) + ', ' + value.y.toFixed(5) + ')';
+        else
+          return null;
+      };
     }
   },
   watch: {
-    value: function() {
-      this.prevCenter = this.valueToCenter;
-    }
-  }
+    dialog: function(newVal) {
+      if (newVal) {
+        if (!this.value) {
+          this.currValue = defaultLocation;
+        } else {
+          this.currValue = this.value;
+        }
+      }
+    },
+  },
 }
 </script>

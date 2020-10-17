@@ -110,7 +110,7 @@ export default {
     startTime: '',
     endTime: '',
     place: '',
-    coords: {}
+    coords: null
   }),
   methods: {
     reset: function(channel, locale, date) {
@@ -123,7 +123,7 @@ export default {
       this.startTime = '';
       this.endTime = '';
       this.place = '';
-      this.coords = {};
+      this.coords = null;
 
       // apply prefilled values
       this.channel = channel;
@@ -148,7 +148,7 @@ export default {
       }
 
       this.place = event.place;
-      this.coords = event.coords ? event.coords : {};
+      this.coords = event.coords;
     },
     submit: async function() {
       if (!this.channel.id || this.channel.id < 0) {
@@ -193,9 +193,6 @@ export default {
         endTimestamp = endTimestamp.toISOString();
       }
 
-      // prepare coords
-      const coords = this.coords && this.coords.x && this.coords.y ? this.coords : null;
-
       await this.$emit('submit', {
         channelId: this.channel.id,
         name: {
@@ -204,7 +201,7 @@ export default {
         },
         info,
         place: this.place,
-        coords,
+        coords: this.coords,
         startTime: startTimestamp.toISOString(),
         endTime: endTimestamp
       });

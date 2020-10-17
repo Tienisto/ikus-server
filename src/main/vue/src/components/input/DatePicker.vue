@@ -3,9 +3,15 @@
     <template v-slot:activator="{ on, attrs }">
       <v-text-field :value="valueFormatted" :label="label" :prepend-icon="icon" v-bind="attrs" v-on="on" hide-details readonly filled></v-text-field>
     </template>
-    <v-date-picker :value="value" @input="$emit('input', $event)" locale="de" :first-day-of-week="1" scrollable>
+    <v-date-picker :value="currValue" @input="currValue = $event" locale="de" :first-day-of-week="1" scrollable>
       <v-spacer></v-spacer>
-      <v-btn text color="primary" @click="dialog = false">Schließen</v-btn>
+      <v-btn @click="dialog = false" color="black" text>
+        Abbrechen
+      </v-btn>
+      <v-btn @click="save" color="primary">
+        <v-icon left>mdi-content-save</v-icon>
+        Speichern
+      </v-btn>
     </v-date-picker>
   </v-dialog>
 </template>
@@ -29,11 +35,25 @@ export default {
     }
   },
   data: () => ({
-    dialog: false
+    dialog: false,
+    currValue: null
   }),
+  methods: {
+    save: function() {
+      this.$emit('input', this.currValue);
+      this.dialog = false;
+    }
+  },
   computed: {
     valueFormatted: function() {
       return moment(this.value).format('DD.MM.YYYY');
+    }
+  },
+  watch: {
+    dialog: function(newVal) {
+      if (newVal) {
+        this.currValue = this.value;
+      }
     }
   }
 }
