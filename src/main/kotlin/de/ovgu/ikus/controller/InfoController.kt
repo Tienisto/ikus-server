@@ -85,7 +85,7 @@ class InfoController (
     }
 
     @GetMapping("/sys-logs")
-    suspend fun getSystemLogs(): SysLogsDto {
+    fun getSystemLogs(): SysLogsDto {
         val logs = fileService.loadFileAsString("logs/spring.log")
         return SysLogsDto(logs)
     }

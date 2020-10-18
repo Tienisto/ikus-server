@@ -5,7 +5,8 @@
       Die Logdaten sind nur für Sie sichtbar.
     </template>
 
-    <v-card>
+    <LoadingIndicator v-if="fetching" />
+    <v-card v-if="!fetching">
       <v-card-text style="font-family: Consolas,monospace; white-space: pre-wrap; font-size: 12px">{{ logs }}</v-card-text>
     </v-card>
 
@@ -15,10 +16,11 @@
 <script>
 import {getSysLogs} from "@/api";
 import MainContainer from "@/components/layout/MainContainer";
+import LoadingIndicator from "@/components/LoadingIndicator";
 
 export default {
   name: 'SysLogsView',
-  components: {MainContainer},
+  components: {LoadingIndicator, MainContainer},
   data: () => ({
     fetching: true,
     logs: '',
@@ -26,7 +28,6 @@ export default {
   }),
   methods: {
     fetchData: async function() {
-      this.fetching = true;
       const response = await getSysLogs();
       if (this.logs !== response.logs)
         this.logs = response.logs;
