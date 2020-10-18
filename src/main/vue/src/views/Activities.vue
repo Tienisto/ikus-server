@@ -1,5 +1,5 @@
 <template>
-  <MainContainer title="Logs" icon="mdi-text-subject">
+  <MainContainer title="Aktivitäten" icon="mdi-text-subject">
 
     <template v-slot:intro>
       Alle Nutzer können einsehen, was im System passiert.

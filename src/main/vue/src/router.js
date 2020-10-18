@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from './views/Login'
 import Users from './views/Users'
-import Logs from "@/views/Logs";
 import Channels from "@/views/Channels";
 import Dashboard from "@/views/Dashboard";
 import Posts from "@/views/Posts";
@@ -15,6 +14,8 @@ import Statistics from "@/views/Statistics";
 import Status from "@/views/Status";
 import Privacy from "@/views/Privacy";
 import Features from "@/views/Features";
+import Activities from "@/views/Activities";
+import SysLogs from "@/views/SysLogs";
 
 Vue.use(VueRouter)
 
@@ -40,9 +41,14 @@ Vue.use(VueRouter)
     component: Users
   },
   {
-    path: '/logs',
-    name: 'Logs',
-    component: Logs
+    path: '/activities',
+    name: 'Activities',
+    component: Activities
+  },
+  {
+    path: '/sys-logs',
+    name: 'SysLogs',
+    component: SysLogs
   },
   {
     path: '/dashboard',

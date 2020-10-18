@@ -165,8 +165,8 @@ export default {
         icon: 'mdi-finance'
       },
       {
-        route: '/logs',
-        label: 'Logs',
+        route: '/activities',
+        label: 'Aktivitäten',
         icon: 'mdi-text-subject'
       }
     ],
@@ -177,8 +177,13 @@ export default {
         icon: 'mdi-finance'
       },
       {
-        route: '/logs',
-        label: 'Logs',
+        route: '/activities',
+        label: 'Aktivitäten',
+        icon: 'mdi-text-subject'
+      },
+      {
+        route: '/sys-logs',
+        label: 'System-Logs',
         icon: 'mdi-text-subject'
       },
       {

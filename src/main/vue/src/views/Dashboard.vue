@@ -33,7 +33,7 @@
 
           <v-card-actions>
             <v-spacer/>
-            <router-link to="/logs" v-slot="{ href, navigate }">
+            <router-link to="/activities" v-slot="{ href, navigate }">
               <v-btn @click="navigate" :href="href" color="black" text>
                 Mehr
                 <v-icon right>mdi-arrow-right</v-icon>

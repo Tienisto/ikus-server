@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ServerWebExchange
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
@@ -91,6 +92,13 @@ class FileService (
         webExchange.response.headers["Content-Type"] = getMime(path)
         webExchange.response.headers["Content-Disposition"] = if (download) "attachment" else "inline"
         return resource
+    }
+
+    fun loadFileAsString(path: String, absolute: Boolean = false): String {
+        return when (absolute) {
+            true -> File(path).readText()
+            false -> File(propsStorage.path + "/" + path).readText()
+        }
     }
 
     fun deleteFile(path: String) {

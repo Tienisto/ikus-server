@@ -2,7 +2,7 @@
   <div id="main-container-wrapper" class="secondary" style="padding: 30px 30px 100px 30px; min-height: 100vh">
     <div id="main-container-top-spacer" style="display: none; height: 30px"></div>
 
-    <div style="margin: auto; max-width: 1200px">
+    <div style="margin: auto" :style="{ 'max-width': maxWidth+'px' }">
       <!-- title -->
       <div class="mb-8 ml-4 ml-sm-0">
         <v-icon size="26" class="primary--text">{{ icon }}</v-icon>
@@ -35,7 +35,20 @@
 <script>
 export default {
   name: 'MainContainer',
-  props: ['title', 'icon']
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    icon: {
+      type: String,
+      required: true
+    },
+    maxWidth: {
+      type: Number,
+      default: 1200
+    }
+  }
 }
 </script>
 

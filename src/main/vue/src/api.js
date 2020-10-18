@@ -448,6 +448,13 @@ export async function getLogs({ limit }) {
     });
 }
 
+export async function getSysLogs() {
+    return await makeRequest({
+        route: 'sys-logs',
+        method: 'GET'
+    });
+}
+
 export async function getContacts() {
     return await makeRequest({
         route: 'contacts',

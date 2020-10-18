@@ -10,6 +10,7 @@ import java.time.OffsetDateTime
 data class VersionDto(val version: String)
 data class EnvDto(val key: String, val description: String, val default: String, val value: String)
 data class StatusDto(val version: String, val date: String, val runTime: Long, val database: Boolean, val storageRead: Boolean, val storageWrite: Boolean, val adminPassword: Boolean, val jwtWebsite: JwtStatus, val jwtApp: JwtStatus, val env: List<EnvDto>?)
+data class SysLogsDto(val logs: String)
 
 data class MeDto(val name: String, val admin: Boolean)
 data class DashboardDto(val logs: List<LogDto>, val posts: List<PostDto>, val events: List<EventDto>)

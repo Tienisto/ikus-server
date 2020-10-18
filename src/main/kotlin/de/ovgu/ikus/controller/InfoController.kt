@@ -80,8 +80,14 @@ class InfoController (
     }
 
     @GetMapping("/logs")
-    suspend fun logs(@RequestParam limit: Int): List<LogDto> {
+    suspend fun getUserLogs(@RequestParam limit: Int): List<LogDto> {
         return logService.findAll(limit)
+    }
+
+    @GetMapping("/sys-logs")
+    suspend fun getSystemLogs(): SysLogsDto {
+        val logs = fileService.loadFileAsString("logs/spring.log")
+        return SysLogsDto(logs)
     }
 
     @GetMapping("/dashboard")
