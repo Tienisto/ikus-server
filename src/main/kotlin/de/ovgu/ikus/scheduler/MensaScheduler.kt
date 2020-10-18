@@ -25,9 +25,9 @@ class MensaScheduler (
     @Scheduled(cron = "0 0,30 * * * *")
     fun tick() {
         mono {
-            logger.info("Updating mensa cache.")
+            logger.debug("Updating mensa cache.")
             mensaService.updateMenu()
-            logger.info("Mensa cache updated.")
+            logger.debug("Mensa cache updated.")
         }.subscribeOn(Schedulers.parallel()).subscribe()
     }
 }
