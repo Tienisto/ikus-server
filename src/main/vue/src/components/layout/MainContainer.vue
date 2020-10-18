@@ -1,6 +1,7 @@
 <template>
   <div id="main-container-wrapper" class="secondary" style="padding: 30px 30px 100px 30px; min-height: 100vh">
-    <div id="main-container-top-spacer" style="display: none; height: 30px"></div>
+
+    <div v-if="topSpacer" id="main-container-top-spacer" style="display: none; height: 30px"></div>
 
     <div style="margin: auto" :style="{ 'max-width': maxWidth+'px' }">
       <!-- title -->
@@ -47,6 +48,10 @@ export default {
     maxWidth: {
       type: Number,
       default: 1200
+    },
+    topSpacer: {
+      type: Boolean,
+      default: true
     }
   }
 }

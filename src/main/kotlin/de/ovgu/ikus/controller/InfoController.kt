@@ -6,9 +6,11 @@ import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.PostType
 import de.ovgu.ikus.properties.*
 import de.ovgu.ikus.security.JwtService
+import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
 import de.ovgu.ikus.utils.toDto
 import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -85,7 +87,10 @@ class InfoController (
     }
 
     @GetMapping("/sys-logs")
-    fun getSystemLogs(): SysLogsDto {
+    fun getSystemLogs(authentication: Authentication): SysLogsDto {
+        if (authentication.toUser().name != propsAdmin.name)
+            throw ErrorCode(403, "Admin only")
+
         val logs = fileService.loadFileAsString("logs/spring.log")
         return SysLogsDto(logs)
     }
