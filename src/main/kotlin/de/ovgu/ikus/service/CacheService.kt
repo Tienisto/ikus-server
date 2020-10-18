@@ -16,7 +16,7 @@ enum class CacheKey {
     CONTACTS,
     APP_CONFIG
 }
-private val lifeTime = Duration.ofMinutes(5).toMillis()
+private val lifeTime = Duration.ofMinutes(10).toMillis()
 data class CachedData(var json: String?, var needUpdate: Boolean, var expires: Long)
 
 @Service
