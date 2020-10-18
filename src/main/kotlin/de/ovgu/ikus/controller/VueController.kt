@@ -18,7 +18,7 @@ class VueController (
 ) {
 
     @GetMapping("/" , "/privacy", "/status",
-            "/users", "/statistics", "/logs",
+            "/users", "/statistics", "/activities", "sys-logs",
             "/dashboard", "/posts", "/calendar", "/channels", "/links", "/handbook", "/faq", "/contacts", "/features")
     @ResponseBody
     suspend fun routes(request: ServerHttpRequest, response: ServerHttpResponse): ClassPathResource? {
