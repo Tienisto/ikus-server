@@ -178,7 +178,7 @@ class MensaService (
         val response = client.get()
                 .uri(url)
                 .accept(MediaType.ALL)
-                .awaitExchange { response -> response }
+                .awaitExchange()
 
         if(response.statusCode() != HttpStatus.OK)
             return null
