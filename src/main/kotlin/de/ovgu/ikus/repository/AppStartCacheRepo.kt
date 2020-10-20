@@ -54,7 +54,7 @@ class AppStartCacheRepo(
                         last_update = :lastUpdate
                 """.trimIndent())
                 .bind("deviceId", appStart.deviceId)
-                .bind("platform", appStart.platform.toString()) // TODO: remove toString
+                .bind("platform", appStart.platform.toString())
                 .bind("lastUpdate", appStart.lastUpdate)
                 .fetch()
                 .awaitRowsUpdated()
