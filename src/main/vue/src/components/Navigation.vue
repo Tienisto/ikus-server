@@ -167,7 +167,7 @@ export default {
       {
         route: '/activities',
         label: 'Aktivitäten',
-        icon: 'mdi-text-subject'
+        icon: 'mdi-history'
       }
     ],
     adminAnalysisPages: [
@@ -179,7 +179,7 @@ export default {
       {
         route: '/activities',
         label: 'Aktivitäten',
-        icon: 'mdi-text-subject'
+        icon: 'mdi-history'
       },
       {
         route: '/sys-logs',
