@@ -89,9 +89,11 @@
               <v-list-item-title>{{ p.label }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+
+          <v-divider/>
         </template>
 
-        <v-list-item link class="mt-4 white" @click="logout" light :disabled="loggingOut">
+        <v-list-item link class="mt-6 white" @click="logout" light :disabled="loggingOut">
           <v-list-item-icon>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-icon>
