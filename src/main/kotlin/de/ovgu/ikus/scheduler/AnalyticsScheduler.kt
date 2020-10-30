@@ -13,6 +13,7 @@ import reactor.core.scheduler.Schedulers
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.Period
+import java.time.ZoneOffset
 import java.time.temporal.TemporalAmount
 
 @Component
@@ -45,7 +46,7 @@ class AnalyticsScheduler (
         return mono {
             logger.info("Start counting.")
 
-            val appStarts = analyticsService.findAppStartCacheAfter(OffsetDateTime.now().minus(time))
+            val appStarts = analyticsService.findAppStartCacheAfter(OffsetDateTime.now(ZoneOffset.UTC).minus(time))
 
             val android = appStarts.count { start -> start.platform == Platform.ANDROID }
             val ios = appStarts.size - android

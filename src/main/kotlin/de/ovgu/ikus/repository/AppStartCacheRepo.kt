@@ -2,11 +2,11 @@ package de.ovgu.ikus.repository
 
 import de.ovgu.ikus.dto.CurrentAppStarts
 import de.ovgu.ikus.model.AppStartCache
+import de.ovgu.ikus.model.Platform
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
-import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.r2dbc.core.await
-import org.springframework.r2dbc.core.awaitRowsUpdated
+import org.springframework.r2dbc.core.*
 import org.springframework.stereotype.Repository
 import java.time.OffsetDateTime
 
@@ -17,17 +17,22 @@ class AppStartCacheRepo(
 ) {
 
     suspend fun findAfter(timestamp: OffsetDateTime): List<AppStartCache> {
-        return crudRepo.findByLastUpdateAfter(timestamp)
+        return client.sql("SELECT * FROM app_start_cache WHERE last_update > :timestamp")
+                .bind("timestamp", timestamp)
+                .fetch()
+                .all()
+                .map { row ->
+                    AppStartCache(
+                            deviceId = row["device_id"] as String,
+                            platform = Platform.valueOf(row["platform"] as String),
+                            lastUpdate = row["last_update"] as OffsetDateTime
+                    )
+                }
+                .collectList()
+                .awaitFirst()
     }
 
-    // TODO: use database client when fixed
     suspend fun count(monthStart: OffsetDateTime, weekStart: OffsetDateTime, dayStart: OffsetDateTime): CurrentAppStarts {
-        return CurrentAppStarts(
-                month = crudRepo.countByLastUpdateAfter(monthStart).toLong(),
-                week = crudRepo.countByLastUpdateAfter(weekStart).toLong(),
-                day = crudRepo.countByLastUpdateAfter(dayStart).toLong()
-        )
-        /*
         val result = client.sql("""
                     SELECT
                         (SELECT COUNT(*) FROM app_start_cache WHERE last_update > :monthStart) as month,
@@ -39,10 +44,9 @@ class AppStartCacheRepo(
                 .bind("weekStart", weekStart)
                 .bind("dayStart", dayStart)
                 .fetch()
-                .awaitFirst()
+                .awaitSingle()
 
         return CurrentAppStarts(result["month"] as Long, result["week"] as Long, result["day"] as Long)
-         */
     }
 
     suspend fun save(appStart: AppStartCache) {
@@ -78,8 +82,4 @@ class AppStartCacheRepo(
     }
 }
 
-interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String> {
-
-    suspend fun findByLastUpdateAfter(timestamp: OffsetDateTime): List<AppStartCache>
-    suspend fun countByLastUpdateAfter(timestamp: OffsetDateTime): Int
-}
+interface AppStartCacheCrudRepo : CoroutineCrudRepository<AppStartCache, String>
