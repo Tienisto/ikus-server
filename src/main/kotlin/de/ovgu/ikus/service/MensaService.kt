@@ -121,11 +121,28 @@ class MensaService (
     private fun getFoodFromTable(table: Element): List<Food> {
         return try {
             table.select("tbody tr").mapNotNull { tr ->
-
-                if (tr.children().size != 2)
-                    return@mapNotNull null
-
                 try {
+                    if (tr.children().size == 1) {
+                        // Sides
+                        val td = tr.children().first()
+                        val nameEn = td
+                                .select(".grau")
+                                .text()
+                                .replace("Sides: ", "")
+                        val nameDe = td
+                                .childNodes()
+                                .mapNotNull { node ->
+                                    when (node) {
+                                        is TextNode -> node.text()
+                                        else -> null
+                                    }
+                                }
+                                .first()
+                                .replace("Beilagen: ", "")
+
+                        return@mapNotNull Food(nameEn, nameDe, 0.0, listOf(FoodTag.SIDES))
+                    }
+
                     // name
                     val name = tr.select("strong").first()
                     val nameEn = name.select(".grau").text()

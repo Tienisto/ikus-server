@@ -9,7 +9,8 @@ enum class FoodTag {
     BEEF,
     PIG,
     SOUP,
-    ALCOHOL
+    ALCOHOL,
+    SIDES
 }
 
 data class Food(val name: String,
