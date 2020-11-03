@@ -144,37 +144,50 @@ class MensaService (
                     }
 
                     // name
-                    val name = tr.select("strong").first()
-                    val nameEn = name.select(".grau").text()
-                    val nameDe = when (val nameDeNode = name.childNodes()[0]) {
-                        is Element -> nameDeNode.text()
-                        is TextNode -> nameDeNode.wholeText
-                        else -> "Error"
+                    val (nameEn, nameDe) = try {
+                        val name = tr.select("strong").first()
+                        val nameEn = name.select(".grau").text()
+                        val nameDe = when (val nameDeNode = name.childNodes()[0]) {
+                            is Element -> nameDeNode.text()
+                            is TextNode -> nameDeNode.wholeText
+                            else -> "Error"
+                        }
+                        Pair(nameEn, nameDe)
+                    } catch (e: Exception) {
+                        Pair("Error", "Error")
                     }
 
                     // price
                     val tds = tr.children()
-                    val price = tds[0].childNodes().last().outerHtml() // take last row of the left column
-                            .split("|").first().trim() // 1,45 | 2,50 | 3,20 -> 1,45
-                            .replace(",", ".").toDouble() // 1,45 -> 1.45
+                    val price = try {
+                        tds[0].childNodes().last().outerHtml() // take last row of the left column
+                                .split("|").first().trim() // 1,45 | 2,50 | 3,20 -> 1,45
+                                .replace(",", ".").toDouble() // 1,45 -> 1.45
+                    } catch (e: Exception) {
+                        0.0
+                    }
 
                     // tags
-                    val tags = tds[1].select("img")
-                            .mapNotNull { img ->
-                                val tagTitle = img.attr("title").toLowerCase()
-                                when {
-                                    tagTitle.contains("vegan") -> FoodTag.VEGAN
-                                    tagTitle.contains("vegetarisch") -> FoodTag.VEGETARIAN
-                                    tagTitle.contains("knoblauch") -> FoodTag.GARLIC
-                                    tagTitle.contains("fisch") -> FoodTag.FISH
-                                    tagTitle.contains("geflügel") -> FoodTag.CHICKEN
-                                    tagTitle.contains("rind") -> FoodTag.BEEF
-                                    tagTitle.contains("schwein") -> FoodTag.PIG
-                                    tagTitle.contains("suppe") -> FoodTag.SOUP
-                                    tagTitle.contains("alkohol") -> FoodTag.ALCOHOL
-                                    else -> null
+                    val tags = try {
+                        tds[1].select("img")
+                                .mapNotNull { img ->
+                                    val tagTitle = img.attr("title").toLowerCase()
+                                    when {
+                                        tagTitle.contains("vegan") -> FoodTag.VEGAN
+                                        tagTitle.contains("vegetarisch") -> FoodTag.VEGETARIAN
+                                        tagTitle.contains("knoblauch") -> FoodTag.GARLIC
+                                        tagTitle.contains("fisch") -> FoodTag.FISH
+                                        tagTitle.contains("geflügel") -> FoodTag.CHICKEN
+                                        tagTitle.contains("rind") -> FoodTag.BEEF
+                                        tagTitle.contains("schwein") -> FoodTag.PIG
+                                        tagTitle.contains("suppe") -> FoodTag.SOUP
+                                        tagTitle.contains("alkohol") -> FoodTag.ALCOHOL
+                                        else -> null
+                                    }
                                 }
-                            }
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
 
                     Food(nameEn, nameDe, price, tags)
                 } catch (e: Exception) {
