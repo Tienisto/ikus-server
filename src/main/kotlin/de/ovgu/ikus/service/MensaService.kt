@@ -5,13 +5,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.TextNode
+import org.slf4j.LoggerFactory
 import org.springframework.data.geo.Point
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import org.springframework.web.reactive.function.client.awaitExchange
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -20,6 +19,7 @@ class MensaService (
         private val cacheService: CacheService
 ) {
 
+    private val logger = LoggerFactory.getLogger(MensaService::class.java)
     private val client = WebClient.create()
     private val datePattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
@@ -205,15 +205,18 @@ class MensaService (
      * @return the parsed document
      */
     private suspend fun getDocument(url: String): Document? {
-        val response = client.get()
-                .uri(url)
-                .accept(MediaType.ALL)
-                .awaitExchange()
+        try {
+            val response = client.get()
+                    .uri(url)
+                    .accept(MediaType.ALL)
+                    .retrieve()
 
-        if(response.statusCode() != HttpStatus.OK)
+            val body = response.awaitBody<String>()
+            return Jsoup.parse(body)
+        } catch (e: Exception) {
+            // e.g. 404
+            logger.warn(e.message)
             return null
-
-        val body = response.awaitBody<String>()
-        return Jsoup.parse(body)
+        }
     }
 }
