@@ -27,26 +27,37 @@ class AnalyticsScheduler (
     // every 00:10 each day
     @Scheduled(cron = "0 10 0 * * *", zone = "UTC")
     fun tickDaily() {
-        countGeneric(StatsType.DAILY, Period.ofDays(1)).subscribeOn(Schedulers.parallel()).subscribe()
+        countGeneric(
+                type = StatsType.DAILY,
+                countUsersNewerThan = Period.ofDays(1)
+        ).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
     // every 00:20 each monday
     @Scheduled(cron = "0 20 0 * * MON", zone = "UTC")
     fun tickWeekly() {
-        countGeneric(StatsType.WEEKLY, Period.ofWeeks(1)).subscribeOn(Schedulers.parallel()).subscribe()
+        countGeneric(
+                type = StatsType.WEEKLY,
+                countUsersNewerThan = Period.ofWeeks(1)
+        ).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
     // every 00:30 each first day of month
     @Scheduled(cron = "0 30 0 1 * *", zone = "UTC")
     fun tickMonthly() {
-        countGeneric(StatsType.MONTHLY, Period.ofMonths(1), true).subscribeOn(Schedulers.parallel()).subscribe()
+        countGeneric(
+                type = StatsType.MONTHLY,
+                countUsersNewerThan = Period.ofMonths(1),
+                clearUsersOlderThan = Period.ofMonths(3)
+        ).subscribeOn(Schedulers.parallel()).subscribe()
     }
 
-    private fun countGeneric(type: StatsType, time: TemporalAmount, clearUsers: Boolean = false): Mono<Any> {
+    private fun countGeneric(type: StatsType, countUsersNewerThan: TemporalAmount, clearUsersOlderThan: TemporalAmount? = null): Mono<Any> {
         return mono {
             logger.info("Start counting.")
 
-            val appStarts = analyticsService.findAppStartCacheAfter(OffsetDateTime.now(ZoneOffset.UTC).minus(time))
+            val now = OffsetDateTime.now(ZoneOffset.UTC)
+            val appStarts = analyticsService.findAppStartCacheAfter(now.minus(countUsersNewerThan))
 
             val android = appStarts.count { start -> start.platform == Platform.ANDROID }
             val ios = appStarts.size - android
@@ -61,8 +72,8 @@ class AnalyticsScheduler (
             analyticsService.saveAppStart(stats)
             logger.info(stats.toString())
 
-            if (clearUsers) {
-                val deleteCount = analyticsService.deleteAppStartCacheOlderThan(OffsetDateTime.now().minusDays(60))
+            if (clearUsersOlderThan != null) {
+                val deleteCount = analyticsService.deleteAppStartCacheOlderThan(now.minus(clearUsersOlderThan))
                 logger.info("Deleted inactive users: $deleteCount")
             }
         }
