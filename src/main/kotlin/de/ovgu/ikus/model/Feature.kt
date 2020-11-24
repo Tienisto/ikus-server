@@ -9,8 +9,12 @@ enum class NativeFeature (val favorite: Boolean) {
     MENSA(true),
     LINKS(true),
     HANDBOOK(false),
+    PODCASTS(false),
     FAQ(false),
-    CONTACTS(false)
+    CONTACTS(false),
+    EMAILS(false),
+    GRADES(false),
+    TIMETABLE(false)
 }
 
 @Table

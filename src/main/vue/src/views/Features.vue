@@ -229,8 +229,12 @@ export default {
             case 'MENSA': return 'restaurant';
             case 'LINKS': return 'language';
             case 'HANDBOOK': return 'book';
+            case 'PODCASTS': return 'headset';
             case 'FAQ': return 'help';
             case 'CONTACTS': return 'person';
+            case 'EMAILS': return 'email';
+            case 'GRADES': return 'check_circle';
+            case 'TIMETABLE': return 'table_chart';
             default: return '';
           }
         } else {
@@ -262,8 +266,12 @@ export default {
             case 'MENSA': stringObj = { 'en': 'Mensa', 'de': 'Mensa' }; break;
             case 'LINKS': stringObj = { 'en': 'Links', 'de': 'Links' }; break;
             case 'HANDBOOK': stringObj = { 'en': 'Handbook', 'de': 'Handbuch' }; break;
+            case 'PODCASTS': stringObj = { 'en': 'Podcasts', 'de': 'Podcasts' }; break;
             case 'FAQ': stringObj = { 'en': 'FAQ', 'de': 'FAQ' }; break;
             case 'CONTACTS': stringObj = { 'en': 'Contacts', 'de': 'Kontakte' }; break;
+            case 'EMAILS': stringObj = { 'en': 'Emails', 'de': 'E-Mails' }; break;
+            case 'GRADES': stringObj = { 'en': 'Grades', 'de': 'Noten' }; break;
+            case 'TIMETABLE': stringObj = { 'en': 'Timetable', 'de': 'Stundenplan' }; break;
           }
           return localizedString(stringObj, this.locale);
         } else {
