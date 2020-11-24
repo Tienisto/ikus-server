@@ -54,7 +54,7 @@ data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val d
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
 data class LocalizedLinkDto(val id: Int, val channel: LocalizedChannelDto, val url: String, val info: String)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?, val links: List<String>)
-data class LocalizedFoodDto(val name: String, val price: Double, val tags: List<FoodTag>)
+data class LocalizedFoodDto(val name: String, val price: Double?, val tags: List<FoodTag>)
 data class LocalizedMenuDto(val date: String, val food: List<LocalizedFoodDto>)
 data class LocalizedMenuInfoDto(val name: Mensa, val openingHours: String, val coords: CoordsDto, val menus: List<LocalizedMenuDto>) // as array
 data class LocalizedFeatureDto(val id: Int, val favorite: Boolean, val name: String?, val icon: String?, val nativeFeature: NativeFeature?, val post: LocalizedPostDto?, val link: LocalizedLinkDto?)

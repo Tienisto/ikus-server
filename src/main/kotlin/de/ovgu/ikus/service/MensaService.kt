@@ -140,7 +140,7 @@ class MensaService (
                                 .first()
                                 .replace("Beilagen: ", "")
 
-                        return@mapNotNull Food(nameEn, nameDe, 0.0, listOf(FoodTag.SIDES))
+                        return@mapNotNull Food(nameEn, nameDe, null, listOf(FoodTag.SIDES))
                     }
 
                     // name
@@ -192,7 +192,7 @@ class MensaService (
                     Food(nameEn, nameDe, price, tags)
                 } catch (e: Exception) {
                     // fallback for specific food
-                    Food("Error", "Error", 0.0, emptyList())
+                    Food("Error", "Error", null, emptyList())
                 }
             }
         } catch (e: Exception) {

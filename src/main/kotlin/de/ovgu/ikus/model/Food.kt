@@ -15,5 +15,5 @@ enum class FoodTag {
 
 data class Food(val name: String,
                 val nameDe: String,
-                val price: Double,
+                val price: Double?,
                 val tags: List<FoodTag>)
