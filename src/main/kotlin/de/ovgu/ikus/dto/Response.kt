@@ -1,11 +1,16 @@
 package de.ovgu.ikus.dto
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import de.ovgu.ikus.model.FoodTag
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.model.Mensa
 import de.ovgu.ikus.model.NativeFeature
 import de.ovgu.ikus.security.JwtStatus
 import java.time.OffsetDateTime
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+data class Feedback(val message: String? = null)
+data class MultiLocaleString(val en: String, val de: String)
 
 data class VersionDto(val version: String)
 data class EnvDto(val key: String, val description: String, val default: String, val value: String)
