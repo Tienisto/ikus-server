@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import javax.annotation.PostConstruct
 
 @RestController
 @RequestMapping("/api")
@@ -34,12 +33,7 @@ class InfoController (
         private val eventService: EventService
 ) {
 
-    private var startTime: Long = 0
-
-    @PostConstruct
-    fun init() {
-        startTime = System.currentTimeMillis()
-    }
+    private val startTime = System.currentTimeMillis()
 
     @GetMapping("/version")
     fun version(): VersionDto {
