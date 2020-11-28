@@ -34,6 +34,7 @@ class CacheService {
 
         return when {
             cached.needUpdate || System.currentTimeMillis() > cached.expires -> {
+                // update data and return
                 cached.needUpdate = false
                 cached.expires = System.currentTimeMillis() + lifeTime
                 val newData = updateFunc().toJSON()
@@ -41,6 +42,7 @@ class CacheService {
                 newData
             }
             else -> {
+                // return cached data
                 var json: String? = cached.json
                 while (json == null) {
                     // wait until first data arrives
