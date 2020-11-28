@@ -182,6 +182,24 @@ class PublicController(
         }
     }
 
+    @GetMapping("/combined")
+    suspend fun getCombined(@RequestParam locale: IkusLocale, @RequestParam routes: List<CacheKey>): Map<String, String> {
+        return routes.map { route ->
+            val value = when (route) {
+                CacheKey.NEWS -> getNews(locale)
+                CacheKey.CALENDAR -> getEvents(locale)
+                CacheKey.MENSA -> getMensa(locale)
+                CacheKey.LINKS -> getLinks(locale)
+                CacheKey.HANDBOOK_BOOKMARKS -> getHandbookBookmarks(locale)
+                CacheKey.FAQ -> getFAQ(locale)
+                CacheKey.CONTACTS -> getContacts(locale)
+                CacheKey.APP_CONFIG -> getAppConfig(locale)
+            }
+
+            route.name to value
+        }.toMap()
+    }
+
     @PostMapping("/start")
     suspend fun appStart(@RequestBody(required = false) request: Request.AppStartSignal?) {
         if (request == null)
