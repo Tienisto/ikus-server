@@ -182,8 +182,8 @@ class PublicController(
         }
     }
 
-    @GetMapping("/combined")
-    suspend fun getCombined(@RequestParam locale: IkusLocale, @RequestParam routes: List<CacheKey>): Map<String, String> {
+    @GetMapping("/combined", "/batch")
+    suspend fun getBatch(@RequestParam locale: IkusLocale, @RequestParam routes: List<CacheKey>): Map<String, String> {
         return routes.map { route ->
             val value = when (route) {
                 CacheKey.NEWS -> getNews(locale)
