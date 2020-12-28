@@ -191,7 +191,7 @@ class PublicController(
                 CacheKey.MENSA -> getMensa(locale)
                 CacheKey.LINKS -> getLinks(locale)
                 CacheKey.HANDBOOK_BOOKMARKS -> getHandbookBookmarks(locale)
-                CacheKey.PODCASTS -> TODO()
+                CacheKey.AUDIO -> TODO()
                 CacheKey.FAQ -> getFAQ(locale)
                 CacheKey.CONTACTS -> getContacts(locale)
                 CacheKey.APP_CONFIG -> getAppConfig(locale)

@@ -1,4 +1,6 @@
-CREATE TABLE podcast (
+UPDATE feature SET native_feature = 'AUDIO' WHERE native_feature = 'PODCASTS';
+
+CREATE TABLE audio (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     name_de TEXT NOT NULL,
@@ -7,9 +9,9 @@ CREATE TABLE podcast (
     position INT NOT NULL
 );
 
-CREATE TABLE podcast_file (
+CREATE TABLE audio_file (
     id SERIAL PRIMARY KEY,
-    podcast_id INT NOT NULL REFERENCES podcast(id) ON DELETE CASCADE,
+    audio_id INT NOT NULL REFERENCES audio(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     name_de TEXT NOT NULL,
     file TEXT NOT NULL,

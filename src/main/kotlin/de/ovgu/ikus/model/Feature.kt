@@ -9,7 +9,7 @@ enum class NativeFeature (val favorite: Boolean) {
     MENSA(true),
     LINKS(true),
     HANDBOOK(false),
-    PODCASTS(false),
+    AUDIO(false),
     FAQ(false),
     CONTACTS(false),
     EMAILS(false),
