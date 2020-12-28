@@ -111,6 +111,26 @@ fun HandbookBookmark.toDto(): HandbookBookmarkDto {
     return HandbookBookmarkDto(page, name)
 }
 
+fun PodcastFile.toDto(): PodcastFileDto {
+    val tempTextEn = text
+    val tempTextDe = textDe
+    val textMultiLocale = when {
+        tempTextEn != null && tempTextDe != null -> MultiLocaleString(en = tempTextEn, de = tempTextDe)
+        else -> null
+    }
+    return PodcastFileDto(id, MultiLocaleString(en = name, de = nameDe), MultiLocaleString(en = file, de = fileDe), textMultiLocale)
+}
+
+fun Podcast.toDto(files: List<PodcastFileDto>): PodcastDto {
+    val tempImageEn = image
+    val tempImageDe = imageDe
+    val imageMultiLocale = when {
+        tempImageEn != null && tempImageDe != null -> MultiLocaleString(en = tempImageEn, de = tempImageDe)
+        else -> null
+    }
+    return PodcastDto(id, MultiLocaleString(en = name, de = nameDe), imageMultiLocale, files)
+}
+
 fun Contact.toDto(): ContactDto {
     val tempOpeningHoursEn = openingHours
     val tempOpeningHoursDe = openingHoursDe

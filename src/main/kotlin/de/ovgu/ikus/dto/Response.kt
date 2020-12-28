@@ -43,6 +43,10 @@ data class LinkGroupDto(val channel: ChannelDto, val links: List<LinkDto>)
 // handbook
 data class HandbookBookmarkDto(val page: Int, val name: String)
 
+// podcast
+data class PodcastFileDto(val id: Int, val name: MultiLocaleString, val file: MultiLocaleString, val text: MultiLocaleString?)
+data class PodcastDto(val id: Int, val name: MultiLocaleString, val image: MultiLocaleString?, val files: List<PodcastFileDto>)
+
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?, val links: List<String>)
 
