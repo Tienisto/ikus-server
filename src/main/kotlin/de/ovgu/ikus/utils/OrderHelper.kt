@@ -11,6 +11,7 @@ fun<T> List<T>.moveUpItem(item: T, equals: (a: T, b: T) -> Boolean, setIndex: (i
     val position = this.indexOfFirst { el -> equals(el, item) }
 
     if (position != 0) {
+        // not at the start of the list
         val result = this.toMutableList()
         result.removeAt(position)
         result.add(position - 1, item)
@@ -33,6 +34,7 @@ fun<T> List<T>.moveDownItem(item: T, equals: (a: T, b: T) -> Boolean, setIndex: 
     val position = this.indexOfFirst { el -> equals(el, item) }
 
     if (position != this.size - 1) {
+        // not at the end of the list
         val result = this.toMutableList()
         result.removeAt(position)
         result.add(position + 1, item)
