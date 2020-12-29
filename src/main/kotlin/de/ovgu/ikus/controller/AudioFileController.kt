@@ -67,7 +67,7 @@ class AudioFileController (
     suspend fun moveUp(authentication: Authentication, @RequestBody request: Request.Id) {
         val file = audioFileService.findById(request.id) ?: throw ErrorCode(404, "Audio File not found")
         val files = audioFileService
-            .findAllOrdered()
+            .findByAudioOrderByPosition(file.audioId)
             .moveUpItem(item = file, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (files != null) {
@@ -80,7 +80,7 @@ class AudioFileController (
     suspend fun moveDown(authentication: Authentication, @RequestBody request: Request.Id) {
         val file = audioFileService.findById(request.id) ?: throw ErrorCode(404, "Audio File not found")
         val files = audioFileService
-            .findAllOrdered()
+            .findByAudioOrderByPosition(file.audioId)
             .moveDownItem(item = file, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
 
         if (files != null) {

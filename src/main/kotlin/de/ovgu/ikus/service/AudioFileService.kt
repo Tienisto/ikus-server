@@ -17,6 +17,10 @@ class AudioFileService(
         return audioFileRepo.findByOrderByPosition()
     }
 
+    suspend fun findByAudioOrderByPosition(audioId: Int): List<AudioFile> {
+        return audioFileRepo.findByAudioIdOrderByPosition(audioId)
+    }
+
     suspend fun findById(id: Int): AudioFile? {
         return audioFileRepo.findById(id)
     }
@@ -45,7 +49,7 @@ class AudioFileService(
     suspend fun setAudio(audioFile: AudioFile, filePart: FilePart, locale: IkusLocale) {
         checkExtension(filePart.filename())
 
-        val path = "audio/files/${audioFile.id}-$locale.jpg"
+        val path = "audio/files/${audioFile.id}-$locale.mp3"
         fileService.storeFilePart(filePart, path)
 
         when (locale) {

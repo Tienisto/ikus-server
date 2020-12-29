@@ -10,4 +10,5 @@ interface AudioFileRepo : CoroutineCrudRepository<AudioFile, Int> {
     suspend fun findMaxPosition(): Int?
 
     suspend fun findByOrderByPosition(): List<AudioFile>
+    suspend fun findByAudioIdOrderByPosition(audioId: Int): List<AudioFile>
 }
