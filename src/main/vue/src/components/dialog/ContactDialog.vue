@@ -9,26 +9,7 @@
         <v-col cols="4">
           <v-card class="secondary" style="height: 100%">
             <v-card-text class="pa-1" style="height: 100%">
-              <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center">
-
-                <ImageWithButton v-if="fileSrc" :src="fileSrc" :width="125" :height="125" style="width: 100%">
-                  <v-btn v-if="!loading" color="white" small @click="removeFile" tile>
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </ImageWithButton>
-
-                <FileUpload v-else v-slot:default="{ upload }" @select="setFile">
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn @click="upload" color="primary" v-bind="attrs" v-on="on" fab>
-                        <v-icon>mdi-plus</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Bild hochladen</span>
-                  </v-tooltip>
-                </FileUpload>
-
-              </div>
+              <ImagePicker ref="imagePicker" :width="125" :height="125" @select="setFile" @delete="removeFile"/>
             </v-card-text>
           </v-card>
         </v-col>
@@ -69,12 +50,11 @@
 import {getFileUrl} from "@/api";
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/dialog/GenericDialog";
-import FileUpload from "@/components/FileUpload";
-import ImageWithButton from "@/components/ImageWithButton";
+import ImagePicker from "@/components/input/ImagePicker";
 
 export default {
   name: 'ContactDialog',
-  components: {ImageWithButton, FileUpload, GenericDialog},
+  components: {ImagePicker, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -99,8 +79,6 @@ export default {
     openingHoursDe: '',
     links: [],
     linksText: '',
-    file: null, // file of dto
-    fileSrc: null, // file which will be displayed
     uploadingFile: null, // file which will be uploaded in submit
     deletingFile: false // delete file when submit
   }),
@@ -116,8 +94,6 @@ export default {
       this.openingHoursDe = '';
       this.links = [];
       this.linksText = '';
-      this.file = null;
-      this.fileSrc = null;
       this.uploadingFile = null;
       this.deletingFile = false;
     },
@@ -132,23 +108,19 @@ export default {
       this.openingHoursDe = contact.openingHours ? contact.openingHours.de : '';
       this.links = contact.links;
       this.linksText = contact.links.join('\n');
-      this.file = contact.file;
-      if (this.file) {
-        this.fileSrc = getFileUrl(this.file) + '#' + new Date().getTime();
+
+      if (contact.file) {
+        this.$nextTick(() => {
+          const imageUrl = getFileUrl(contact.file) + '#' + new Date().getTime();
+          this.$refs.imagePicker.setImage(imageUrl);
+        });
       }
     },
     setFile: function(file) {
       this.uploadingFile = file;
       this.deletingFile = false;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.fileSrc = e.target.result;
-      }
-
-      return reader.readAsDataURL(file); // convert to base64 string
     },
     removeFile: function() {
-      this.fileSrc = null;
       if (this.uploadingFile) {
         // just remove cache
         this.uploadingFile = null;

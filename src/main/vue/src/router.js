@@ -16,6 +16,7 @@ import Privacy from "@/views/Privacy";
 import Features from "@/views/Features";
 import Activities from "@/views/Activities";
 import SysLogs from "@/views/SysLogs";
+import Audio from "@/views/Audio";
 
 Vue.use(VueRouter)
 
@@ -74,6 +75,11 @@ Vue.use(VueRouter)
     path: '/handbook',
     name: 'Handbook',
     component: Handbook
+  },
+  {
+    path: '/audio',
+    name: 'Audio',
+    component: Audio
   },
   {
     path: '/faq',

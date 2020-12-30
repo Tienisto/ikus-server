@@ -145,6 +145,11 @@ export default {
         icon: 'mdi-file-document'
       },
       {
+        route: '/audio',
+        label: 'Audio',
+        icon: 'mdi-headphones'
+      },
+      {
         route: '/faq',
         label: 'FAQ',
         icon: 'mdi-help-circle'

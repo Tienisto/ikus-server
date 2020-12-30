@@ -203,9 +203,9 @@ export default {
     },
     showUpdateContact: function(contact) {
       // apply
-      this.selectedContact = contact;
       this.$refs.contactDialog.reset();
       this.$refs.contactDialog.load(contact);
+      this.selectedContact = contact;
       this.dialogUpdating = true;
       this.dialogContact = true;
     },
@@ -213,17 +213,17 @@ export default {
       this.selectedContact = contact;
       this.dialogDelete = true;
     },
-    submitContact: async function(contact, options) {
+    submitContact: async function(contact, actions) {
       if (this.dialogUpdating)
-        await this.updateContact(contact, options);
+        await this.updateContact(contact, actions);
       else
-        await this.createContact(contact, options);
+        await this.createContact(contact, actions);
     },
-    createContact: async function(contact, options) {
+    createContact: async function(contact, actions) {
       try {
         this.loading = true;
         const savedContact = await createContact(contact);
-        await this.handleOptions(savedContact.id, options);
+        await this.handleActions(savedContact.id, actions);
         this.dialogContact = false;
         await this.fetchData();
       } catch (e) {
@@ -232,14 +232,14 @@ export default {
         this.loading = false;
       }
     },
-    updateContact: async function(contact, options) {
+    updateContact: async function(contact, actions) {
       try {
         this.loading = true;
         await updateContact({
           id: this.selectedContact.id,
           ...contact
         });
-        await this.handleOptions(this.selectedContact.id, options);
+        await this.handleActions(this.selectedContact.id, actions);
         this.dialogContact = false;
         await this.fetchData();
       } catch (e) {
@@ -248,10 +248,10 @@ export default {
         this.loading = false;
       }
     },
-    handleOptions: async function(contactId, options) {
-      if (options.uploadingFile) {
-        await setContactFile({ contactId, file: options.uploadingFile });
-      } else if (options.deletingFile) {
+    handleActions: async function(contactId, actions) {
+      if (actions.uploadingFile) {
+        await setContactFile({ contactId, file: actions.uploadingFile });
+      } else if (actions.deletingFile) {
         await deleteContactFile({ contactId });
       }
     },
