@@ -47,7 +47,7 @@ class AudioService (
         checkExtension(file.filename())
 
         val path = "audio/${audio.id}-$locale.jpg"
-        val inputStream = imageService.digestImage(file)
+        val inputStream = imageService.digestImage(file, 2000, 2000)
         fileService.storeFileInputStream(inputStream, path)
 
         when (locale) {

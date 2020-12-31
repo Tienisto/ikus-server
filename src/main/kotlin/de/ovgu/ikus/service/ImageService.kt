@@ -20,24 +20,21 @@ class ImageService {
      * makes sure that the image is compressed and has the correct rotation
      * calls [reduceSizeOfFile] and [digestImageRotation] internally
      */
-    suspend fun digestImage(file: FilePart): InputStream {
+    suspend fun digestImage(file: FilePart, maxWidth: Int = 1000, maxHeight: Int = 1000): InputStream {
         val bytesOriginal = file.toBytes()
-
-        val scaled = when (val rotated = digestImageRotation(bytesOriginal)) {
-            null -> reduceSizeOfFile(ByteArrayInputStream(bytesOriginal)) // not rotated
-            else -> reduceSizeOfFile(ByteArrayInputStream(rotated.toByteArray())) // rotated
-        }
-
-        return ByteArrayInputStream(scaled.toByteArray())
+        val rotatedOrNull = digestImageRotation(bytesOriginal)
+        val bytesWithCorrectOrientation = if (rotatedOrNull != null) rotatedOrNull.toByteArray() else bytesOriginal
+        val bytesWithCorrectSize = reduceSizeOfFile(ByteArrayInputStream(bytesWithCorrectOrientation), maxWidth, maxHeight).toByteArray()
+        return ByteArrayInputStream(bytesWithCorrectSize)
     }
 
     /**
      * compress the image and apply the changes to the hard drive and also to the database
      * @param imageInput image which should be compressed.
      */
-    fun reduceSizeOfFile(imageInput: InputStream): ByteArrayOutputStream {
+    fun reduceSizeOfFile(imageInput: InputStream, maxWidth: Int, maxHeight: Int): ByteArrayOutputStream {
         val image = ImageIO.read(imageInput)
-        val imageCompressed = reduceSizeBuffered(image, 1000, 1000)
+        val imageCompressed = reduceSizeBuffered(image, maxWidth, maxHeight)
         val output = ByteArrayOutputStream()
         ImageIO.write(imageCompressed, "jpg", output)
         return output
