@@ -11,6 +11,7 @@ import java.time.OffsetDateTime
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Feedback(val message: String? = null)
 data class MultiLocaleString(val en: String, val de: String)
+data class Token(val token: String)
 
 data class VersionDto(val version: String)
 data class EnvDto(val key: String, val description: String, val default: String, val value: String)

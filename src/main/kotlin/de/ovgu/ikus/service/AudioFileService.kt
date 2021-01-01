@@ -6,6 +6,7 @@ import de.ovgu.ikus.repository.AudioFileRepo
 import kotlinx.coroutines.flow.collect
 import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
+import java.io.ByteArrayInputStream
 
 @Service
 class AudioFileService(
@@ -46,11 +47,9 @@ class AudioFileService(
     /**
      * stores the audio file to the hard drive and updates the file attribute of the audio file
      */
-    suspend fun setAudio(audioFile: AudioFile, filePart: FilePart, locale: IkusLocale) {
-        checkExtension(filePart.filename())
-
+    suspend fun setAudio(audioFile: AudioFile, byteArray: ByteArray, locale: IkusLocale) {
         val path = "audio/files/${audioFile.id}-$locale.mp3"
-        fileService.storeFilePart(filePart, path)
+        fileService.storeFileInputStream(ByteArrayInputStream(byteArray), path)
 
         when (locale) {
             IkusLocale.EN -> audioFile.file = path
@@ -58,14 +57,5 @@ class AudioFileService(
         }
 
         audioFileRepo.save(audioFile)
-    }
-
-    private fun checkExtension(fileName: String): String {
-        // TODO
-        val lowerCase = fileName.toLowerCase()
-        return when {
-            lowerCase.endsWith(".mp3") -> "mp3"
-            else -> throw ErrorCode(409, "file type not allowed")
-        }
     }
 }
