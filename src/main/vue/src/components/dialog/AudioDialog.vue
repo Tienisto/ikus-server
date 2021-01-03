@@ -80,6 +80,12 @@ export default {
 
       // apply preset
       this.locale = locale;
+      this.$nextTick(() => {
+        this.$nextTick(() => {
+          // somehow this need 2 ticks
+          this.updateImageBox();
+        });
+      });
     },
     load: function(audio) {
       // apply

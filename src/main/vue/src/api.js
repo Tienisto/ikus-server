@@ -513,12 +513,12 @@ export async function createAudioFile({ audioId, name, text }) {
     });
 }
 
-export async function uploadAudioFile({ fileId, file, locale }) {
+export async function uploadAudioFile({ fileId, token, file, locale }) {
     return await makeRequest({
         route: 'audio/file/upload',
         method: 'PUT',
         body: { file },
-        params: { fileId, locale },
+        params: { fileId, token, locale },
         useJSON: false
     });
 }

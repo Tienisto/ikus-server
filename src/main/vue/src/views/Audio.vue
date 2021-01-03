@@ -35,6 +35,31 @@
     <AudioDialog ref="audioDialog" v-model="dialogAudio" :loading="loading" :updating="dialogUpdating"
                   @submit="submitAudio"/>
 
+    <AudioFileDialog ref="audioFileDialog" v-model="dialogAudioFile" :loading="loading" :updating="dialogUpdating"
+                      @submit="submitAudioFile"/>
+
+    <GenericDialog v-model="dialogDeleteAudioFile" title="Audio-Datei löschen">
+      <template v-slot:content>
+        Folgende Datei wird gelöscht:
+        <br>
+        <b>{{ selectedAudioFile.name ? selectedAudioFile.name.en : '' }}</b>
+        <br><br>
+        Möchten Sie wirklich diese Datei löschen?
+        <br>
+        Dieser Vorgang ist nicht widerrufbar und betrifft beide Sprachen.
+      </template>
+
+      <template v-slot:actions>
+        <v-btn @click="dialogDeleteAudioFile = false" color="black" text :disabled="loading">
+          Abbrechen
+        </v-btn>
+        <v-btn @click="deleteAudioFile" color="primary" :loading="loading">
+          <v-icon left>mdi-delete</v-icon>
+          Löschen
+        </v-btn>
+      </template>
+    </GenericDialog>
+
     <ConfirmTextDialog ref="deleteAudioDialog" v-model="dialogDeleteAudio" :confirm-text="confirmText" :loading="loading" title="Gruppe löschen"
                        @submit="deleteAudio">
       Möchten Sie wirklich die Audio-Gruppe {{ confirmText }} löschen?
@@ -60,7 +85,7 @@ import {
   deleteAudioFile,
   createAudio,
   updateAudio,
-  setAudioImage, deleteAudioImage
+  setAudioImage, deleteAudioImage, uploadAudioFile
 } from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
@@ -70,10 +95,14 @@ import Notice from "@/components/Notice";
 import ConfirmTextDialog from "@/components/dialog/ConfirmTextDialog";
 import AudioCard from "@/components/cards/AudioCard";
 import AudioDialog from "@/components/dialog/AudioDialog";
+import AudioFileDialog from "@/components/dialog/AudioFileDialog";
+import GenericDialog from "@/components/dialog/GenericDialog";
 
 export default {
   name: 'AudioView',
   components: {
+    GenericDialog,
+    AudioFileDialog,
     AudioDialog,
     AudioCard,
     ConfirmTextDialog, Notice, LoadingIndicator, LocaleSelector, MainContainer},
@@ -119,15 +148,15 @@ export default {
       this.dialogAudioFile = true;
     },
     showUpdateAudioFile: function(audio, audioFile) {
-      this.$refs.linkDialog.reset(audio, this.locale);
-      this.$refs.linkDialog.load(audioFile);
+      this.$refs.audioFileDialog.reset(audio, this.locale);
+      this.$refs.audioFileDialog.load(audioFile);
       this.selectedAudioFile = audioFile;
       this.dialogUpdating = true;
       this.dialogAudioFile = true;
     },
-    showDeleteAudioFile: function(audioFile) {
+    showDeleteAudioFile: function(audio, audioFile) {
       this.selectedAudioFile = audioFile;
-      this.dialogDeleteAudioFile = audioFile;
+      this.dialogDeleteAudioFile = true;
     },
     submitAudio: async function(audio, actions) {
       if (this.dialogUpdating)
@@ -139,7 +168,7 @@ export default {
       try {
         this.loading = true;
         const savedAudio = await createAudio(audio);
-        await this.handleActions(savedAudio.id, actions);
+        await this.handleAudioGroupActions(savedAudio.id, actions);
         this.dialogAudio = false;
         await this.fetchData();
       } catch (e) {
@@ -152,7 +181,7 @@ export default {
       try {
         this.loading = true;
         await updateAudio({ id: this.selectedAudio.id, ...audio });
-        await this.handleActions(this.selectedAudio.id, actions);
+        await this.handleAudioGroupActions(this.selectedAudio.id, actions);
         this.dialogAudio = false;
         await this.fetchData();
       } catch (e) {
@@ -161,7 +190,7 @@ export default {
         this.loading = false;
       }
     },
-    handleActions: async function(audioId, actions) {
+    handleAudioGroupActions: async function(audioId, actions) {
       if (actions.uploadingFileEn) {
         await setAudioImage({ audioId, file: actions.uploadingFileEn, locale: 'EN' });
       }
@@ -208,16 +237,17 @@ export default {
         this.loading = false;
       }
     },
-    submitAudioFile: async function(audio) {
+    submitAudioFile: async function(audioFile, actions) {
       if (this.dialogUpdating)
-        await this.updateAudioFile(audio);
+        await this.updateAudioFile(audioFile, actions);
       else
-        await this.createAudioFile(audio);
+        await this.createAudioFile(audioFile, actions);
     },
-    createAudioFile: async function(audio) {
+    createAudioFile: async function(audioFile, actions) {
       try {
         this.loading = true;
-        await createAudioFile(audio);
+        const response = await createAudioFile(audioFile);
+        await this.handleAudioFileActions(null, response.token, actions);
         this.dialogAudioFile = false;
         await this.fetchData();
       } catch (e) {
@@ -226,13 +256,14 @@ export default {
         this.loading = false;
       }
     },
-    updateAudioFile: async function(audioFile) {
+    updateAudioFile: async function(audioFile, actions) {
       try {
         this.loading = true;
         await updateAudioFile({
           id: this.selectedAudioFile.id,
           ...audioFile
         });
+        await this.handleAudioFileActions(this.selectedAudioFile.id, null, actions);
         this.dialogAudioFile = false;
         await this.fetchData();
       } catch (e) {
@@ -241,7 +272,16 @@ export default {
         this.loading = false;
       }
     },
-    moveUpAudioFile: async function(audioFile) {
+    handleAudioFileActions: async function(fileId, token, actions) {
+      if (actions.uploadingFileEn) {
+        await uploadAudioFile({ fileId, token, file: actions.uploadingFileEn, locale: 'EN' });
+      }
+
+      if (actions.uploadingFileDe) {
+        await uploadAudioFile({ fileId, token, file: actions.uploadingFileDe, locale: 'DE' });
+      }
+    },
+    moveUpAudioFile: async function(audio, audioFile) {
       try {
         this.loading = true;
         await moveUpAudioFile({id: audioFile.id});
@@ -252,7 +292,7 @@ export default {
         this.loading = false;
       }
     },
-    moveDownAudioFile: async function(audioFile) {
+    moveDownAudioFile: async function(audio, audioFile) {
       try {
         this.loading = true;
         await moveDownAudioFile({id: audioFile.id});

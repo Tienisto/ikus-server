@@ -28,7 +28,8 @@ class AudioFileController (
     private val audioFileService: AudioFileService
 ) {
 
-    private class CreateRequest(var audioFile: AudioFile, var audioEn: ByteArray?, var audioDe: ByteArray?, val timestamp: Instant)
+    private class FileWithName(val name: String, val content: ByteArray)
+    private class CreateRequest(var audioFile: AudioFile, var audioEn: FileWithName?, var audioDe: FileWithName?, val timestamp: Instant)
     private var requests = mapOf<String, CreateRequest>()
 
     @PostMapping
@@ -39,6 +40,7 @@ class AudioFileController (
             audioId = audio.id,
             name = request.name.en.trim(), nameDe = request.name.de.trim(),
             text = request.text?.en?.trimOrNull(), textDe = request.text?.de?.trimOrNull(),
+            file = "", fileDe = "", // will be added later
             position = maxPosition + 1
         )
 
@@ -110,9 +112,10 @@ class AudioFileController (
 
         if (token != null) {
             val createRequest = requests[token] ?: throw ErrorCode(400, "invalid token")
+            val filePart = file.awaitFirst()
             when (locale) {
-                IkusLocale.EN -> createRequest.audioEn = file.awaitFirst().toBytes()
-                IkusLocale.DE -> createRequest.audioDe = file.awaitFirst().toBytes()
+                IkusLocale.EN -> createRequest.audioEn = FileWithName(filePart.filename(), filePart.toBytes())
+                IkusLocale.DE -> createRequest.audioDe = FileWithName(filePart.filename(), filePart.toBytes())
             }
 
             val audioEn = createRequest.audioEn
@@ -121,17 +124,21 @@ class AudioFileController (
             if (audioEn != null && audioDe != null) {
                 // both languages has been uploaded, create
                 val savedFile = audioFileService.save(createRequest.audioFile)
-                audioFileService.setAudio(savedFile, audioEn, IkusLocale.EN)
-                audioFileService.setAudio(savedFile, audioDe, IkusLocale.DE)
+                audioFileService.setAudio(savedFile, audioEn.name, audioEn.content, IkusLocale.EN)
+                audioFileService.setAudio(savedFile, audioDe.name, audioDe.content, IkusLocale.DE)
                 logService.log(LogType.CREATE_AUDIO_FILE, authentication.toUser(), "${createRequest.audioFile.name} / ${createRequest.audioFile.name}")
                 cacheService.triggerUpdateFlag(CacheKey.AUDIO)
                 requests = requests.minus(token)
             }
+
+            return
         }
 
         if (fileId != null) {
             val audioFile = audioFileService.findById(fileId) ?: throw ErrorCode(404, "Audio File not found")
-            audioFileService.setAudio(audioFile, file.awaitFirst().toBytes(), locale)
+            val filePart = file.awaitFirst()
+            audioFileService.setAudio(audioFile, filePart.filename(), filePart.toBytes(), locale)
+            return
         }
 
         throw ErrorCode(400, "missing parameters")

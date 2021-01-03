@@ -45,16 +45,16 @@
                       {{ localized(f.name) }}
                     </div>
                     <div style="display: flex" class="pl-1 pr-1" :style="mouseOver === f.id ? {} : { 'visibility': 'hidden' }">
-                      <v-btn @click="$emit('move-up-file', f)" :disabled="loading" icon small>
+                      <v-btn @click="$emit('move-up-file', audio, f)" :disabled="loading" icon small>
                         <v-icon>mdi-arrow-up</v-icon>
                       </v-btn>
-                      <v-btn @click="$emit('move-down-file', f)" :disabled="loading" class="ml-2" icon small>
+                      <v-btn @click="$emit('move-down-file', audio, f)" :disabled="loading" class="ml-2" icon small>
                         <v-icon>mdi-arrow-down</v-icon>
                       </v-btn>
-                      <v-btn @click="$emit('update-file', f)" :disabled="loading" class="ml-2" icon small>
+                      <v-btn @click="$emit('update-file', audio, f)" :disabled="loading" class="ml-2" icon small>
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                      <v-btn @click="$emit('delete-file', f)" :disabled="loading" class="ml-2" icon small>
+                      <v-btn @click="$emit('delete-file', audio, f)" :disabled="loading" class="ml-2" icon small>
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                     </div>
@@ -67,7 +67,7 @@
         </v-col>
         <v-col cols="4" class="pa-4">
           <!-- using v-img causes weird resize effects -->
-          <img v-if="audio.image" :src="fileUrl(localized(audio.image))" style="width: 100%" />
+          <img v-if="audioImage" :src="audioImage" style="width: 100%" />
         </v-col>
       </v-row>
 
@@ -98,8 +98,16 @@ export default {
     }
   },
   data: () => ({
-    mouseOver: -1
+    mouseOver: -1,
+    audioImage: null,
   }),
+  methods: {
+    updateAudioImage: function(newVal) {
+      if (newVal.image) {
+        this.audioImage = this.fileUrl(this.localized(newVal.image));
+      }
+    }
+  },
   computed: {
     localized: function() {
       return (obj) => localizedString(obj, this.locale);
@@ -107,6 +115,17 @@ export default {
     fileUrl: function() {
       return (file) => getFileUrl(file) + '#' + new Date().getTime();
     }
+  },
+  watch: {
+    audio: function(newVal) {
+      this.updateAudioImage(newVal);
+    },
+    locale: function() {
+      this.updateAudioImage(this.audio)
+    }
+  },
+  mounted: function() {
+    this.updateAudioImage(this.audio);
   }
 }
 </script>
