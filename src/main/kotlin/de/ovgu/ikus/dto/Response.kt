@@ -11,6 +11,7 @@ import java.time.OffsetDateTime
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Feedback(val message: String? = null)
 data class MultiLocaleString(val en: String, val de: String)
+data class Token(val token: String)
 
 data class VersionDto(val version: String)
 data class EnvDto(val key: String, val description: String, val default: String, val value: String)
@@ -42,6 +43,10 @@ data class LinkGroupDto(val channel: ChannelDto, val links: List<LinkDto>)
 
 // handbook
 data class HandbookBookmarkDto(val page: Int, val name: String)
+
+// audio
+data class AudioFileDto(val id: Int, val name: MultiLocaleString, val file: MultiLocaleString, val text: MultiLocaleString?)
+data class AudioDto(val id: Int, val name: MultiLocaleString, val image: MultiLocaleString?, val files: List<AudioFileDto>)
 
 // contacts
 data class ContactDto(val id: Int, val file: String?, val name: MultiLocaleString, val place: String?, val email: String?, val phoneNumber: String?, val openingHours: MultiLocaleString?, val links: List<String>)

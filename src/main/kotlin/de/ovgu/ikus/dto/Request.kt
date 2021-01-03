@@ -28,6 +28,11 @@ object Request {
 
     data class UpdateBookmarks(val locale: IkusLocale, val bookmarks: List<HandbookBookmarkDto>)
 
+    data class CreateAudio(val name: MultiLocaleString)
+    data class UpdateAudio(val id: Int, val name: MultiLocaleString)
+    data class CreateAudioFile(val audioId: Int, val name: MultiLocaleString, val text: MultiLocaleString?)
+    data class UpdateAudioFile(val id: Int, val audioId: Int, val name: MultiLocaleString, val text: MultiLocaleString?)
+
     data class CreateContact(val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?, val links: List<String>)
     data class UpdateContact(val id: Int, val name: MultiLocaleString, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: MultiLocaleString?, val links: List<String>)
 

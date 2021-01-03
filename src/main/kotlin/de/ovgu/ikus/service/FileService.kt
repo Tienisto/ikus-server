@@ -20,7 +20,7 @@ import java.nio.file.StandardCopyOption
 
 @Service
 class FileService (
-        private val propsStorage: StorageProperties
+    private val propsStorage: StorageProperties
 ) {
 
     private val logger = LoggerFactory.getLogger(FileService::class.java)

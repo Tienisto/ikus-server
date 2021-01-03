@@ -229,7 +229,7 @@ export default {
             case 'MENSA': return 'restaurant';
             case 'LINKS': return 'language';
             case 'HANDBOOK': return 'book';
-            case 'PODCASTS': return 'headset';
+            case 'AUDIO': return 'headset';
             case 'FAQ': return 'help';
             case 'CONTACTS': return 'person';
             case 'EMAILS': return 'email';
@@ -266,7 +266,7 @@ export default {
             case 'MENSA': stringObj = { 'en': 'Mensa', 'de': 'Mensa' }; break;
             case 'LINKS': stringObj = { 'en': 'Links', 'de': 'Links' }; break;
             case 'HANDBOOK': stringObj = { 'en': 'Handbook', 'de': 'Handbuch' }; break;
-            case 'PODCASTS': stringObj = { 'en': 'Podcasts', 'de': 'Podcasts' }; break;
+            case 'AUDIO': stringObj = { 'en': 'Audio', 'de': 'Audio' }; break;
             case 'FAQ': stringObj = { 'en': 'FAQ', 'de': 'FAQ' }; break;
             case 'CONTACTS': stringObj = { 'en': 'Contacts', 'de': 'Kontakte' }; break;
             case 'EMAILS': stringObj = { 'en': 'Emails', 'de': 'E-Mails' }; break;

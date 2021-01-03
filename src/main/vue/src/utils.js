@@ -39,6 +39,12 @@ export function logTypeString(type) {
         case 'DELETE_LINK': return 'Link gelöscht';
         case 'UPDATE_HANDBOOK': return 'Handbook geändert';
         case 'UPDATE_HANDBOOK_BOOKMARKS': return 'Handbook (Inhaltsverzeichnis) geändert';
+        case 'CREATE_AUDIO': return 'Audio erstellt';
+        case 'UPDATE_AUDIO': return 'Audio geändert';
+        case 'DELETE_AUDIO': return 'Audio gelöscht';
+        case 'CREATE_AUDIO_FILE': return 'Audio Datei gelöscht';
+        case 'UPDATE_AUDIO_FILE': return 'Audio Datei geändert';
+        case 'DELETE_AUDIO_FILE': return 'Audio Datei gelöscht';
         case 'CREATE_CONTACT': return 'Neue Kontaktdaten';
         case 'UPDATE_CONTACT': return 'Kontaktdaten geändert';
         case 'DELETE_CONTACT': return 'Kontaktdaten gelöscht';

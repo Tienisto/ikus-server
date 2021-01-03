@@ -440,6 +440,121 @@ export async function updateBookmarks({ bookmarks, locale }) {
     });
 }
 
+export async function getAudio() {
+    return await makeRequest({
+        route: 'audio',
+        method: 'GET'
+    });
+}
+
+export async function createAudio({ name }) {
+    return await makeRequest({
+        route: 'audio',
+        method: 'POST',
+        body: { name }
+    });
+}
+
+export async function updateAudio({ id, name }) {
+    return await makeRequest({
+        route: 'audio',
+        method: 'PUT',
+        body: { id, name }
+    });
+}
+
+export async function moveUpAudio({ id }) {
+    return await makeRequest({
+        route: 'audio/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownAudio({ id }) {
+    return await makeRequest({
+        route: 'audio/move-down',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function deleteAudio({ id }) {
+    return await makeRequest({
+        route: 'audio',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
+export async function setAudioImage({ audioId, file, locale }) {
+    return await makeRequest({
+        route: 'audio/image',
+        method: 'PUT',
+        body: { file },
+        params: { audioId, locale },
+        useJSON: false
+    });
+}
+
+export async function deleteAudioImage({ audioId }) {
+    return await makeRequest({
+        route: 'audio/image',
+        method: 'DELETE',
+        params: { audioId }
+    });
+}
+
+export async function createAudioFile({ audioId, name, text }) {
+    return await makeRequest({
+        route: 'audio/file',
+        method: 'POST',
+        body: { audioId, name, text }
+    });
+}
+
+export async function uploadAudioFile({ fileId, token, file, locale }) {
+    return await makeRequest({
+        route: 'audio/file/upload',
+        method: 'PUT',
+        body: { file },
+        params: { fileId, token, locale },
+        useJSON: false
+    });
+}
+
+export async function updateAudioFile({ id, audioId, name, text }) {
+    return await makeRequest({
+        route: 'audio/file',
+        method: 'PUT',
+        body: { id, audioId, name, text }
+    });
+}
+
+export async function moveUpAudioFile({ id }) {
+    return await makeRequest({
+        route: 'audio/file/move-up',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function moveDownAudioFile({ id }) {
+    return await makeRequest({
+        route: 'audio/file/move-down',
+        method: 'POST',
+        body: { id }
+    });
+}
+
+export async function deleteAudioFile({ id }) {
+    return await makeRequest({
+        route: 'audio/file',
+        method: 'DELETE',
+        body: { id }
+    });
+}
+
 export async function getLogs({ limit }) {
     return await makeRequest({
         route: 'logs',

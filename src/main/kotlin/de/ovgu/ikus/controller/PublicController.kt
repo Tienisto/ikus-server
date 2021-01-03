@@ -34,8 +34,13 @@ class PublicController(
     private val newsComparator = compareByDescending<LocalizedPostDto> { it.pinned }.thenByDescending { it.date }
 
     @GetMapping("/file/{folder}/{name}")
-    fun getImage(@PathVariable folder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource? {
+    fun getFile(@PathVariable folder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource? {
         return fileService.loadFile("$folder/$name", download == true, webExchange)
+    }
+
+    @GetMapping("/file/{folder}/{subFolder}/{name}")
+    fun getFileSubFolder(@PathVariable folder: String, @PathVariable subFolder: String, @PathVariable name: String, @RequestParam(required = false) download: Boolean?, webExchange: ServerWebExchange): FileSystemResource? {
+        return fileService.loadFile("$folder/$subFolder/$name", download == true, webExchange)
     }
 
     @GetMapping("/news")
@@ -191,6 +196,7 @@ class PublicController(
                 CacheKey.MENSA -> getMensa(locale)
                 CacheKey.LINKS -> getLinks(locale)
                 CacheKey.HANDBOOK_BOOKMARKS -> getHandbookBookmarks(locale)
+                CacheKey.AUDIO -> TODO()
                 CacheKey.FAQ -> getFAQ(locale)
                 CacheKey.CONTACTS -> getContacts(locale)
                 CacheKey.APP_CONFIG -> getAppConfig(locale)

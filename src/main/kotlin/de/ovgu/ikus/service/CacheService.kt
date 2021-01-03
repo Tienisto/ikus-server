@@ -12,6 +12,7 @@ enum class CacheKey {
     MENSA,
     LINKS,
     HANDBOOK_BOOKMARKS,
+    AUDIO,
     FAQ,
     CONTACTS,
     APP_CONFIG
