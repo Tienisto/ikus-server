@@ -121,6 +121,13 @@ fun AudioFile.toDto(): AudioFileDto {
     return AudioFileDto(id, MultiLocaleString(en = name, de = nameDe), MultiLocaleString(en = file, de = fileDe), textMultiLocale)
 }
 
+fun AudioFile.toLocalizedDto(locale: IkusLocale): LocalizedAudioFileDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedAudioFileDto(id, name, file, text)
+        IkusLocale.DE -> LocalizedAudioFileDto(id, nameDe, fileDe, textDe)
+    }
+}
+
 fun Audio.toDto(files: List<AudioFileDto>): AudioDto {
     val tempImageEn = image
     val tempImageDe = imageDe
@@ -129,6 +136,13 @@ fun Audio.toDto(files: List<AudioFileDto>): AudioDto {
         else -> null
     }
     return AudioDto(id, MultiLocaleString(en = name, de = nameDe), imageMultiLocale, files)
+}
+
+fun Audio.toLocalizedDto(locale: IkusLocale, files: List<LocalizedAudioFileDto>): LocalizedAudioDto {
+    return when (locale) {
+        IkusLocale.EN -> LocalizedAudioDto(id, name, image, files)
+        IkusLocale.DE -> LocalizedAudioDto(id, nameDe, imageDe, files)
+    }
 }
 
 fun Contact.toDto(): ContactDto {

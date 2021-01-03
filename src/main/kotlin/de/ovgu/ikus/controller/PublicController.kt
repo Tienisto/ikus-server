@@ -25,6 +25,8 @@ class PublicController(
         private val fileService: FileService,
         private val linkService: LinkService,
         private val handbookService: HandbookService,
+        private val audioService: AudioService,
+        private val audioFileService: AudioFileService,
         private val contactService: ContactService,
         private val featureService: FeatureService,
         private val analyticsService: AnalyticsService,
@@ -121,6 +123,22 @@ class PublicController(
         }
     }
 
+    @GetMapping("/audio")
+    suspend fun getAudio(@RequestParam locale: IkusLocale): String {
+        return cacheService.getCacheOrUpdate(CacheKey.AUDIO, locale) {
+            val files = audioFileService.findAllOrdered()
+            audioService
+                .findAllOrdered()
+                .map { audio ->
+                    val currFiles = files
+                        .filter { file -> file.audioId == audio.id }
+                        .map { file -> file.toLocalizedDto(locale) }
+
+                    audio.toLocalizedDto(locale, currFiles)
+                }
+        }
+    }
+
     @GetMapping("/faq")
     suspend fun getFAQ(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.FAQ, locale) {
@@ -196,7 +214,7 @@ class PublicController(
                 CacheKey.MENSA -> getMensa(locale)
                 CacheKey.LINKS -> getLinks(locale)
                 CacheKey.HANDBOOK_BOOKMARKS -> getHandbookBookmarks(locale)
-                CacheKey.AUDIO -> TODO()
+                CacheKey.AUDIO -> getAudio(locale)
                 CacheKey.FAQ -> getFAQ(locale)
                 CacheKey.CONTACTS -> getContacts(locale)
                 CacheKey.APP_CONFIG -> getAppConfig(locale)
