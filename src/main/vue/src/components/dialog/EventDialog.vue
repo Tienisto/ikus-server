@@ -27,18 +27,18 @@
       </v-card>
 
       <v-row class="mt-4">
-        <v-col cols="5">
-          <DatePicker v-model="date" label="Datum*" icon="mdi-calendar"/>
+        <v-col cols="6">
+          <DatePicker v-model="startDate" label="Datum*" icon="mdi-calendar"/>
         </v-col>
-        <v-col cols="7">
-          <v-row no-gutters>
-            <v-col cols="6">
-              <TimePicker v-model="startTime" icon="mdi-clock-outline" label="Von"/>
-            </v-col>
-            <v-col cols="6" class="pl-5">
-              <TimePicker v-model="endTime" label="Bis"/>
-            </v-col>
-          </v-row>
+        <v-col cols="6">
+          <TimePicker v-model="startTime" icon="mdi-clock-outline" label="Von"/>
+        </v-col>
+        <v-col cols="6">
+          <v-checkbox v-if="sameDay" v-model="sameDay" label="gleicher Tag" class="ml-6" hide-details />
+          <DatePicker v-else v-model="endDate" label="Enddatum" icon="mdi-calendar"/>
+        </v-col>
+        <v-col cols="6">
+          <TimePicker v-model="endTime" icon="mdi-clock-outline" label="Bis"/>
         </v-col>
         <v-col cols="12">
           <v-text-field v-model="place" label="Ort" prepend-icon="mdi-map" filled hide-details/>
@@ -106,11 +106,13 @@ export default {
     nameDe: '',
     infoEn: '',
     infoDe: '',
-    date: '',
+    startDate: '',
     startTime: '',
+    endDate: '',
     endTime: '',
     place: '',
-    coords: null
+    coords: null,
+    sameDay: true // ui purpose only
   }),
   methods: {
     reset: function(channel, locale, date) {
@@ -119,19 +121,24 @@ export default {
       this.nameDe = '';
       this.infoEn = '';
       this.infoDe = '';
-      this.date = '';
+      this.startDate = '';
       this.startTime = '';
+      this.endDate = '';
       this.endTime = '';
       this.place = '';
       this.coords = null;
+      this.sameDay = true;
 
       // apply prefilled values
       this.channel = channel;
       this.locale = locale;
-      this.date = date;
+      this.startDate = date;
+      this.endDate = date;
     },
     load: function(event) {
-      // apply post
+      // apply event
+      // backend data event.startTime refer to the start timestamp (date+time)
+      // vue startDate/startTime refer to date/time only
       this.nameEn = event.name.en;
       this.nameDe = event.name.de;
       if (event.info) {
@@ -140,11 +147,18 @@ export default {
       }
 
       const startTimeObj = moment(event.startTime);
-      this.date = startTimeObj.format('YYYY-MM-DD');
+      this.startDate = startTimeObj.format('YYYY-MM-DD');
       this.startTime = startTimeObj.format('HH:mm');
 
       if (event.endTime) {
-        this.endTime = moment(event.endTime).format('HH:mm');
+        const endTimeObj = moment(event.endTime);
+        this.endDate = endTimeObj.format('YYYY-MM-DD');
+        this.endTime = endTimeObj.format('HH:mm');
+
+        if (this.startDate !== this.endDate)
+          this.sameDay = false;
+      } else {
+        this.endDate = this.startDate;
       }
 
       this.place = event.place;
@@ -175,7 +189,11 @@ export default {
         this.startTime = '00:00';
       }
 
-      const startTimestamp = moment(this.date);
+      if (!this.sameDay && !this.endTime) {
+        this.endTime = '00:00';
+      }
+
+      const startTimestamp = moment(this.startDate);
       const startTime = moment('2020-01-02T'+this.startTime);
       startTimestamp.set({
         hours: startTime.hours(),
@@ -184,7 +202,13 @@ export default {
 
       let endTimestamp = null;
       if (this.endTime) {
-        endTimestamp = moment(this.date);
+        // apply date
+        if (this.sameDay)
+          endTimestamp = moment(this.startDate);
+        else
+          endTimestamp = moment(this.endDate);
+
+        // apply time
         const endTime = moment('2020-01-02T'+this.endTime);
         endTimestamp.set({
           hours: endTime.hours(),
