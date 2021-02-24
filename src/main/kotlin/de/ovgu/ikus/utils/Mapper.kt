@@ -62,12 +62,8 @@ fun Event.toDto(channel: ChannelDto): EventDto {
         null -> null
         else -> CoordsDto(temp.x, temp.y)
     }
-    val tempInfoEn = info
-    val tempInfoDe = infoDe
-    val infoMultiLocale = when {
-        tempInfoEn != null && tempInfoDe != null -> MultiLocaleString(en = tempInfoEn, de = tempInfoDe)
-        else -> null
-    }
+
+    val infoMultiLocale = createMultiLocaleString(en = info, de = infoDe)
     return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale)
 }
 
@@ -112,30 +108,20 @@ fun HandbookBookmark.toDto(): HandbookBookmarkDto {
 }
 
 fun AudioFile.toDto(): AudioFileDto {
-    val tempTextEn = text
-    val tempTextDe = textDe
-    val textMultiLocale = when {
-        tempTextEn != null && tempTextDe != null -> MultiLocaleString(en = tempTextEn, de = tempTextDe)
-        else -> null
-    }
-    return AudioFileDto(id, MultiLocaleString(en = name, de = nameDe), MultiLocaleString(en = file, de = fileDe), textMultiLocale)
+    val textMultiLocale = createMultiLocaleString(en = text, de = textDe)
+    val imageMultiLocale = createMultiLocaleString(en = image, de = imageDe)
+    return AudioFileDto(id, MultiLocaleString(en = name, de = nameDe), MultiLocaleString(en = file, de = fileDe), textMultiLocale, imageMultiLocale)
 }
 
 fun AudioFile.toLocalizedDto(locale: IkusLocale): LocalizedAudioFileDto {
     return when (locale) {
-        IkusLocale.EN -> LocalizedAudioFileDto(id, name, file, text)
-        IkusLocale.DE -> LocalizedAudioFileDto(id, nameDe, fileDe, textDe)
+        IkusLocale.EN -> LocalizedAudioFileDto(id, name, file, text, image)
+        IkusLocale.DE -> LocalizedAudioFileDto(id, nameDe, fileDe, textDe, imageDe)
     }
 }
 
 fun Audio.toDto(files: List<AudioFileDto>): AudioDto {
-    val tempImageEn = image
-    val tempImageDe = imageDe
-    val imageMultiLocale = when {
-        tempImageEn != null && tempImageDe != null -> MultiLocaleString(en = tempImageEn, de = tempImageDe)
-        else -> null
-    }
-    return AudioDto(id, MultiLocaleString(en = name, de = nameDe), imageMultiLocale, files)
+    return AudioDto(id, MultiLocaleString(en = name, de = nameDe), createMultiLocaleString(en = image, de = imageDe), files)
 }
 
 fun Audio.toLocalizedDto(locale: IkusLocale, files: List<LocalizedAudioFileDto>): LocalizedAudioDto {
@@ -146,12 +132,7 @@ fun Audio.toLocalizedDto(locale: IkusLocale, files: List<LocalizedAudioFileDto>)
 }
 
 fun Contact.toDto(): ContactDto {
-    val tempOpeningHoursEn = openingHours
-    val tempOpeningHoursDe = openingHoursDe
-    val openingHoursMultiLocale = when {
-        tempOpeningHoursEn != null && tempOpeningHoursDe != null -> MultiLocaleString(en = tempOpeningHoursEn, de = tempOpeningHoursDe)
-        else -> null
-    }
+    val openingHoursMultiLocale = createMultiLocaleString(en = openingHours, de = openingHoursDe)
     return ContactDto(id, file, MultiLocaleString(en = name, de = nameDe), place, email, phoneNumber, openingHoursMultiLocale, links)
 }
 
@@ -163,13 +144,7 @@ fun Contact.toLocalizedDto(locale: IkusLocale): LocalizedContactDto {
 }
 
 fun Feature.toDto(post: PostDto?, link: LinkDto?): FeatureDto {
-    val tempNameEn = name
-    val tempNameDe = nameDe
-    val nameMultiLocale = when {
-        tempNameEn != null && tempNameDe != null -> MultiLocaleString(en = tempNameEn, de = tempNameDe)
-        else -> null
-    }
-    return FeatureDto(id, favorite, nameMultiLocale, icon, nativeFeature, post, link)
+    return FeatureDto(id, favorite, createMultiLocaleString(en = name, de = nameDe), icon, nativeFeature, post, link)
 }
 
 fun Feature.toLocalizedDto(locale: IkusLocale, post: LocalizedPostDto?, link: LocalizedLinkDto?): LocalizedFeatureDto {
@@ -191,4 +166,11 @@ fun CoordsDto.toPoint(): Point {
 
 fun Point.toCoordsDto(): CoordsDto {
     return CoordsDto(x, y)
+}
+
+private fun createMultiLocaleString(en: String?, de: String?): MultiLocaleString? {
+    if (de != null && en != null)
+        return MultiLocaleString(en = en, de = de)
+    else
+        return null
 }

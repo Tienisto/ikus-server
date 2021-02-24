@@ -1,5 +1,6 @@
 package de.ovgu.ikus.controller
 
+import de.ovgu.ikus.dto.AudioFileDto
 import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.dto.Token
@@ -104,15 +105,19 @@ class AudioFileController (
         cacheService.triggerUpdateFlag(CacheKey.AUDIO)
     }
 
-    @PutMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    suspend fun upload(authentication: Authentication,
+    @PutMapping("/upload-audio", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    suspend fun uploadAudioFile(authentication: Authentication,
                        @RequestParam(required = false) fileId: Int?, @RequestParam locale: IkusLocale,
                        @RequestParam(required = false) token: String?,
-                       @RequestPart("file") file: Mono<FilePart>) {
+                       @RequestPart("file") file: Mono<FilePart>): AudioFileDto? {
 
         if (token != null) {
+
+            // upload audio file for new entity (using CreateRequest map)
+
             val createRequest = requests[token] ?: throw ErrorCode(400, "invalid token")
             val filePart = file.awaitFirst()
+
             when (locale) {
                 IkusLocale.EN -> createRequest.audioEn = FileWithName(filePart.filename(), filePart.toBytes())
                 IkusLocale.DE -> createRequest.audioDe = FileWithName(filePart.filename(), filePart.toBytes())
@@ -129,18 +134,36 @@ class AudioFileController (
                 logService.log(LogType.CREATE_AUDIO_FILE, authentication.toUser(), "${createRequest.audioFile.name} / ${createRequest.audioFile.name}")
                 cacheService.triggerUpdateFlag(CacheKey.AUDIO)
                 requests = requests.minus(token)
+
+                return savedFile.toDto()
             }
 
-            return
+            return null
         }
 
         if (fileId != null) {
+
+            // upload audio file for existing entity (via file id)
+
             val audioFile = audioFileService.findById(fileId) ?: throw ErrorCode(404, "Audio File not found")
             val filePart = file.awaitFirst()
             audioFileService.setAudio(audioFile, filePart.filename(), filePart.toBytes(), locale)
-            return
+            return audioFile.toDto()
         }
 
         throw ErrorCode(400, "missing parameters")
+    }
+
+    @PutMapping("/upload-image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    suspend fun uploadImage(@RequestParam(required = false) fileId: Int, @RequestParam locale: IkusLocale,
+                            @RequestPart("file") file: Mono<FilePart>) {
+        val audioFile = audioFileService.findById(fileId) ?: throw ErrorCode(404, "Audio File not found")
+        audioFileService.setImage(audioFile, file.awaitFirst(), locale)
+    }
+
+    @DeleteMapping("/image")
+    suspend fun deleteImage(@RequestParam fileId: Int) {
+        val audioFile = audioFileService.findById(fileId) ?: throw ErrorCode(404, "Audio File not found")
+        audioFileService.deleteImages(audioFile)
     }
 }

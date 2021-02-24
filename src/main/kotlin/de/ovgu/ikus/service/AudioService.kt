@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class AudioService (
     private val audioRepo: AudioRepo,
+    private val audioFileService: AudioFileService,
     private val imageService: ImageService,
     private val fileService: FileService
 ) {
@@ -32,6 +33,13 @@ class AudioService (
     }
 
     suspend fun delete(audio: Audio) {
+        // delete children
+        audioFileService
+            .findByAudioOrderByPosition(audio.id)
+            .forEach { audioFile ->
+                audioFileService.delete(audioFile)
+            }
+
         deleteImages(audio)
         audioRepo.delete(audio)
     }

@@ -12,4 +12,6 @@ data class AudioFile(@Id var id: Int = 0,
                      var fileDe: String = "",
                      var text: String? = null,
                      var textDe: String? = null,
+                     var image: String? = null,
+                     var imageDe: String? = null,
                      var position: Int = 0)

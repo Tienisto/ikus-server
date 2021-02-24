@@ -45,7 +45,7 @@ data class LinkGroupDto(val channel: ChannelDto, val links: List<LinkDto>)
 data class HandbookBookmarkDto(val page: Int, val name: String)
 
 // audio
-data class AudioFileDto(val id: Int, val name: MultiLocaleString, val file: MultiLocaleString, val text: MultiLocaleString?)
+data class AudioFileDto(val id: Int, val name: MultiLocaleString, val file: MultiLocaleString, val text: MultiLocaleString?, val image: MultiLocaleString?)
 data class AudioDto(val id: Int, val name: MultiLocaleString, val image: MultiLocaleString?, val files: List<AudioFileDto>)
 
 // contacts
@@ -63,7 +63,7 @@ data class LocalizedChannelDto(val id: Int, val name: String)
 data class LocalizedPostDto(val id: Int, val channel: LocalizedChannelDto, val date: String, val title: String, val preview: String, val content: String, val pinned: Boolean, val files: List<PostFileDto>)
 data class LocalizedEventDto(val id: Int, val channel: LocalizedChannelDto, val name: String, val info: String?, val startTime: String, val endTime: String?, val place: String?, val coords: CoordsDto?)
 data class LocalizedLinkDto(val id: Int, val channel: LocalizedChannelDto, val url: String, val info: String)
-data class LocalizedAudioFileDto(val id: Int, val name: String, val file: String, val text: String?)
+data class LocalizedAudioFileDto(val id: Int, val name: String, val file: String, val text: String?, val image: String?)
 data class LocalizedAudioDto(val id: Int, val name: String, val image: String?, val files: List<LocalizedAudioFileDto>)
 data class LocalizedContactDto(val id: Int, val file: String?, val name: String, val email: String?, val phoneNumber: String?, val place: String?, val openingHours: String?, val links: List<String>)
 data class LocalizedFoodDto(val name: String, val price: Double?, val tags: List<FoodTag>)

@@ -5,13 +5,15 @@ import de.ovgu.ikus.model.*
 import de.ovgu.ikus.repository.AudioFileRepo
 import kotlinx.coroutines.flow.collect
 import org.slf4j.LoggerFactory
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import java.io.ByteArrayInputStream
 
 @Service
 class AudioFileService(
     private val audioFileRepo: AudioFileRepo,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val imageService: ImageService
 ) {
 
     private val logger = LoggerFactory.getLogger(AudioFileService::class.java)
@@ -38,8 +40,12 @@ class AudioFileService(
 
     suspend fun delete(file: AudioFile) {
         try {
+            // delete audio files
             fileService.deleteFile(file.file)
             fileService.deleteFile(file.fileDe)
+
+            // delete image files
+            deleteImages(file)
         } catch (e: Exception) {
             logger.error(e.message, e)
         }
@@ -66,7 +72,7 @@ class AudioFileService(
             logger.error(e.message, e)
         }
 
-        val extension = checkExtension(fileName)
+        val extension = checkExtensionAudio(fileName)
         val path = "audio/files/${audioFile.id}-$locale.$extension"
         fileService.storeFileInputStream(ByteArrayInputStream(byteArray), path)
 
@@ -78,7 +84,42 @@ class AudioFileService(
         audioFileRepo.save(audioFile)
     }
 
-    private fun checkExtension(fileName: String): String {
+    /**
+     * stores the image to the hard drive and updates the file attribute of the audio
+     */
+    suspend fun setImage(audioFile: AudioFile, file: FilePart, locale: IkusLocale) {
+        checkExtensionImage(file.filename())
+
+        val path = "audio/files/${audioFile.id}-$locale.jpg"
+        val inputStream = imageService.digestImage(file, 2000, 2000)
+        fileService.storeFileInputStream(inputStream, path)
+
+        when (locale) {
+            IkusLocale.EN -> audioFile.image = path
+            IkusLocale.DE -> audioFile.imageDe = path
+        }
+
+        audioFileRepo.save(audioFile)
+    }
+
+    /**
+     * deletes the images if existing, updates the audio
+     */
+    suspend fun deleteImages(audioFile: AudioFile) {
+        val file = audioFile.image
+        if (file != null)
+            fileService.deleteFile(file)
+
+        val fileDe = audioFile.imageDe
+        if (fileDe != null)
+            fileService.deleteFile(fileDe)
+
+        audioFile.image = null
+        audioFile.imageDe = null
+        audioFileRepo.save(audioFile)
+    }
+
+    private fun checkExtensionAudio(fileName: String): String {
         // TODO: check for specific extensions
 
         val lastDotIndex = fileName.indexOfLast { c -> c == '.' }
@@ -86,5 +127,14 @@ class AudioFileService(
             throw ErrorCode(400, "Extension not found in $fileName")
 
         return fileName.substring(lastDotIndex + 1).toLowerCase()
+    }
+
+    private fun checkExtensionImage(fileName: String): String {
+        val lowerCase = fileName.toLowerCase()
+        return when {
+            lowerCase.endsWith(".jpg") || lowerCase.endsWith(".jpeg") -> "jpg"
+            lowerCase.endsWith(".png") -> "png"
+            else -> throw ErrorCode(409, "file type not allowed")
+        }
     }
 }

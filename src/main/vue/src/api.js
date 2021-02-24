@@ -513,13 +513,31 @@ export async function createAudioFile({ audioId, name, text }) {
     });
 }
 
-export async function uploadAudioFile({ fileId, token, file, locale }) {
+export async function uploadAudioFileAudio({ fileId, token, file, locale }) {
     return await makeRequest({
-        route: 'audio/file/upload',
+        route: 'audio/file/upload-audio',
         method: 'PUT',
         body: { file },
         params: { fileId, token, locale },
         useJSON: false
+    });
+}
+
+export async function uploadAudioFileImage({ fileId, file, locale }) {
+    return await makeRequest({
+        route: 'audio/file/upload-image',
+        method: 'PUT',
+        body: { file },
+        params: { fileId, locale },
+        useJSON: false
+    });
+}
+
+export async function deleteAudioFileImage({ fileId }) {
+    return await makeRequest({
+        route: 'audio/file/image',
+        method: 'DELETE',
+        params: { fileId }
     });
 }
 

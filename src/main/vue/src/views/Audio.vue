@@ -85,7 +85,7 @@ import {
   deleteAudioFile,
   createAudio,
   updateAudio,
-  setAudioImage, deleteAudioImage, uploadAudioFile
+  setAudioImage, deleteAudioImage, uploadAudioFileAudio, uploadAudioFileImage, deleteAudioFileImage
 } from "@/api";
 import {localizedString, showSnackbar} from "@/utils";
 import MainContainer from "@/components/layout/MainContainer";
@@ -273,12 +273,32 @@ export default {
       }
     },
     handleAudioFileActions: async function(fileId, token, actions) {
-      if (actions.uploadingFileEn) {
-        await uploadAudioFile({ fileId, token, file: actions.uploadingFileEn, locale: 'EN' });
+      if (actions.uploadingAudioFileEn) {
+        const response = await uploadAudioFileAudio({ fileId, token, file: actions.uploadingAudioFileEn, locale: 'EN' });
+        if (response && response.id) {
+          // just created after last request
+          fileId = response.id;
+        }
       }
 
-      if (actions.uploadingFileDe) {
-        await uploadAudioFile({ fileId, token, file: actions.uploadingFileDe, locale: 'DE' });
+      if (actions.uploadingAudioFileDe) {
+        const response = await uploadAudioFileAudio({ fileId, token, file: actions.uploadingAudioFileDe, locale: 'DE' });
+        if (response && response.id) {
+          // just created after last request
+          fileId = response.id;
+        }
+      }
+
+      if (actions.uploadingImageFileEn) {
+        await uploadAudioFileImage({ fileId, file: actions.uploadingImageFileEn, locale: 'EN' });
+      }
+
+      if (actions.uploadingImageFileDe) {
+        await uploadAudioFileImage({ fileId, file: actions.uploadingImageFileDe, locale: 'DE' });
+      }
+
+      if (actions.deletingImageFile) {
+        await deleteAudioFileImage({ fileId });
       }
     },
     moveUpAudioFile: async function(audio, audioFile) {
