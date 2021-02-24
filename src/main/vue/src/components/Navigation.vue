@@ -146,7 +146,7 @@ export default {
       },
       {
         route: '/audio',
-        label: 'Audio',
+        label: 'Guides',
         icon: 'mdi-headphones'
       },
       {

@@ -1,10 +1,10 @@
 <template>
-  <MainContainer title="Audio" icon="mdi-headphones">
+  <MainContainer title="Audio-Guides" icon="mdi-headphones">
 
     <template v-slot:intro>
       Hier können Sie die Audio-Dateien verwalten.
       <br>
-      Jedes "Audio" besteht aus einem Titelbild sowie aus beliebig vielen Audiodateien.
+      Jede Gruppe besteht aus einem Titelbild sowie aus beliebig vielen Audiodateien.
     </template>
 
     <template v-slot:meta>
