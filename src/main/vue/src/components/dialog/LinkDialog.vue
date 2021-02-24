@@ -7,6 +7,7 @@
               label="Gruppe"
               v-model="channel"
               :items="channels" item-text="name.en" item-value="id"
+              filled
               hide-details
               return-object
           ></v-select>
