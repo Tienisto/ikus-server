@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :width="700" :persistent="true">
+  <GenericDialog :value="value" @input="$emit('input', $event)" :title="dialogTitle" :width="700" persistent>
     <template v-slot:content>
       <LoadingOverlay v-if="uploading" :text="uploadingText" :percentage="uploadingProgress" :intermediate="uploadIntermediate" />
       <v-row>
