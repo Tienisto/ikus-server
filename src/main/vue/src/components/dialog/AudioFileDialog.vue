@@ -12,6 +12,19 @@
         </v-col>
       </v-row>
 
+      <v-row>
+        <v-col cols="6" style="display: flex; align-items: center; justify-content: end">
+          Bild:
+        </v-col>
+        <v-col cols="6">
+          <v-card class="secondary" style="height: 100%">
+            <v-card-text class="pa-1" style="height: 100%; min-height: 210px">
+              <ImagePicker ref="imagePicker" :width="200" :height="200" @select="setImage" @delete="deleteImage"/>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
       <div style="display: flex; align-items: center" class="mt-2">
         <div style="flex: 1" class="pr-2">
           <audio ref="audio" v-if="hasAudio" controls="controls" style="width: 100%; outline: none">
@@ -30,19 +43,6 @@
           </v-tooltip>
         </FileUpload>
       </div>
-
-      <v-row>
-        <v-col cols="6" style="display: flex; align-items: center; justify-content: end">
-          Bild:
-        </v-col>
-        <v-col cols="6">
-          <v-card class="secondary" style="height: 100%">
-            <v-card-text class="pa-1" style="height: 100%; min-height: 210px">
-              <ImagePicker ref="imagePicker" :width="200" :height="200" @select="setImage" @delete="deleteImage"/>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
 
       <v-text-field v-model="nameEn" label="Name" v-if="locale === 'EN'" class="mt-4" :disabled="loading" filled hide-details />
       <v-text-field v-model="nameDe" label="Name" v-else class="mt-4" :disabled="loading" filled hide-details />
