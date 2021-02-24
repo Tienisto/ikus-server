@@ -7,6 +7,7 @@ import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.repository.UserRepo
 import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.Jwts
+import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -29,6 +30,7 @@ class JwtService (
         private val userRepo: UserRepo
 ) {
 
+    private val logger = LoggerFactory.getLogger(JwtService::class.java)
     private lateinit var jwtKey: SecretKeySpec
     private lateinit var jwtParser: JwtParser
     private lateinit var jwtParserApp: JwtParser
@@ -104,7 +106,7 @@ class JwtService (
             jwtParserApp.parseClaimsJws(token)
             return true
         } catch (e: Exception) {
-            println(e)
+            logger.info(e.message)
             return false
         }
     }
