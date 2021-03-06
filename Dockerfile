@@ -1,7 +1,5 @@
-FROM alpine:3.12
-RUN apk add --update npm openjdk11
-
-WORKDIR /build/src/main/vue
+FROM node:14.16-alpine3.11 as stage-vue
+WORKDIR /vue-build
 
 # add vue dependencies
 ADD src/main/vue/package.json .
@@ -12,10 +10,15 @@ RUN npm i
 ADD src/main/vue/ .
 RUN npm run build
 
-# build spring
+FROM gradle:jdk11 as stage-spring
 WORKDIR /build
+
+# add vue build
+COPY --from=stage-vue /vue-build/dist/ /build/src/main/vue/dist/
+
+# build spring
 ADD . ./
-RUN sh ./gradlew assemble
+RUN gradle assemble
 RUN mv build/libs/*.jar /server.jar
 RUN rm -r /build
 
