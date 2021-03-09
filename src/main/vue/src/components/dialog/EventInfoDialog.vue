@@ -83,7 +83,13 @@ export default {
       const end = this.event.endTime ? moment(this.event.endTime) : null;
 
       if (start && end) {
-        return start.format('DD.MM.YYYY, HH:mm') + ' - ' + end.format('HH:mm');
+        if (start.date() === end.date() && start.month() === end.month() && start.year() === end.year()) {
+          // same day
+          return start.format('DD.MM.YYYY, HH:mm') + ' - ' + end.format('HH:mm');
+        } else {
+          // multiple days
+          return start.format('DD.MM.YYYY, HH:mm') + ' - ' + end.format('DD.MM.YYYY, HH:mm');
+        }
       } else {
         return start.format('DD.MM.YYYY, HH:mm');
       }
