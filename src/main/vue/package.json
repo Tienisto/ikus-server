@@ -9,23 +9,23 @@
   },
   "dependencies": {
     "chart.js": "^2.9.4",
-    "core-js": "^3.8.1",
+    "core-js": "^3.9.1",
     "moment": "^2.29.1",
     "ol": "^6.4.3",
     "tiptap": "^1.30.0",
     "tiptap-extensions": "^1.33.2",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
-    "vue-router": "^3.4.9",
-    "vuelayers": "^0.11.29",
-    "vuetify": "^2.3.21"
+    "vue-router": "^3.5.1",
+    "vuelayers": "^0.11.31",
+    "vuetify": "^2.4.7"
   },
   "devDependencies": {
-    "@mdi/font": "^5.8.55",
-    "@vue/cli-plugin-babel": "^4.5.9",
-    "@vue/cli-plugin-eslint": "^4.5.9",
-    "@vue/cli-plugin-router": "^4.5.9",
-    "@vue/cli-service": "^4.5.9",
+    "@mdi/font": "^5.9.55",
+    "@vue/cli-plugin-babel": "^4.5.12",
+    "@vue/cli-plugin-eslint": "^4.5.12",
+    "@vue/cli-plugin-router": "^4.5.12",
+    "@vue/cli-service": "^4.5.12",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -34,6 +34,6 @@
     "sass-loader": "^8.0.0",
     "vue-cli-plugin-vuetify": "^2.0.8",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.6.0"
+    "vuetify-loader": "^1.7.2"
   }
 }
