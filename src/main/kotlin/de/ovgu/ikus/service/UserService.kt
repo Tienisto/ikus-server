@@ -4,15 +4,15 @@ import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.model.User
 import de.ovgu.ikus.properties.AdminProperties
 import de.ovgu.ikus.repository.UserRepo
-import de.ovgu.ikus.security.HashService
+import de.ovgu.ikus.security.CryptoUtils
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
 class UserService (
-        private val propsAdmin: AdminProperties,
-        private val hashService: HashService,
-        private val userRepo: UserRepo
+    private val propsAdmin: AdminProperties,
+    private val cryptoUtils: CryptoUtils,
+    private val userRepo: UserRepo
 ) {
 
     private val logger = LoggerFactory.getLogger(UserService::class.java)
@@ -24,12 +24,12 @@ class UserService (
         var user = userRepo.findByName(propsAdmin.name)
         if (user == null) {
             // no admin found
-            user = User(name = propsAdmin.name, password = hashService.hash(propsAdmin.password))
+            user = User(name = propsAdmin.name, password = cryptoUtils.hashBcrypt(propsAdmin.password))
             userRepo.save(user)
             logger.info("Created admin user.")
-        } else if (!hashService.check(propsAdmin.password, user.password)) {
+        } else if (!cryptoUtils.checkBcrypt(propsAdmin.password, user.password)) {
             // admin exists but wrong password
-            user.password = hashService.hash(propsAdmin.password)
+            user.password = cryptoUtils.hashBcrypt(propsAdmin.password)
             userRepo.save(user)
             logger.info("Updated admin user password.")
         }
@@ -50,7 +50,7 @@ class UserService (
         if (userRepo.findByName(name) != null)
             throw ErrorCode(409, "Name already used")
 
-        return userRepo.save(User(name = name, password = hashService.hash(password)))
+        return userRepo.save(User(name = name, password = cryptoUtils.hashBcrypt(password)))
     }
 
     suspend fun updateName(user: User, name: String): User {
@@ -64,7 +64,7 @@ class UserService (
     }
 
     suspend fun updatePassword(user: User, password: String): User {
-        user.password = hashService.hash(password)
+        user.password = cryptoUtils.hashBcrypt(password)
         return userRepo.save(user)
     }
 

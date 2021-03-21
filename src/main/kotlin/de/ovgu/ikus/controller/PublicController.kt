@@ -5,32 +5,38 @@ import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.ChannelType
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.PostType
+import de.ovgu.ikus.model.RegistrationData
+import de.ovgu.ikus.security.CryptoUtils
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.service.*
+import de.ovgu.ikus.utils.parseJSON
 import de.ovgu.ikus.utils.toDto
+import de.ovgu.ikus.utils.toJSON
 import de.ovgu.ikus.utils.toLocalizedDto
 import org.springframework.core.io.FileSystemResource
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ServerWebExchange
+import java.util.*
 
 @RestController
 @RequestMapping("/api/public")
 class PublicController(
-        private val cacheService: CacheService,
-        private val jwtService: JwtService,
-        private val postService: PostService,
-        private val postFileService: PostFileService,
-        private val eventService: EventService,
-        private val channelService: ChannelService,
-        private val fileService: FileService,
-        private val linkService: LinkService,
-        private val handbookService: HandbookService,
-        private val audioService: AudioService,
-        private val audioFileService: AudioFileService,
-        private val contactService: ContactService,
-        private val featureService: FeatureService,
-        private val analyticsService: AnalyticsService,
-        private val mensaService: MensaService
+    private val cryptoUtils: CryptoUtils,
+    private val cacheService: CacheService,
+    private val jwtService: JwtService,
+    private val postService: PostService,
+    private val postFileService: PostFileService,
+    private val eventService: EventService,
+    private val channelService: ChannelService,
+    private val fileService: FileService,
+    private val linkService: LinkService,
+    private val handbookService: HandbookService,
+    private val audioService: AudioService,
+    private val audioFileService: AudioFileService,
+    private val contactService: ContactService,
+    private val featureService: FeatureService,
+    private val analyticsService: AnalyticsService,
+    private val mensaService: MensaService
 ) {
 
     private val newsComparator = compareByDescending<LocalizedPostDto> { it.pinned }.thenByDescending { it.date }
@@ -51,17 +57,17 @@ class PublicController(
             val channels = channelService.findByTypeOrderByName(ChannelType.NEWS, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val postsUnsorted = channels
-                    .map { channel -> postService.findByChannelOrderByDate(channel, 10) }
-                    .flatten()
+                .map { channel -> postService.findByChannelOrderByDate(channel, 10) }
+                .flatten()
             val files = postFileService.findByPostIn(postsUnsorted)
             val posts = postsUnsorted
-                    .map { post ->
-                        val currFiles = files
-                                .filter { file -> file.postId == post.id }
-                                .map { file -> file.toDto() }
-                        post.toLocalizedDto(locale, channelsDtoMap[post.channelId] ?: LocalizedChannelDto(0, "Error"), currFiles)
-                    }
-                    .sortedWith(newsComparator)
+                .map { post ->
+                    val currFiles = files
+                        .filter { file -> file.postId == post.id }
+                        .map { file -> file.toDto() }
+                    post.toLocalizedDto(locale, channelsDtoMap[post.channelId] ?: LocalizedChannelDto(0, "Error"), currFiles)
+                }
+                .sortedWith(newsComparator)
 
             PublicPostDto(channelsDtoMap.values.toList(), posts)
         }
@@ -73,11 +79,11 @@ class PublicController(
             val channels = channelService.findByTypeOrderByName(ChannelType.CALENDAR, locale)
             val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
             val events = eventService
-                    .findAllOrdered()
-                    .map { event ->
-                        val channel = channelsDtoMap[event.channelId] ?: LocalizedChannelDto(0, "Error")
-                        event.toLocalizedDto(locale, channel)
-                    }
+                .findAllOrdered()
+                .map { event ->
+                    val channel = channelsDtoMap[event.channelId] ?: LocalizedChannelDto(0, "Error")
+                    event.toLocalizedDto(locale, channel, cryptoUtils)
+                }
 
             PublicEventDto(channelsDtoMap.values.toList(), events)
         }
@@ -87,14 +93,14 @@ class PublicController(
     suspend fun getMensa(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.MENSA, locale) {
             mensaService
-                    .getMenu()
-                    .map { menuInfo ->
-                        val menus = menuInfo.menus.map { menu ->
-                            val food = menu.food.map { food -> food.toLocalizedDto(locale) }
-                            menu.toLocalizedDto(food)
-                        }
-                        menuInfo.toLocalizedDto(locale, menus)
+                .getMenu()
+                .map { menuInfo ->
+                    val menus = menuInfo.menus.map { menu ->
+                        val food = menu.food.map { food -> food.toLocalizedDto(locale) }
+                        menu.toLocalizedDto(food)
                     }
+                    menuInfo.toLocalizedDto(locale, menus)
+                }
         }
     }
 
@@ -106,8 +112,8 @@ class PublicController(
             channels.map { channel ->
                 val groupDto = channel.toLocalizedDto(locale)
                 val linksDto = links
-                        .filter { link -> link.channelId == channel.id }
-                        .map { link -> link.toLocalizedDto(locale, groupDto) }
+                    .filter { link -> link.channelId == channel.id }
+                    .map { link -> link.toLocalizedDto(locale, groupDto) }
 
                 PublicLinkDto(groupDto, linksDto)
             }
@@ -118,8 +124,8 @@ class PublicController(
     suspend fun getHandbookBookmarks(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.HANDBOOK_BOOKMARKS, locale) {
             handbookService
-                    .findByLocaleOrdered(locale)
-                    .map { bookmark -> bookmark.toDto() }
+                .findByLocaleOrdered(locale)
+                .map { bookmark -> bookmark.toDto() }
         }
     }
 
@@ -148,13 +154,13 @@ class PublicController(
             channels.map { channel ->
                 val channelDto = channel.toLocalizedDto(locale)
                 val postsDto = posts
-                        .filter { post -> post.channelId == channel.id}
-                        .map { post ->
-                            val currFiles = files
-                                    .filter { file -> file.postId == post.id }
-                                    .map { file -> file.toDto() }
-                            post.toLocalizedDto(locale, channelDto, currFiles)
-                        }
+                    .filter { post -> post.channelId == channel.id }
+                    .map { post ->
+                        val currFiles = files
+                            .filter { file -> file.postId == post.id }
+                            .map { file -> file.toDto() }
+                        post.toLocalizedDto(locale, channelDto, currFiles)
+                    }
                 PublicFAQDto(channelDto, postsDto)
             }
         }
@@ -164,8 +170,8 @@ class PublicController(
     suspend fun getContacts(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.CONTACTS, locale) {
             contactService
-                    .findAllOrdered()
-                    .map { contact -> contact.toLocalizedDto(locale) }
+                .findAllOrdered()
+                .map { contact -> contact.toLocalizedDto(locale) }
         }
     }
 
@@ -173,34 +179,34 @@ class PublicController(
     suspend fun getAppConfig(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.APP_CONFIG, locale) {
             val features = featureService
-                    .findAllOrderByPosition()
-                    .map { feature ->
-                        val postDto = when (val postId = feature.postId) {
+                .findAllOrderByPosition()
+                .map { feature ->
+                    val postDto = when (val postId = feature.postId) {
+                        null -> null
+                        else -> when (val post = postService.findById(postId)) {
                             null -> null
-                            else -> when (val post = postService.findById(postId)) {
+                            else -> when (val channel = channelService.findById(post.channelId)?.toLocalizedDto(locale)) {
                                 null -> null
-                                else -> when (val channel = channelService.findById(post.channelId)?.toLocalizedDto(locale)) {
-                                    null -> null
-                                    else -> post.toLocalizedDto(locale, channel, postFileService.findByPost(post).map { file -> file.toDto() })
-                                }
+                                else -> post.toLocalizedDto(locale, channel, postFileService.findByPost(post).map { file -> file.toDto() })
                             }
                         }
-                        val linkDto = when (val linkId = feature.linkId) {
-                            null -> null
-                            else -> when (val link = linkService.findById(linkId)) {
-                                null -> null
-                                else -> when (val channel = channelService.findById(link.channelId)?.toLocalizedDto(locale)) {
-                                    null -> null
-                                    else -> link.toLocalizedDto(locale, channel)
-                                }
-                            }
-                        }
-                        feature.toLocalizedDto(locale, postDto, linkDto)
                     }
+                    val linkDto = when (val linkId = feature.linkId) {
+                        null -> null
+                        else -> when (val link = linkService.findById(linkId)) {
+                            null -> null
+                            else -> when (val channel = channelService.findById(link.channelId)?.toLocalizedDto(locale)) {
+                                null -> null
+                                else -> link.toLocalizedDto(locale, channel)
+                            }
+                        }
+                    }
+                    feature.toLocalizedDto(locale, postDto, linkDto)
+                }
 
             PublicConfigDto(
-                    version = BuildInfo.API_LEVEL,
-                    features = features
+                version = BuildInfo.API_LEVEL,
+                features = features
             )
         }
     }
@@ -236,5 +242,52 @@ class PublicController(
             return
 
         analyticsService.saveAppStartCache(request.platform, request.deviceId)
+    }
+
+    @PostMapping("/event/register")
+    suspend fun registerEvent(@RequestBody payload: Request.RegisterEvent): RegisterEventResponse? {
+        if (!jwtService.checkAppToken(payload.jwt))
+            return null
+
+        val event = eventService.findById(payload.eventId) ?: return null
+
+        if (!event.registrationOpen)
+            throw ErrorCode(403, "Closed")
+
+        if (event.registrations.size >= event.registrationSlots + event.registrationSlotsWaiting)
+            throw ErrorCode(409, "Full")
+
+        val registrationData = RegistrationData(
+            token = UUID.randomUUID().toString(),
+            firstName = payload.firstName,
+            lastName = payload.lastName,
+            email = payload.email,
+            address = payload.address,
+            country = payload.country
+        )
+
+        event.registrations = event.registrations + registrationData.toJSON()
+        eventService.save(event)
+        cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+        return RegisterEventResponse(registrationData.token)
+    }
+
+    @PostMapping("/event/unregister")
+    suspend fun unregisterEvent(@RequestBody payload: Request.UnregisterEvent) {
+        if (!jwtService.checkAppToken(payload.jwt))
+            return
+
+        val event = eventService.findById(payload.eventId) ?: return
+
+        val index = event.registrations
+            .map { r -> r.parseJSON<RegistrationData>() }
+            .indexOfFirst { r -> r.token == payload.token }
+
+        if (index != -1) {
+            // remove registration from list
+            event.registrations = event.registrations.filterIndexed { i, _ -> i == index }
+            eventService.save(event)
+            cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+        }
     }
 }

@@ -4,7 +4,7 @@ import de.ovgu.ikus.dto.ErrorCode
 import de.ovgu.ikus.dto.MeDto
 import de.ovgu.ikus.dto.Request
 import de.ovgu.ikus.model.LogType
-import de.ovgu.ikus.security.HashService
+import de.ovgu.ikus.security.CryptoUtils
 import de.ovgu.ikus.security.isAdmin
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.LogService
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/account")
 class AccountController (
-        private val logService: LogService,
-        private val hashService: HashService,
-        private val userService: UserService
+    private val logService: LogService,
+    private val cryptoUtils: CryptoUtils,
+    private val userService: UserService
 ) {
 
     @GetMapping
@@ -31,7 +31,7 @@ class AccountController (
     suspend fun changePassword(authentication: Authentication, @RequestBody request: Request.UpdateMyPassword) {
         val user = authentication.toUser()
 
-        if (!hashService.check(request.oldPassword, user.password))
+        if (!cryptoUtils.checkBcrypt(request.oldPassword, user.password))
             throw ErrorCode(403, "Wrong Password")
 
         userService.updatePassword(user, request.newPassword)

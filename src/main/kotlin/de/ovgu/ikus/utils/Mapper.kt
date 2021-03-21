@@ -2,6 +2,8 @@ package de.ovgu.ikus.utils
 
 import de.ovgu.ikus.dto.*
 import de.ovgu.ikus.model.*
+import de.ovgu.ikus.security.CryptoUtils
+import de.ovgu.ikus.security.toHexString
 import org.jsoup.Jsoup
 import org.springframework.data.geo.Point
 
@@ -64,13 +66,18 @@ fun Event.toDto(channel: ChannelDto): EventDto {
     }
 
     val infoMultiLocale = createMultiLocaleString(en = info, de = infoDe)
-    return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale)
+    return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale, registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrations)
 }
 
-fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto): LocalizedEventDto {
+fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto, cryptoUtils: CryptoUtils): LocalizedEventDto {
+    // only return hashed registration tokens (due to privacy)
+    val registrationHashes = registrations.map { registration ->
+        val data = registration.parseJSON<RegistrationData>()
+        cryptoUtils.hashSHA256(data.token).toHexString()
+    }
     return when (locale) {
-        IkusLocale.EN -> LocalizedEventDto(id, channel, name, info, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto())
-        IkusLocale.DE -> LocalizedEventDto(id, channel, nameDe, infoDe, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto())
+        IkusLocale.EN -> LocalizedEventDto(id, channel, name, info, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(), registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
+        IkusLocale.DE -> LocalizedEventDto(id, channel, nameDe, infoDe, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(), registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
     }
 }
 

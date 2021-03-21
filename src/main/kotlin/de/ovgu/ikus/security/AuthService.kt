@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService (
-        private val hashService: HashService,
-        private val userRepo: UserRepo
+    private val cryptoUtils: CryptoUtils,
+    private val userRepo: UserRepo
 ) {
 
     /**
@@ -18,7 +18,7 @@ class AuthService (
 
         val user = userRepo.findByName(name) ?: return null
 
-        if (!hashService.check(password, user.password))
+        if (!cryptoUtils.checkBcrypt(password, user.password))
             return null
 
         return user

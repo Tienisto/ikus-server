@@ -92,4 +92,42 @@ class EventController (
         logService.log(LogType.DELETE_EVENT, authentication.toUser(), "${event.name} (${event.nameDe})")
         cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
     }
+
+    @PostMapping("/registration/fields")
+    suspend fun updateRegistrationRequirements(authentication: Authentication, @RequestBody payload: Request.UpdateEventRegistrationFields) {
+        val event = eventService.findById(payload.id) ?: throw ErrorCode(404, "Event not found")
+
+        event.registrationFields = payload.fields
+        eventService.save(event)
+        logService.log(LogType.UPDATE_EVENT_REGISTRATION_FIELDS, authentication.toUser(), "${event.name} (${event.nameDe})")
+        cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+    }
+
+    @PostMapping("/registration/slots")
+    suspend fun updateRegistrationSlots(authentication: Authentication, @RequestBody payload: Request.UpdateEventRegistrationSlots) {
+        val event = eventService.findById(payload.id) ?: throw ErrorCode(404, "Event not found")
+
+        event.registrationSlots = payload.slots
+        event.registrationSlotsWaiting = payload.slotsWaiting
+        eventService.save(event)
+        logService.log(LogType.UPDATE_EVENT_REGISTRATION_SLOTS, authentication.toUser(), "${event.name} (${event.nameDe})")
+        cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+    }
+
+    @PostMapping("/registration/open")
+    suspend fun updateRegistrationOpen(authentication: Authentication, @RequestBody payload: Request.Id) {
+        updateEventOpenState(payload.id, true)
+    }
+
+    @PostMapping("/registration/close")
+    suspend fun updateRegistrationClose(authentication: Authentication, @RequestBody payload: Request.Id) {
+        updateEventOpenState(payload.id, false)
+    }
+
+    private suspend fun updateEventOpenState(eventId: Int, open: Boolean) {
+        val event = eventService.findById(eventId) ?: throw ErrorCode(404, "Event not found")
+        event.registrationOpen = open
+        eventService.save(event)
+        cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+    }
 }

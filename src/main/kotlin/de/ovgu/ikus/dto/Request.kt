@@ -2,6 +2,7 @@ package de.ovgu.ikus.dto
 
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.Platform
+import de.ovgu.ikus.model.RegistrationField
 import java.time.OffsetDateTime
 
 object Request {
@@ -22,6 +23,8 @@ object Request {
 
     data class CreateEvent(val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
     data class UpdateEvent(val id: Int, val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
+    data class UpdateEventRegistrationFields(val id: Int, val fields: List<RegistrationField>)
+    data class UpdateEventRegistrationSlots(val id: Int, val slots: Int, val slotsWaiting: Int)
 
     data class CreateLink(val channelId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
     data class UpdateLink(val id: Int, val channelId: Int, val url: MultiLocaleString, val info: MultiLocaleString)
@@ -40,4 +43,6 @@ object Request {
     data class UpdateFeature(val id: Int, val name: MultiLocaleString, val icon: String, val postId: Int?, val linkId: Int?)
 
     data class AppStartSignal(val token: String?, val platform: Platform?, val deviceId: String?)
+    data class RegisterEvent(val jwt: String?, val eventId: Int, val firstName: String?, val lastName: String?, val email: String?, val address: String?, val country: String?)
+    data class UnregisterEvent(val jwt: String?, val eventId: Int, val token: String)
 }
