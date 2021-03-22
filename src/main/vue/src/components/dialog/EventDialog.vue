@@ -48,10 +48,16 @@
         </v-col>
       </v-row>
 
-      <v-btn v-if="updating" @click="$emit('delete')" class="mt-4" color="primary" :disabled="loading" text>
-        <v-icon left>mdi-delete</v-icon>
-        Event Löschen
-      </v-btn>
+      <div v-if="updating" class="mt-2">
+        <v-btn @click="$emit('delete')" class="mt-4" color="primary" :disabled="loading" text>
+          <v-icon left>mdi-delete</v-icon>
+          Event Löschen
+        </v-btn>
+        <v-btn @click="$emit('registrations')" class="mt-4" color="primary" :disabled="loading" text>
+          <v-icon left>mdi-clipboard-text</v-icon>
+          Anmeldungen
+        </v-btn>
+      </div>
 
     </template>
 

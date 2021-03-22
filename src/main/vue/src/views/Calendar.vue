@@ -48,7 +48,7 @@
     </v-card>
 
     <EventDialog ref="eventDialog" v-model="dialogEvent" :channels="channels" :updating="dialogUpdating" :loading="loading"
-                  @submit="submit" @delete="showDeleteDialog"/>
+                  @submit="submit" @delete="showDeleteDialog" @registrations="$router.push(`/calendar/registrations?eventId=${selectedEvent.id}`)"/>
 
     <GenericDialog v-model="dialogDelete" title="Event löschen">
       <template v-slot:content>

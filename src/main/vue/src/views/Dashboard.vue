@@ -33,7 +33,7 @@
 
           <v-card-actions>
             <v-spacer/>
-            <router-link to="/activities" v-slot="{ href, navigate }">
+            <router-link to="/activities" v-slot="{ href, navigate }" custom>
               <v-btn @click="navigate" :href="href" color="black" text>
                 Mehr
                 <v-icon right>mdi-arrow-right</v-icon>
@@ -57,7 +57,7 @@
 
           <v-card-actions>
             <v-spacer/>
-            <router-link to="/posts" v-slot="{ href, navigate }">
+            <router-link to="/posts" v-slot="{ href, navigate }" custom>
               <v-btn @click="navigate" :href="href" color="black" text>
                 Mehr
                 <v-icon right>mdi-arrow-right</v-icon>
@@ -89,7 +89,7 @@
 
           <v-card-actions>
             <v-spacer/>
-            <router-link to="/calendar" v-slot="{ href, navigate }">
+            <router-link to="/calendar" v-slot="{ href, navigate }" custom>
               <v-btn @click="navigate" :href="href" color="black" text>
                 Mehr
                 <v-icon right>mdi-arrow-right</v-icon>

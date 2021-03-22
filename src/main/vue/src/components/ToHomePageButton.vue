@@ -1,5 +1,5 @@
 <template>
-  <router-link v-if="!loggedIn" to="/" v-slot="{ href, navigate }" class="mt-4">
+  <router-link v-if="!loggedIn" to="/" v-slot="{ href, navigate }" class="mt-4" custom>
     <v-btn @click="navigate" :href="href" color="black" text>
       <v-icon left>mdi-arrow-left</v-icon>
       Startseite

@@ -17,6 +17,7 @@ import Features from "@/views/Features";
 import Activities from "@/views/Activities";
 import SysLogs from "@/views/SysLogs";
 import Audio from "@/views/Audio";
+import EventRegistrations from "@/views/EventRegistrations";
 
 Vue.use(VueRouter)
 
@@ -65,6 +66,11 @@ Vue.use(VueRouter)
     path: '/calendar',
     name: 'Calendar',
     component: Calendar
+  },
+  {
+    path: '/calendar/registrations',
+    name: 'EventRegistrations',
+    component: EventRegistrations
   },
   {
     path: '/links',

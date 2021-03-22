@@ -33,7 +33,7 @@ data class PostGroupDto(val channel: ChannelDto, val posts: List<PostDto>)
 // event
 data class CoordsDto(val x: Double, val y: Double)
 data class EventDto(val id: Int, val channel: ChannelDto, val place: String?, val coords: CoordsDto?, val startTime: String, val endTime: String?, val name: MultiLocaleString, val info: MultiLocaleString?,
-                    val registrationFields: List<RegistrationField>, val registrationSlots: Int, val registrationSlotsWaiting: Int, val registrationOpen: Boolean, val registrations: List<String>)
+                    val registrationFields: List<RegistrationField>, val registrationSlots: Int, val registrationSlotsWaiting: Int, val registrationOpen: Boolean, val registrations: List<RegistrationData>)
 
 // links
 data class LinkDto(val id: Int, val channel: ChannelDto, val url: MultiLocaleString, val info: MultiLocaleString)

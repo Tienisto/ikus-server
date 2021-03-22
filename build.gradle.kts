@@ -37,6 +37,7 @@ dependencies {
 	// tools
 	implementation("org.jsoup:jsoup:1.13.1") // parse html
 	implementation("com.drewnoakes:metadata-extractor:2.14.0") // get image orientation
+	implementation("com.github.librepdf:openpdf:1.3.25")
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

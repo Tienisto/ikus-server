@@ -2,20 +2,16 @@ package de.ovgu.ikus.controller
 
 import de.ovgu.ikus.BuildInfo
 import de.ovgu.ikus.dto.*
-import de.ovgu.ikus.model.ChannelType
-import de.ovgu.ikus.model.IkusLocale
-import de.ovgu.ikus.model.PostType
-import de.ovgu.ikus.model.RegistrationData
+import de.ovgu.ikus.model.*
 import de.ovgu.ikus.security.CryptoUtils
 import de.ovgu.ikus.security.JwtService
 import de.ovgu.ikus.service.*
-import de.ovgu.ikus.utils.parseJSON
-import de.ovgu.ikus.utils.toDto
-import de.ovgu.ikus.utils.toJSON
-import de.ovgu.ikus.utils.toLocalizedDto
+import de.ovgu.ikus.utils.*
+import org.slf4j.LoggerFactory
 import org.springframework.core.io.FileSystemResource
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ServerWebExchange
+import java.time.OffsetDateTime
 import java.util.*
 
 @RestController
@@ -39,6 +35,7 @@ class PublicController(
     private val mensaService: MensaService
 ) {
 
+    private val logger = LoggerFactory.getLogger(PublicController::class.java)
     private val newsComparator = compareByDescending<LocalizedPostDto> { it.pinned }.thenByDescending { it.date }
 
     @GetMapping("/file/{folder}/{name}")
@@ -246,10 +243,12 @@ class PublicController(
 
     @PostMapping("/event/register")
     suspend fun registerEvent(@RequestBody payload: Request.RegisterEvent): RegisterEventResponse? {
-        if (!jwtService.checkAppToken(payload.jwt))
+        if (!jwtService.checkAppToken(payload.jwt)) {
+            logger.info("Wrong JWT (calling /api/public/event/register)")
             return null
+        }
 
-        val event = eventService.findById(payload.eventId) ?: return null
+        val event = eventService.findById(payload.eventId) ?: throw ErrorCode(404, "Event not found")
 
         if (!event.registrationOpen)
             throw ErrorCode(403, "Closed")
@@ -257,8 +256,22 @@ class PublicController(
         if (event.registrations.size >= event.registrationSlots + event.registrationSlotsWaiting)
             throw ErrorCode(409, "Full")
 
+        // input validation
+        event.registrationFields.forEach { field ->
+            when (RegistrationField.valueOf(field)) {
+                RegistrationField.MATRICULATION_NUMBER -> if (payload.matriculationNumber == null) throw ErrorCode(400, "Missing matriculation number")
+                RegistrationField.FIRST_NAME -> if (payload.firstName.isNullOrBlank()) throw ErrorCode(400, "Missing first name")
+                RegistrationField.LAST_NAME -> if (payload.lastName.isNullOrBlank()) throw ErrorCode(400, "Missing last name")
+                RegistrationField.EMAIL -> if (payload.email.isNullOrBlank()) throw ErrorCode(400, "Missing email")
+                RegistrationField.ADDRESS -> if (payload.address.isNullOrBlank()) throw ErrorCode(400, "Missing address")
+                RegistrationField.COUNTRY -> if (payload.country.isNullOrBlank()) throw ErrorCode(400, "Missing country")
+            }
+        }
+
         val registrationData = RegistrationData(
+            timestamp = OffsetDateTime.now().germany(),
             token = UUID.randomUUID().toString(),
+            matriculationNumber = payload.matriculationNumber,
             firstName = payload.firstName,
             lastName = payload.lastName,
             email = payload.email,
@@ -278,16 +291,12 @@ class PublicController(
             return
 
         val event = eventService.findById(payload.eventId) ?: return
+        val changed = eventService.removeRegisteredUser(event, payload.token)
 
-        val index = event.registrations
-            .map { r -> r.parseJSON<RegistrationData>() }
-            .indexOfFirst { r -> r.token == payload.token }
-
-        if (index != -1) {
-            // remove registration from list
-            event.registrations = event.registrations.filterIndexed { i, _ -> i == index }
-            eventService.save(event)
+        if (changed) {
             cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+        } else {
+            logger.info("Unregister failed (invalid token: ${payload.token})")
         }
     }
 }

@@ -34,6 +34,8 @@ export function logTypeString(type) {
         case 'CREATE_EVENT': return 'Event erstellt';
         case 'UPDATE_EVENT': return 'Event geändert';
         case 'DELETE_EVENT': return 'Event gelöscht';
+        case 'UPDATE_EVENT_OPEN_REGISTRATION': return 'Event-Anmeldung geöffnet';
+        case 'UPDATE_EVENT_CLOSE_REGISTRATION': return 'Event-Anmeldung geschlossen';
         case 'CREATE_LINK': return 'Link erstellt';
         case 'UPDATE_LINK': return 'Link geändert';
         case 'DELETE_LINK': return 'Link gelöscht';

@@ -1,0 +1,8 @@
+export const registrationFields = {
+    MATRICULATION_NUMBER: 'MATRICULATION_NUMBER',
+    FIRST_NAME: 'FIRST_NAME',
+    LAST_NAME: 'LAST_NAME',
+    EMAIL: 'EMAIL',
+    ADDRESS: 'ADDRESS',
+    COUNTRY: 'COUNTRY'
+}

@@ -66,7 +66,9 @@ fun Event.toDto(channel: ChannelDto): EventDto {
     }
 
     val infoMultiLocale = createMultiLocaleString(en = info, de = infoDe)
-    return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale, registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrations)
+    val fields = registrationFields.map { field -> RegistrationField.valueOf(field) }
+    return EventDto(id, channel, place, coordsDto, startTime.toString(), endTime?.toString(), MultiLocaleString(en = name, de = nameDe), infoMultiLocale,
+        fields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrations.map { r -> r.parseJSON() })
 }
 
 fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto, cryptoUtils: CryptoUtils): LocalizedEventDto {
@@ -75,9 +77,12 @@ fun Event.toLocalizedDto(locale: IkusLocale, channel: LocalizedChannelDto, crypt
         val data = registration.parseJSON<RegistrationData>()
         cryptoUtils.hashSHA256(data.token).toHexString()
     }
+    val fields = registrationFields.map { field -> RegistrationField.valueOf(field) }
     return when (locale) {
-        IkusLocale.EN -> LocalizedEventDto(id, channel, name, info, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(), registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
-        IkusLocale.DE -> LocalizedEventDto(id, channel, nameDe, infoDe, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(), registrationFields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
+        IkusLocale.EN -> LocalizedEventDto(id, channel, name, info, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(),
+            fields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
+        IkusLocale.DE -> LocalizedEventDto(id, channel, nameDe, infoDe, startTime.toString(), endTime?.toString(), place, coords?.toCoordsDto(),
+            fields, registrationSlots, registrationSlotsWaiting, registrationOpen, registrationHashes)
     }
 }
 

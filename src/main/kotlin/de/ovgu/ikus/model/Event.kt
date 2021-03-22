@@ -1,16 +1,20 @@
 package de.ovgu.ikus.model
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.data.annotation.Id
 import org.springframework.data.geo.Point
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 
 enum class RegistrationField {
-    FIRST_NAME, LAST_NAME, EMAIL, ADDRESS, COUNTRY
+    MATRICULATION_NUMBER, FIRST_NAME, LAST_NAME, EMAIL, ADDRESS, COUNTRY
 }
 
 data class RegistrationData(
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mmXXX")
+    val timestamp: OffsetDateTime,
     val token: String,
+    val matriculationNumber: Int?,
     val firstName: String?,
     val lastName: String?,
     val email: String?,
@@ -30,7 +34,7 @@ data class Event(
     var nameDe: String = "",
     var info: String? = null,
     var infoDe: String? = null,
-    var registrationFields: List<RegistrationField> = emptyList(),
+    var registrationFields: List<String> = emptyList(),
     var registrationSlots: Int = 0,
     var registrationSlotsWaiting: Int = 0,
     var registrationOpen: Boolean = false,

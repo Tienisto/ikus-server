@@ -287,6 +287,13 @@ export async function getEventsByChannel({ channelId }) {
     });
 }
 
+export async function getEventsById({ eventId }) {
+    return await makeRequest({
+        route: `events/${eventId}`,
+        method: 'GET'
+    });
+}
+
 export async function createEvent({ channelId, name, info, place, coords, startTime, endTime }) {
     return await makeRequest({
         route: 'events',
@@ -308,6 +315,22 @@ export async function deleteEvent({ id }) {
         route: 'events',
         method: 'DELETE',
         body: { id }
+    });
+}
+
+export async function updateEventRegistration({ eventId, fields, slots, slotsWaiting, open }) {
+    return await makeRequest({
+        route: 'events/registrations',
+        method: 'POST',
+        body: { id: eventId, fields, slots, slotsWaiting, open }
+    });
+}
+
+export async function kickEventRegistration({ eventId, token }) {
+    return await makeRequest({
+        route: 'events/registrations/kick',
+        method: 'POST',
+        body: { eventId, token }
     });
 }
 

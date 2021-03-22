@@ -22,10 +22,10 @@
     <div id="version-container" class="white--text text-body-1">
       <span>Version {{ version }}</span>
       <br>
-      <router-link to="/privacy" v-slot="{ href, navigate }">
+      <router-link to="/privacy" v-slot="{ href, navigate }" custom>
         <a @click="navigate" :href="href" class="white--text text-decoration-underline">Datenschutz</a>
       </router-link>
-      <router-link to="/status" v-slot="{ href, navigate }">
+      <router-link to="/status" v-slot="{ href, navigate }" custom>
         <a @click="navigate" :href="href" class="white--text text-decoration-underline ml-2">Status</a>
       </router-link>
     </div>
