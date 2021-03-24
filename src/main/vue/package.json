@@ -12,13 +12,13 @@
     "core-js": "^3.9.1",
     "moment": "^2.29.1",
     "ol": "^6.4.3",
-    "tiptap": "^1.30.0",
-    "tiptap-extensions": "^1.33.2",
+    "tiptap": "^1.32.1",
+    "tiptap-extensions": "^1.35.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.5.1",
     "vuelayers": "^0.11.31",
-    "vuetify": "^2.4.7"
+    "vuetify": "^2.4.8"
   },
   "devDependencies": {
     "@mdi/font": "^5.9.55",
