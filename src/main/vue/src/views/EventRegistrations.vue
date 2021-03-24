@@ -54,7 +54,6 @@
     <v-card>
       <v-card-text>
         <v-data-table
-            :loading="fetching"
             :headers="[
                 { text: 'Platz', value: 'position', sortable: false },
                 { text: 'Vorname', value: 'firstName', sortable: false },
@@ -128,7 +127,8 @@ export default {
     dialogConfig: false,
     dialogInfo: false,
     dialogExport: false,
-    dialogDelete: false
+    dialogDelete: false,
+    timerId: null
   }),
   methods: {
     fetchData: async function() {
@@ -241,6 +241,14 @@ export default {
   },
   mounted: async function() {
     await this.fetchData();
+    this.timerId = setInterval(() => {
+      this.fetchData();
+    }, 3000);
+  },
+  destroyed: function() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 }
 </script>
