@@ -170,21 +170,22 @@ class MensaService (
                     // tags
                     val tags = try {
                         tds[1].select("img")
-                                .mapNotNull { img ->
-                                    val tagTitle = img.attr("title").toLowerCase()
-                                    when {
-                                        tagTitle.contains("vegan") -> FoodTag.VEGAN
-                                        tagTitle.contains("vegetarisch") -> FoodTag.VEGETARIAN
-                                        tagTitle.contains("knoblauch") -> FoodTag.GARLIC
-                                        tagTitle.contains("fisch") -> FoodTag.FISH
-                                        tagTitle.contains("geflügel") -> FoodTag.CHICKEN
-                                        tagTitle.contains("rind") -> FoodTag.BEEF
-                                        tagTitle.contains("schwein") -> FoodTag.PIG
-                                        tagTitle.contains("suppe") -> FoodTag.SOUP
-                                        tagTitle.contains("alkohol") -> FoodTag.ALCOHOL
-                                        else -> null
-                                    }
+                            .mapNotNull { img ->
+                                val tagTitle = img.attr("title").toLowerCase()
+                                when {
+                                    tagTitle.contains("vegan") -> FoodTag.VEGAN
+                                    tagTitle.contains("vegetarisch") -> FoodTag.VEGETARIAN
+                                    tagTitle.contains("knoblauch") -> FoodTag.GARLIC
+                                    tagTitle.contains("fisch") -> FoodTag.FISH
+                                    tagTitle.contains("geflügel") -> FoodTag.CHICKEN
+                                    tagTitle.contains("rind") -> FoodTag.BEEF
+                                    tagTitle.contains("schwein") -> FoodTag.PIG
+                                    tagTitle.contains("suppe") -> FoodTag.SOUP
+                                    tagTitle.contains("alkohol") -> FoodTag.ALCOHOL
+                                    else -> null
                                 }
+                            }
+                            .distinct()
                     } catch (e: Exception) {
                         emptyList()
                     }
