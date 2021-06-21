@@ -171,7 +171,7 @@ class MensaService (
                     val tags = try {
                         tds[1].select("img")
                             .mapNotNull { img ->
-                                val tagTitle = img.attr("title").toLowerCase()
+                                val tagTitle = img.attr("title").lowercase()
                                 when {
                                     tagTitle.contains("vegan") -> FoodTag.VEGAN
                                     tagTitle.contains("vegetarisch") -> FoodTag.VEGETARIAN

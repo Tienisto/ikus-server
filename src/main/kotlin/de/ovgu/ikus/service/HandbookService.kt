@@ -15,7 +15,7 @@ class HandbookService (
 ) {
 
     suspend fun uploadFile(file: FilePart, locale: IkusLocale) {
-        if (!file.filename().toLowerCase().endsWith(".pdf"))
+        if (!file.filename().lowercase().endsWith(".pdf"))
             throw ErrorCode(409, "PDF only")
 
         val path = when (locale) {

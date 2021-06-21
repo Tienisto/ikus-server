@@ -52,7 +52,7 @@ class PublicController(
     suspend fun getNews(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.NEWS, locale) {
             val channels = channelService.findByTypeOrderByName(ChannelType.NEWS, locale)
-            val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
+            val channelsDtoMap = channels.associate { channel -> channel.id to channel.toLocalizedDto(locale) }
             val postsUnsorted = channels
                 .map { channel -> postService.findByChannelOrderByDate(channel, 10) }
                 .flatten()
@@ -74,7 +74,7 @@ class PublicController(
     suspend fun getEvents(@RequestParam locale: IkusLocale): String {
         return cacheService.getCacheOrUpdate(CacheKey.CALENDAR, locale) {
             val channels = channelService.findByTypeOrderByName(ChannelType.CALENDAR, locale)
-            val channelsDtoMap = channels.map { channel -> channel.id to channel.toLocalizedDto(locale) }.toMap()
+            val channelsDtoMap = channels.associate { channel -> channel.id to channel.toLocalizedDto(locale) }
             val events = eventService
                 .findAllOrdered()
                 .map { event ->
@@ -210,7 +210,7 @@ class PublicController(
 
     @GetMapping("/combined", "/batch")
     suspend fun getBatch(@RequestParam locale: IkusLocale, @RequestParam routes: List<CacheKey>): Map<String, String> {
-        return routes.map { route ->
+        return routes.associate { route ->
             val value = when (route) {
                 CacheKey.NEWS -> getNews(locale)
                 CacheKey.CALENDAR -> getEvents(locale)
@@ -224,7 +224,7 @@ class PublicController(
             }
 
             route.name to value
-        }.toMap()
+        }
     }
 
     @PostMapping("/start")

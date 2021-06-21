@@ -30,14 +30,13 @@ class HandbookController (
     suspend fun getBookmarks(): Map<IkusLocale, List<HandbookBookmarkDto>> {
         val bookmarks = handbookService.findAllOrdered()
         return IkusLocale
-                .values()
-                .map { locale ->
-                    val currBookmarks = bookmarks
-                            .filter { bookmark -> bookmark.locale == locale }
-                            .map { bookmark -> bookmark.toDto() }
+            .values().associate { locale ->
+                val currBookmarks = bookmarks
+                    .filter { bookmark -> bookmark.locale == locale }
+                    .map { bookmark -> bookmark.toDto() }
 
-                    locale to currBookmarks
-                }.toMap()
+                locale to currBookmarks
+            }
     }
 
     @PutMapping("/upload", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])

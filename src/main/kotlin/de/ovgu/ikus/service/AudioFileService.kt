@@ -126,11 +126,11 @@ class AudioFileService(
         if (lastDotIndex == -1)
             throw ErrorCode(400, "Extension not found in $fileName")
 
-        return fileName.substring(lastDotIndex + 1).toLowerCase()
+        return fileName.substring(lastDotIndex + 1).lowercase()
     }
 
     private fun checkExtensionImage(fileName: String): String {
-        val lowerCase = fileName.toLowerCase()
+        val lowerCase = fileName.lowercase()
         return when {
             lowerCase.endsWith(".jpg") || lowerCase.endsWith(".jpeg") -> "jpg"
             lowerCase.endsWith(".png") -> "png"

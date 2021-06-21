@@ -75,7 +75,7 @@ class PostFileService(
     }
 
     private fun checkExtension(fileName: String): String {
-        val lowerCase = fileName.toLowerCase()
+        val lowerCase = fileName.lowercase()
         return when {
             lowerCase.endsWith(".jpg") || lowerCase.endsWith(".jpeg") -> "jpg"
             lowerCase.endsWith(".png") -> "png"

@@ -24,9 +24,8 @@ class EventController (
     @GetMapping("/all")
     suspend fun getAll(): List<EventDto> {
         val channelsDtoMap = channelService
-                .findByType(ChannelType.CALENDAR)
-                .map { channel -> channel.id to channel.toDto() }
-                .toMap()
+            .findByType(ChannelType.CALENDAR)
+            .associate { channel -> channel.id to channel.toDto() }
 
         return eventService.findAllOrdered().map { event ->
             val channel = channelsDtoMap[event.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))

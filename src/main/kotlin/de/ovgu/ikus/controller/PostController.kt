@@ -26,7 +26,7 @@ class PostController (
     @GetMapping("/news/all")
     suspend fun getAllNews(): NewsDto {
         val channels = channelService.findByType(ChannelType.NEWS)
-        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val channelsDtoMap = channels.associate { channel -> channel.id to channel.toDto() }
         val posts = postService.findByTypeOrderByPinnedDescDateDesc(PostType.NEWS)
         val files = postFileService.findByPostIn(posts)
 
@@ -98,7 +98,7 @@ class PostController (
     @GetMapping("/search")
     suspend fun getBySearch(@RequestParam query: String): List<PostDto> {
         val channels = channelService.findByType(ChannelType.NEWS)
-        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val channelsDtoMap = channels.associate { channel -> channel.id to channel.toDto() }
         val posts = postService.search(query, PostType.NEWS)
         val files = postFileService.findByPostIn(posts)
 

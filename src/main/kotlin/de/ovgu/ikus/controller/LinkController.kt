@@ -37,7 +37,7 @@ class LinkController (
     @GetMapping("/search")
     suspend fun getBySearch(@RequestParam query: String): List<LinkDto> {
         val channels = channelService.findByType(ChannelType.LINK)
-        val channelsDtoMap = channels.map { channel -> channel.id to channel.toDto() }.toMap()
+        val channelsDtoMap = channels.associate { channel -> channel.id to channel.toDto() }
         val links = linkService.search(query)
 
         return links.map { link ->

@@ -93,9 +93,8 @@ class InfoController (
     suspend fun dashboard(): DashboardDto {
         val logs = logService.findAll(7)
         val postChannelMap = channelService
-                .findByType(ChannelType.NEWS)
-                .map { channel -> channel.id to channel.toDto() }
-                .toMap()
+            .findByType(ChannelType.NEWS)
+            .associate { channel -> channel.id to channel.toDto() }
         val posts = postService.findByTypeOrderByDateLimited(PostType.NEWS, 6).map { post ->
             val channel = postChannelMap[post.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))
 
@@ -106,9 +105,8 @@ class InfoController (
         }
 
         val eventChannelMap = channelService
-                .findByType(ChannelType.CALENDAR)
-                .map { channel -> channel.id to channel.toDto() }
-                .toMap()
+            .findByType(ChannelType.CALENDAR)
+            .associate { channel -> channel.id to channel.toDto() }
 
         val events = eventService.findAllOrdered().map { event ->
             val channel = eventChannelMap[event.channelId] ?: ChannelDto(0, MultiLocaleString("Error", "Error"))
