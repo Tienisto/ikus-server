@@ -144,18 +144,22 @@ class MensaService (
                     }
 
                     // name
-                    val (nameEn, nameDe) = try {
-                        val name = tr.select("strong").first()
-                        val nameEn = name.select(".grau").text()
-                        val nameDe = when (val nameDeNode = name.childNodes()[0]) {
+                    val tempNameDe = try {
+                        when (val nameDeNode = tr.select("strong").first().childNodes()[0]) {
                             is Element -> nameDeNode.text()
                             is TextNode -> nameDeNode.wholeText
-                            else -> "Error"
-                        }
-                        Pair(nameEn, nameDe)
+                            else -> null
+                        }?.ifBlank { null }
                     } catch (e: Exception) {
-                        Pair("Error", "Error")
+                        null
                     }
+                    val tempNameEn = try {
+                        tr.select("strong").first().select(".grau").text()?.ifBlank { null }
+                    } catch (e: Exception) {
+                        null
+                    }
+                    val nameDe = tempNameDe ?: tempNameEn ?: "Error"
+                    val nameEn = tempNameEn ?: tempNameDe ?: "Error"
 
                     // price
                     val tds = tr.children()
