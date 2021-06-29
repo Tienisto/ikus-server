@@ -27,11 +27,11 @@ class HandbookService (
     }
 
     suspend fun findAllOrdered(): List<HandbookBookmark> {
-        return handbookBookmarkRepo.findByOrderByPage()
+        return handbookBookmarkRepo.findByOrderByPageAscNameAsc()
     }
 
     suspend fun findByLocaleOrdered(locale: IkusLocale): List<HandbookBookmark> {
-        return handbookBookmarkRepo.findByLocaleOrderByPage(locale)
+        return handbookBookmarkRepo.findByLocaleOrderByPageAscNameAsc(locale)
     }
 
     suspend fun updateBookmarks(bookmarks: List<HandbookBookmark>, locale: IkusLocale) {
