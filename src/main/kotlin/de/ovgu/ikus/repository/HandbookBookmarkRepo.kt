@@ -7,8 +7,8 @@ import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
 interface HandbookBookmarkRepo : CoroutineCrudRepository<HandbookBookmark, Int> {
 
-    suspend fun findByOrderByPage(): List<HandbookBookmark>
-    suspend fun findByLocaleOrderByPage(locale: IkusLocale): List<HandbookBookmark>
+    suspend fun findByOrderByPageAscNameAsc(): List<HandbookBookmark>
+    suspend fun findByLocaleOrderByPageAscNameAsc(locale: IkusLocale): List<HandbookBookmark>
 
     @Modifying
     suspend fun deleteByLocale(locale: IkusLocale): Int
