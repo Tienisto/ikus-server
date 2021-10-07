@@ -25,7 +25,7 @@ class EventRegistrationExportService {
         val output = document(title) {
             text(event.nameDe, titleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Englisch: ${event.name}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
-            text("Beginn: ${event.startTime.format(datePattern)}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
+            text("Beginn: ${event.startTime.germany().format(datePattern)}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Ort: ${event.place ?: "keine Angabe"}", subTitleFont, spacingBefore = 0F, spacingAfter = 20F)
 
             val columns = List(1 + fields.size + 1) { index ->
