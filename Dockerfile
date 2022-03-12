@@ -1,4 +1,4 @@
-FROM node:14.16-alpine3.11 as stage-vue
+FROM node:14.18.3-alpine3.15 as stage-vue
 WORKDIR /vue-build
 
 # add vue dependencies
@@ -10,7 +10,7 @@ RUN npm i
 ADD src/main/vue/ .
 RUN npm run build
 
-FROM gradle:7.1.1-jdk11 as stage-spring
+FROM gradle:7.4.1-jdk11 as stage-spring
 WORKDIR /build
 
 # add vue build
