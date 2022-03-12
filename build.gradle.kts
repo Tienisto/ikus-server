@@ -3,10 +3,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-	id("org.springframework.boot") version "2.5.5"
+	id("org.springframework.boot") version "2.6.4"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.5.31"
-	kotlin("plugin.spring") version "1.5.31"
+	kotlin("jvm") version "1.6.10"
+	kotlin("plugin.spring") version "1.5.10"
 }
 
 group = "de.ovgu"
@@ -35,9 +35,9 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
 
 	// tools
-	implementation("org.jsoup:jsoup:1.13.1") // parse html
-	implementation("com.drewnoakes:metadata-extractor:2.14.0") // get image orientation
-	implementation("com.github.librepdf:openpdf:1.3.25")
+	implementation("org.jsoup:jsoup:1.14.3") // parse html
+	implementation("com.drewnoakes:metadata-extractor:2.16.0") // get image orientation
+	implementation("com.github.librepdf:openpdf:1.3.26")
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

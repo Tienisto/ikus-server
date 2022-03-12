@@ -15,8 +15,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Service
-class MensaService (
-        private val cacheService: CacheService
+class MensaService(
+    private val cacheService: CacheService,
 ) {
 
     private val logger = LoggerFactory.getLogger(MensaService::class.java)
@@ -34,62 +34,62 @@ class MensaService (
      */
     suspend fun updateMenu() {
         menuCache = Mensa.values()
-                .mapNotNull { location ->
-                    try {
-                        when (location) {
-                            Mensa.UNI_CAMPUS_DOWN -> scrapeUniCampusDown()
-                            Mensa.UNI_CAMPUS_UP -> scrapeUniCampusUp()
-                            Mensa.ZSCHOKKE -> scrapeZschokke()
-                            Mensa.HERRENKRUG -> scrapeHerrenkrug()
-                        }
-                    } catch (e: Exception) {
-                        null
+            .mapNotNull { location ->
+                try {
+                    when (location) {
+                        Mensa.UNI_CAMPUS_DOWN -> scrapeUniCampusDown()
+                        Mensa.UNI_CAMPUS_UP -> scrapeUniCampusUp()
+                        Mensa.ZSCHOKKE -> scrapeZschokke()
+                        Mensa.HERRENKRUG -> scrapeHerrenkrug()
                     }
+                } catch (e: Exception) {
+                    null
                 }
+            }
         cacheService.triggerUpdateFlag(CacheKey.MENSA)
     }
 
     private suspend fun scrapeUniCampusDown(): MensaInfo {
         val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/")
         return MensaInfo(
-                name = Mensa.UNI_CAMPUS_DOWN,
-                openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
-                openingHoursDe = "Mo - Fr, 10:45 - 14:00",
-                coords = Point(52.13944, 11.64725),
-                menus = menus
+            name = Mensa.UNI_CAMPUS_DOWN,
+            openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
+            openingHoursDe = "Mo - Fr, 10:45 - 14:00",
+            coords = Point(52.13944, 11.64725),
+            menus = menus
         )
     }
 
     private suspend fun scrapeUniCampusUp(): MensaInfo {
         val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/")
         return MensaInfo(
-                name = Mensa.UNI_CAMPUS_UP,
-                openingHours = "closed",
-                openingHoursDe = "geschlossen",
-                coords = Point(52.13944, 11.64725),
-                menus = menus
+            name = Mensa.UNI_CAMPUS_UP,
+            openingHours = "closed",
+            openingHoursDe = "geschlossen",
+            coords = Point(52.13944, 11.64725),
+            menus = menus
         )
     }
 
     private suspend fun scrapeZschokke(): MensaInfo {
         val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/")
         return MensaInfo(
-                name = Mensa.ZSCHOKKE,
-                openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
-                openingHoursDe = "Mo - Fr, 10:45 - 14:00",
-                coords = Point(52.13799, 11.63387),
-                menus = menus
+            name = Mensa.ZSCHOKKE,
+            openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
+            openingHoursDe = "Mo - Fr, 10:45 - 14:00",
+            coords = Point(52.13799, 11.63387),
+            menus = menus
         )
     }
 
     private suspend fun scrapeHerrenkrug(): MensaInfo {
         val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/")
         return MensaInfo(
-                name = Mensa.HERRENKRUG,
-                openingHours = "Mon - Fri, 11:00 AM - 2:15 PM",
-                openingHoursDe = "Mo - Fr, 11:00 - 14:15",
-                coords = Point(52.13975, 11.67615),
-                menus = menus
+            name = Mensa.HERRENKRUG,
+            openingHours = "Mon - Fri, 11:00 AM - 2:15 PM",
+            openingHoursDe = "Mo - Fr, 11:00 - 14:15",
+            coords = Point(52.13975, 11.67615),
+            menus = menus
         )
     }
 
@@ -101,11 +101,11 @@ class MensaService (
     private suspend fun scrapeStudentenwerk(url: String): List<Menu> {
         val doc = getDocument(url) ?: return emptyList()
         return doc.select(".mensa table")
-                .map { table ->
-                    val date = getDateFromTable(table)
-                    val food = getFoodFromTable(table)
-                    Menu(date, food)
-                }
+            .map { table ->
+                val date = getDateFromTable(table)
+                val food = getFoodFromTable(table)
+                Menu(date, food)
+            }
     }
 
     private fun getDateFromTable(table: Element): LocalDate {
@@ -124,28 +124,28 @@ class MensaService (
                 try {
                     if (tr.children().size == 1) {
                         // Sides
-                        val td = tr.children().first()
+                        val td = tr.children().first()!!
                         val nameEn = td
-                                .select(".grau")
-                                .text()
-                                .replace("Sides: ", "")
+                            .select(".grau")
+                            .text()
+                            .replace("Sides: ", "")
                         val nameDe = td
-                                .childNodes()
-                                .mapNotNull { node ->
-                                    when (node) {
-                                        is TextNode -> node.text()
-                                        else -> null
-                                    }
+                            .childNodes()
+                            .mapNotNull { node ->
+                                when (node) {
+                                    is TextNode -> node.text()
+                                    else -> null
                                 }
-                                .first()
-                                .replace("Beilagen: ", "")
+                            }
+                            .first()
+                            .replace("Beilagen: ", "")
 
                         return@mapNotNull Food(nameEn, nameDe, null, listOf(FoodTag.SIDES))
                     }
 
                     // name
                     val tempNameDe = try {
-                        when (val nameDeNode = tr.select("strong").first().childNodes()[0]) {
+                        when (val nameDeNode = tr.select("strong").first()?.childNodes()?.first()) {
                             is Element -> nameDeNode.text()
                             is TextNode -> nameDeNode.wholeText
                             else -> null
@@ -154,7 +154,7 @@ class MensaService (
                         null
                     }
                     val tempNameEn = try {
-                        tr.select("strong").first().select(".grau").text()?.ifBlank { null }
+                        tr.select("strong").first()?.select(".grau")?.text()?.ifBlank { null }
                     } catch (e: Exception) {
                         null
                     }
@@ -165,8 +165,8 @@ class MensaService (
                     val tds = tr.children()
                     val price = try {
                         tds[0].childNodes().last().outerHtml() // take last row of the left column
-                                .split("|").first().trim() // 1,45 | 2,50 | 3,20 -> 1,45
-                                .replace(",", ".").toDouble() // 1,45 -> 1.45
+                            .split("|").first().trim() // 1,45 | 2,50 | 3,20 -> 1,45
+                            .replace(",", ".").toDouble() // 1,45 -> 1.45
                     } catch (e: Exception) {
                         0.0
                     }
@@ -212,9 +212,9 @@ class MensaService (
     private suspend fun getDocument(url: String): Document? {
         try {
             val response = client.get()
-                    .uri(url)
-                    .accept(MediaType.ALL)
-                    .retrieve()
+                .uri(url)
+                .accept(MediaType.ALL)
+                .retrieve()
 
             val body = response.awaitBody<String>()
             return Jsoup.parse(body)
