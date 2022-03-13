@@ -6,8 +6,13 @@ import org.springframework.data.geo.Point
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 
-enum class RegistrationField {
-    MATRICULATION_NUMBER, FIRST_NAME, LAST_NAME, EMAIL, ADDRESS, COUNTRY
+enum class RegistrationField(val germanLabel: String) {
+    MATRICULATION_NUMBER("MNr."),
+    FIRST_NAME("Vorname"),
+    LAST_NAME("Nachname"),
+    EMAIL("E-Mail"),
+    ADDRESS("Adresse"),
+    COUNTRY("Land"),
 }
 
 data class RegistrationData(

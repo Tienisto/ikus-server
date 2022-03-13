@@ -14,9 +14,13 @@
       <v-btn @click="$emit('input', false)" color="black" text>
         Abbrechen
       </v-btn>
-      <v-btn @click="submit" color="primary">
+      <v-btn @click="submit('PDF')" color="primary">
         <v-icon left>mdi-export-variant</v-icon>
-        Exportieren
+        PDF
+      </v-btn>
+      <v-btn @click="submit('WORD')" color="primary">
+        <v-icon left>mdi-export-variant</v-icon>
+        Word
       </v-btn>
     </template>
   </GenericDialog>
@@ -44,7 +48,7 @@ export default {
     country: false
   }),
   methods: {
-    submit: function() {
+    submit: function(type) {
       const fields = [];
       if (this.matriculationNumber)
         fields.push(registrationFields.MATRICULATION_NUMBER);
@@ -58,7 +62,7 @@ export default {
         fields.push(registrationFields.ADDRESS);
       if (this.country)
         fields.push(registrationFields.COUNTRY);
-      this.$emit('submit', fields);
+      this.$emit('submit', fields, type);
     }
   }
 }

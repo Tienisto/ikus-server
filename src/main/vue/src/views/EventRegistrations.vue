@@ -67,7 +67,7 @@
             no-data-text="Keine Anmeldungen"
             hide-default-footer
         >
-          <template v-slot:item.position="{ item, index }">
+          <template v-slot:item.position="{ index }">
             <div :class="index >= event.registrationSlots ? ['red--text'] : []">
               {{ index + 1 }} / {{ event.registrationSlots }}
             </div>
@@ -200,9 +200,8 @@ export default {
         this.loading = false;
       }
     },
-    exportPdf: function(fields) {
-      window.open(`/api/events/export/registrations?eventId=${this.event.id}&fields=${fields.join(',')}`, '_blank');
-      this.dialogExport = false;
+    exportPdf: function(fields, type) {
+      window.open(`/api/events/export/registrations?eventId=${this.event.id}&type=${type}&fields=${fields.join(',')}`, '_blank');
     }
   },
   computed: {
