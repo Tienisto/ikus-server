@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" title="PDF-Export">
+  <GenericDialog :value="value" @input="$emit('input', $event)" title="Export">
     <template v-slot:content>
       <p>Zu exportierende Daten auswählen:</p>
       <v-checkbox v-model="matriculationNumber" label="Matrikel-Nr." hide-details />
@@ -14,9 +14,13 @@
       <v-btn @click="$emit('input', false)" color="black" text>
         Abbrechen
       </v-btn>
-      <v-btn @click="submit" color="primary">
+      <v-btn @click="submit('PDF')" color="primary">
         <v-icon left>mdi-export-variant</v-icon>
-        Exportieren
+        PDF
+      </v-btn>
+      <v-btn @click="submit('WORD')" color="primary">
+        <v-icon left>mdi-export-variant</v-icon>
+        Word
       </v-btn>
     </template>
   </GenericDialog>
@@ -44,7 +48,16 @@ export default {
     country: false
   }),
   methods: {
-    submit: function() {
+    load: function(event) {
+      // apply
+      this.matriculationNumber = event.registrationFields.some((f) => f === 'MATRICULATION_NUMBER');
+      this.firstName = event.registrationFields.some((f) => f === 'FIRST_NAME');
+      this.lastName = event.registrationFields.some((f) => f === 'LAST_NAME');
+      this.email = event.registrationFields.some((f) => f === 'EMAIL');
+      this.address = event.registrationFields.some((f) => f === 'ADDRESS');
+      this.country = event.registrationFields.some((f) => f === 'COUNTRY');
+    },
+    submit: function(type) {
       const fields = [];
       if (this.matriculationNumber)
         fields.push(registrationFields.MATRICULATION_NUMBER);
@@ -58,7 +71,7 @@ export default {
         fields.push(registrationFields.ADDRESS);
       if (this.country)
         fields.push(registrationFields.COUNTRY);
-      this.$emit('submit', fields);
+      this.$emit('submit', fields, type);
     }
   }
 }

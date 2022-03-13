@@ -191,7 +191,7 @@ export default {
       {
         route: '/sys-logs',
         label: 'System-Logs',
-        icon: 'mdi-text-subject'
+        icon: 'mdi-text-long'
       },
       {
         route: '/status',

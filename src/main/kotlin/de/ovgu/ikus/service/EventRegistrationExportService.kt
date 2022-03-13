@@ -8,6 +8,7 @@ import de.ovgu.ikus.utils.*
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToLong
 
 @Service
 class EventRegistrationExportService {
@@ -20,41 +21,20 @@ class EventRegistrationExportService {
     private val emptyFieldString = "(?)"
     private val datePattern = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm 'Uhr'")
 
-    fun exportPDF(event: Event, fields: List<RegistrationField>): Pair<String, ByteArray> {
-        val title = event.nameDe
-        val output = document(title) {
+    fun exportPDF(event: Event, title: String, fields: List<RegistrationField>): ByteArray {
+        return document(title) {
             text(event.nameDe, titleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Englisch: ${event.name}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Beginn: ${event.startTime.germany().format(datePattern)}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Ort: ${event.place ?: "keine Angabe"}", subTitleFont, spacingBefore = 0F, spacingAfter = 20F)
 
-            val columns = List(1 + fields.size + 1) { index ->
-                when {
-                    index == 0 -> 1F
-                    index >= 1 && index <= fields.size -> when (fields[index - 1]) {
-                        RegistrationField.MATRICULATION_NUMBER -> 1.5F
-                        RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME, RegistrationField.COUNTRY -> 2F
-                        RegistrationField.EMAIL, RegistrationField.ADDRESS -> 3F
-                    }
-                    else -> 2F
-                }
-            }
-
-            table(columns) {
+            table(getRowWidths(fields)) {
 
                 // header
                 headerRows = 1
                 cell("Platz", font = cellTitleFont, background = headerColor)
                 fields.forEach { field ->
-                    val name = when (field) {
-                        RegistrationField.MATRICULATION_NUMBER -> "MNr."
-                        RegistrationField.FIRST_NAME -> "Vorname"
-                        RegistrationField.LAST_NAME -> "Nachname"
-                        RegistrationField.EMAIL -> "E-Mail"
-                        RegistrationField.ADDRESS -> "Adresse"
-                        RegistrationField.COUNTRY -> "Land"
-                    }
-                    cell(name, font = cellTitleFont, background = headerColor)
+                    cell(field.germanLabel, font = cellTitleFont, background = headerColor)
                 }
                 cell("Notizen", font = cellTitleFont, background = headerColor)
 
@@ -76,7 +56,59 @@ class EventRegistrationExportService {
                 }
             }
         }
+    }
 
-        return Pair(title, output)
+    fun exportWord(event: Event, title: String, fields: List<RegistrationField>): ByteArray {
+        return wordDocument {
+            logo()
+            text(event.nameDe, fontSize = 16, bold = true)
+            text("Englisch: ${event.name}")
+            text("Beginn: ${event.startTime.germany().format(datePattern)}")
+            text("Ort: ${event.place ?: "keine Angabe"}", spacingAfter = 200)
+
+            val header = mutableListOf<String>()
+            header.add("Platz")
+            header.addAll(fields.map { field -> field.germanLabel })
+            header.add("Notizen")
+
+            val rowWidths = getRowWidths(fields)
+            val rowWidthSum = rowWidths.sum()
+            val rowWidthsNormalized = rowWidths.map { width -> ((width / rowWidthSum) * 100 * 50).roundToLong() }
+
+            val rows = event.registrations.mapIndexed { index, r ->
+                val person = r.parseJSON<RegistrationData>()
+                val row = mutableListOf<String>()
+                row.add("${index + 1}")
+                val actualColumns = fields.map { field ->
+                    when (field) {
+                        RegistrationField.MATRICULATION_NUMBER -> person.matriculationNumber?.toString() ?: emptyFieldString
+                        RegistrationField.FIRST_NAME -> person.firstName ?: emptyFieldString
+                        RegistrationField.LAST_NAME -> person.lastName ?: emptyFieldString
+                        RegistrationField.EMAIL -> person.email ?: emptyFieldString
+                        RegistrationField.ADDRESS -> person.address ?: emptyFieldString
+                        RegistrationField.COUNTRY -> person.country ?: emptyFieldString
+                    }
+                }
+                row.addAll(actualColumns)
+                row.add("")
+                row
+            }
+            table(header, rows, rowWidthsNormalized)
+        }
+    }
+
+
+    private fun getRowWidths(fields: List<RegistrationField>): List<Float> {
+        return List(1 + fields.size + 1) { index ->
+            when {
+                index == 0 -> 1F
+                index >= 1 && index <= fields.size -> when (fields[index - 1]) {
+                    RegistrationField.MATRICULATION_NUMBER -> 1.5F
+                    RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME, RegistrationField.COUNTRY -> 2F
+                    RegistrationField.EMAIL, RegistrationField.ADDRESS -> 3F
+                }
+                else -> 2F
+            }
+        }
     }
 }

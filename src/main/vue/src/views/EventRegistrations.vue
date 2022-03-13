@@ -45,9 +45,9 @@
 
       <br>
 
-      <v-btn @click="dialogExport = true" color="primary" block dark>
+      <v-btn @click="showExportDialog" color="primary" block dark>
         <v-icon left>mdi-export-variant</v-icon>
-        PDF-Export
+        Export
       </v-btn>
     </template>
 
@@ -67,7 +67,7 @@
             no-data-text="Keine Anmeldungen"
             hide-default-footer
         >
-          <template v-slot:item.position="{ item, index }">
+          <template v-slot:item.position="{ index }">
             <div :class="index >= event.registrationSlots ? ['red--text'] : []">
               {{ index + 1 }} / {{ event.registrationSlots }}
             </div>
@@ -87,7 +87,7 @@
     <EventRegistrationConfigDialog ref="configDialog" v-model="dialogConfig" :loading="loading"
                                   @submit="openRegistration"/>
     <EventRegistrationInfoDialog v-model="dialogInfo" :data="selectedRegistration" />
-    <EventRegistrationExportDialog v-model="dialogExport" @submit="exportPdf" />
+    <EventRegistrationExportDialog ref="exportDialog" v-model="dialogExport" @submit="exportData" />
 
     <GenericDeleteDialog v-model="dialogDelete" :loading="loading" dialog-title="Anmeldung löschen"
                         @delete="kickRegistration">
@@ -200,9 +200,12 @@ export default {
         this.loading = false;
       }
     },
-    exportPdf: function(fields) {
-      window.open(`/api/events/export/registrations?eventId=${this.event.id}&fields=${fields.join(',')}`, '_blank');
-      this.dialogExport = false;
+    showExportDialog: function() {
+      this.$refs.exportDialog.load(this.event);
+      this.dialogExport = true;
+    },
+    exportData: function(fields, type) {
+      window.open(`/api/events/export/registrations?eventId=${this.event.id}&type=${type}&fields=${fields.join(',')}`, '_blank');
     }
   },
   computed: {
