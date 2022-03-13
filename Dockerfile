@@ -10,7 +10,7 @@ RUN npm i
 ADD src/main/vue/ .
 RUN npm run build
 
-FROM gradle:7.4.1-jdk11 as stage-spring
+FROM gradle:7.4.1-jdk11-alpine as stage-spring
 WORKDIR /build
 
 # add vue build
