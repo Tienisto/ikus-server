@@ -1,5 +1,5 @@
 <template>
-  <GenericDialog :value="value" @input="$emit('input', $event)" title="PDF-Export">
+  <GenericDialog :value="value" @input="$emit('input', $event)" title="Export">
     <template v-slot:content>
       <p>Zu exportierende Daten auswählen:</p>
       <v-checkbox v-model="matriculationNumber" label="Matrikel-Nr." hide-details />
@@ -48,6 +48,15 @@ export default {
     country: false
   }),
   methods: {
+    load: function(event) {
+      // apply
+      this.matriculationNumber = event.registrationFields.some((f) => f === 'MATRICULATION_NUMBER');
+      this.firstName = event.registrationFields.some((f) => f === 'FIRST_NAME');
+      this.lastName = event.registrationFields.some((f) => f === 'LAST_NAME');
+      this.email = event.registrationFields.some((f) => f === 'EMAIL');
+      this.address = event.registrationFields.some((f) => f === 'ADDRESS');
+      this.country = event.registrationFields.some((f) => f === 'COUNTRY');
+    },
     submit: function(type) {
       const fields = [];
       if (this.matriculationNumber)
