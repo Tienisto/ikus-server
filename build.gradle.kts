@@ -3,10 +3,10 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 plugins {
-	id("org.springframework.boot") version "2.6.4"
+	id("org.springframework.boot") version "2.6.8"
 	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	kotlin("jvm") version "1.6.10"
-	kotlin("plugin.spring") version "1.5.10"
+	kotlin("jvm") version "1.6.21"
+	kotlin("plugin.spring") version "1.6.21"
 }
 
 group = "de.ovgu"
@@ -30,15 +30,15 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 
 	// jwt
-	implementation("io.jsonwebtoken:jjwt-api:0.11.2")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 
 	// tools
 	implementation("org.jsoup:jsoup:1.14.3") // parse html
-	implementation("com.drewnoakes:metadata-extractor:2.16.0") // get image orientation
-	implementation("com.github.librepdf:openpdf:1.3.26") // generate pdf
-	implementation("org.apache.poi:poi-ooxml:5.2.1") // generate word document
+	implementation("com.drewnoakes:metadata-extractor:2.18.0") // get image orientation
+	implementation("com.github.librepdf:openpdf:1.3.28") // generate pdf
+	implementation("org.apache.poi:poi-ooxml:5.2.2") // generate word document
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
