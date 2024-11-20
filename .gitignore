@@ -1,3 +1,5 @@
+/docker-data/
+
 # vue
 /src/main/vue/node_modules/
 /src/main/vue/dist/

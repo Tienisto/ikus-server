@@ -6,7 +6,8 @@ enum class Mensa {
     UNI_CAMPUS_DOWN,
     UNI_CAMPUS_UP,
     ZSCHOKKE,
-    HERRENKRUG
+    HERRENKRUG,
+    PIER_16,
 }
 
 data class MensaInfo(val name: Mensa,

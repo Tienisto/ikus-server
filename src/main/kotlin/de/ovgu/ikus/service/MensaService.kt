@@ -41,6 +41,7 @@ class MensaService(
                         Mensa.UNI_CAMPUS_UP -> scrapeUniCampusUp()
                         Mensa.ZSCHOKKE -> scrapeZschokke()
                         Mensa.HERRENKRUG -> scrapeHerrenkrug()
+                        Mensa.PIER_16 -> scrapePier16()
                     }
                 } catch (e: Exception) {
                     null
@@ -50,7 +51,7 @@ class MensaService(
     }
 
     private suspend fun scrapeUniCampusDown(): MensaInfo {
-        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-unten/")
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus-speiseplan-unten/")
         return MensaInfo(
             name = Mensa.UNI_CAMPUS_DOWN,
             openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
@@ -61,34 +62,45 @@ class MensaService(
     }
 
     private suspend fun scrapeUniCampusUp(): MensaInfo {
-        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus/speiseplan-oben/")
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-unicampus-speiseplan-oben/")
         return MensaInfo(
             name = Mensa.UNI_CAMPUS_UP,
-            openingHours = "closed",
-            openingHoursDe = "geschlossen",
+            openingHours = "Mon - Fri, 10:45 AM - 2:00 PM & 4:00 PM - 7:00 PM",
+            openingHoursDe = "Mo - Fr, 10:45 - 14:00 & 16:00 - 19:00",
             coords = Point(52.13944, 11.64725),
             menus = menus
         )
     }
 
     private suspend fun scrapeZschokke(): MensaInfo {
-        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe/speiseplan/")
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-kellercafe-speiseplan/")
         return MensaInfo(
             name = Mensa.ZSCHOKKE,
-            openingHours = "Mon - Fri, 10:45 AM - 2:00 PM",
-            openingHoursDe = "Mo - Fr, 10:45 - 14:00",
+            openingHours = "Mon - Fri, 8:00 AM - 3:00 PM",
+            openingHoursDe = "Mo - Fr, 8:00 - 15:00",
             coords = Point(52.13799, 11.63387),
             menus = menus
         )
     }
 
     private suspend fun scrapeHerrenkrug(): MensaInfo {
-        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug/speiseplan/")
+        val menus = scrapeStudentenwerk("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/mensa-herrenkrug-speiseplan/")
         return MensaInfo(
             name = Mensa.HERRENKRUG,
-            openingHours = "Mon - Fri, 11:00 AM - 2:15 PM",
-            openingHoursDe = "Mo - Fr, 11:00 - 14:15",
+            openingHours = "Mon - Fri, 8:00 AM - 2:00 PM",
+            openingHoursDe = "Mo - Fr, 8:00 - 14:00",
             coords = Point(52.13975, 11.67615),
+            menus = menus
+        )
+    }
+
+    private suspend fun scrapePier16(): MensaInfo {
+        val menus = scrapePier16("https://www.studentenwerk-magdeburg.de/mensen-cafeterien/pier-16-speiseplan/")
+        return MensaInfo(
+            name = Mensa.PIER_16,
+            openingHours = "Mon - Fri, 7:30 AM - 3:00 PM",
+            openingHoursDe = "Mo - Fr, 7:30 - 15:00",
+            coords = Point(52.1402869,11.6435952),
             menus = menus
         )
     }
@@ -143,35 +155,37 @@ class MensaService(
                         return@mapNotNull Food(nameEn, nameDe, null, listOf(FoodTag.SIDES))
                     }
 
-                    // name
-                    val tempNameDe = try {
-                        when (val nameDeNode = tr.select("strong").first()?.childNodes()?.first()) {
-                            is Element -> nameDeNode.text()
-                            is TextNode -> nameDeNode.wholeText
-                            else -> null
-                        }?.ifBlank { null }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    val tempNameEn = try {
-                        tr.select("strong").first()?.select(".grau")?.text()?.ifBlank { null }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    val nameDe = tempNameDe ?: tempNameEn ?: "Error"
-                    val nameEn = tempNameEn ?: tempNameDe ?: "Error"
-
-                    // price
                     val tds = tr.children()
-                    val price = try {
-                        tds[0].childNodes().last().outerHtml() // take last row of the left column
-                            .split("|").first().trim() // 1,45 | 2,50 | 3,20 -> 1,45
-                            .replace(",", ".").toDouble() // 1,45 -> 1.45
-                    } catch (e: Exception) {
-                        0.0
-                    }
 
-                    // tags
+                    // Extract German name
+                    val nameDe = tds[0].selectFirst("span.gruen")
+                        ?.text()
+                        ?.trim()
+                        ?.ifBlank { null }
+                        ?: tds[0].childNodes()
+                            .firstOrNull { it is TextNode }
+                            ?.let { (it as TextNode).text().trim() }
+                            ?.ifBlank { null }
+                        ?: "Error"
+
+                    // Extract English name
+                    val nameEn = tds[0].selectFirst("span.grau")
+                        ?.ownText()
+                        ?.trim()
+                        ?.ifBlank { null }
+                        ?: "Error"
+
+                    // Extract price
+                    val price = tds[0].childNodes()
+                        .lastOrNull { it is TextNode && it.text().contains("(") }
+                        ?.let {
+                            val priceText = (it as TextNode).text().trim()
+                            val prices = priceText.removeSurrounding("(", ")").split("|")
+                            prices.firstOrNull()?.trim()?.replace(",", ".")?.toDouble()
+                        }
+                        ?: 0.0
+
+                    // Extract tags
                     val tags = try {
                         tds[1].select("img")
                             .mapNotNull { img ->
@@ -202,6 +216,111 @@ class MensaService(
             }
         } catch (e: Exception) {
             emptyList()
+        }
+    }
+
+    private suspend fun scrapePier16(url: String): List<Menu> {
+        val doc = getDocument(url) ?: return emptyList()
+        return doc.select("#content table")
+            .map { table ->
+                val food = getFoodFromNewTable(table)
+                Menu(LocalDate.now(), food)
+            }
+    }
+
+    private fun getFoodFromNewTable(table: Element): List<Food> {
+        return table.select("tbody tr").mapNotNull { tr ->
+            try {
+                val td = tr.selectFirst("td") ?: return@mapNotNull null
+
+                // Get the German name from the <strong> tag
+                val strong = td.selectFirst("strong")
+                val nameDe = strong?.text()?.trim() ?: "Error"
+
+                val childNodes = td.childNodes()
+                val strongIndex = childNodes.indexOf(strong)
+                if (strongIndex == -1) return@mapNotNull null
+
+                // Initialize variables
+                var price: Double? = null
+
+                var i = strongIndex + 1
+
+                // Skip any whitespace text nodes
+                while (i < childNodes.size && childNodes[i] is TextNode && childNodes[i].toString().trim().isEmpty()) {
+                    i++
+                }
+
+                // Skip allergen information (text in parentheses)
+                if (i < childNodes.size && childNodes[i] is TextNode) {
+                    val textNode = childNodes[i] as TextNode
+                    val text = textNode.text().trim()
+                    // If text starts with '(', assume it's allergen info and skip
+                    if (text.startsWith("(") && text.endsWith(")")) {
+                        i++
+                    }
+                }
+
+                // Skip any whitespace text nodes
+                while (i < childNodes.size && childNodes[i] is TextNode && childNodes[i].toString().trim().isEmpty()) {
+                    i++
+                }
+
+                // Expect a <br> element
+                if (i < childNodes.size && childNodes[i] is Element && (childNodes[i] as Element).tagName() == "br") {
+                    i++
+                }
+
+                // Skip any whitespace text nodes
+                while (i < childNodes.size && childNodes[i] is TextNode && childNodes[i].toString().trim().isEmpty()) {
+                    i++
+                }
+
+                // Check if next node is TextNode with English name
+                if (i < childNodes.size && childNodes[i] is TextNode) {
+                    val textNode = childNodes[i] as TextNode
+                    val text = textNode.text().trim()
+
+                    // Check if the text is not a price (does not start with a digit)
+                    if (text.isNotEmpty() && !text[0].isDigit()) {
+                        i++
+
+                        // Skip any whitespace text nodes
+                        while (i < childNodes.size && childNodes[i] is TextNode && childNodes[i].toString().trim().isEmpty()) {
+                            i++
+                        }
+
+                        // Expect a <br> element
+                        if (i < childNodes.size && childNodes[i] is Element && (childNodes[i] as Element).tagName() == "br") {
+                            i++
+                        }
+                    }
+                }
+
+                // Skip any whitespace text nodes
+                while (i < childNodes.size && childNodes[i] is TextNode && childNodes[i].toString().trim().isEmpty()) {
+                    i++
+                }
+
+                // Now, expect the price text
+                if (i < childNodes.size && childNodes[i] is TextNode) {
+                    val textNode = childNodes[i] as TextNode
+                    val priceText = textNode.text().trim()
+                    // Process the priceText to get the price
+                    // E.g., "4,20 l 5,90 l 7,30"
+                    val prices = priceText.split("l")
+                        .map { it.trim().replace(",", ".") }
+                        .mapNotNull { it.toDoubleOrNull() }
+
+                    price = prices.firstOrNull()
+                }
+
+                // Create the Food object
+                Food(nameDe, nameDe, price, emptyList())
+            } catch (e: Exception) {
+                // Fallback in case of errors
+                Food("Error", "Error", null, emptyList())
+            }
         }
     }
 
