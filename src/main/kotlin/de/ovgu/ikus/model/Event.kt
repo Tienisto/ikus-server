@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.data.annotation.Id
 import org.springframework.data.geo.Point
 import org.springframework.data.relational.core.mapping.Table
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 enum class RegistrationField(val germanLabel: String) {
@@ -13,6 +14,7 @@ enum class RegistrationField(val germanLabel: String) {
     EMAIL("E-Mail"),
     ADDRESS("Adresse"),
     COUNTRY("Land"),
+    DATE_OF_BIRTH("Geburtsdatum")
 }
 
 data class RegistrationData(
@@ -24,7 +26,8 @@ data class RegistrationData(
     val lastName: String?,
     val email: String?,
     val address: String?,
-    val country: String?
+    val country: String?,
+    val dateOfBirth: LocalDate?,
 )
 
 @Table

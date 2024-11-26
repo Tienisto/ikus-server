@@ -16,6 +16,7 @@
       <v-checkbox v-model="email" label="E-Mail" hide-details />
       <v-checkbox v-model="address" label="Adresse" hide-details />
       <v-checkbox v-model="country" label="Land" hide-details />
+      <v-checkbox v-model="dateOfBirth" label="Geburtsdatum" hide-details />
     </template>
 
     <template v-slot:actions>
@@ -56,7 +57,8 @@ export default {
     lastName: true,
     email: false,
     address: false,
-    country: false
+    country: false,
+    dateOfBirth: false,
   }),
   methods: {
     reset: function() {
@@ -69,6 +71,7 @@ export default {
       this.email = false;
       this.address = false;
       this.country = false;
+      this.dateOfBirth = false;
     },
     load: function(event) {
       // apply
@@ -80,6 +83,7 @@ export default {
       this.email = event.registrationFields.some((f) => f === 'EMAIL');
       this.address = event.registrationFields.some((f) => f === 'ADDRESS');
       this.country = event.registrationFields.some((f) => f === 'COUNTRY');
+      this.dateOfBirth = event.registrationFields.some((f) => f === 'DATE_OF_BIRTH');
     },
     submit: async function() {
 
@@ -104,6 +108,8 @@ export default {
         fields.push(registrationFields.ADDRESS);
       if (this.country)
         fields.push(registrationFields.COUNTRY);
+      if (this.dateOfBirth)
+        fields.push(registrationFields.DATE_OF_BIRTH);
 
       await this.$emit('submit', {slots, slotsWaiting, fields});
     }

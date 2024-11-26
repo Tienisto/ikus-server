@@ -265,6 +265,7 @@ class PublicController(
                 RegistrationField.EMAIL -> if (payload.email.isNullOrBlank()) throw ErrorCode(400, "Missing email")
                 RegistrationField.ADDRESS -> if (payload.address.isNullOrBlank()) throw ErrorCode(400, "Missing address")
                 RegistrationField.COUNTRY -> if (payload.country.isNullOrBlank()) throw ErrorCode(400, "Missing country")
+                RegistrationField.DATE_OF_BIRTH -> if (payload.dateOfBirth == null) throw ErrorCode(400, "Missing date of birth")
             }
         }
 
@@ -276,10 +277,11 @@ class PublicController(
             lastName = payload.lastName,
             email = payload.email,
             address = payload.address,
-            country = payload.country
+            country = payload.country,
+            dateOfBirth = payload.dateOfBirth,
         )
 
-        event.registrations = event.registrations + registrationData.toJSON()
+        event.registrations += registrationData.toJSON()
         eventService.save(event)
         cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
         return RegisterEventResponse(registrationData.token)

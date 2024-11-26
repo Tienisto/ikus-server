@@ -4,5 +4,6 @@ export const registrationFields = {
     LAST_NAME: 'LAST_NAME',
     EMAIL: 'EMAIL',
     ADDRESS: 'ADDRESS',
-    COUNTRY: 'COUNTRY'
+    COUNTRY: 'COUNTRY',
+    DATE_OF_BIRTH: 'DATE_OF_BIRTH',
 }

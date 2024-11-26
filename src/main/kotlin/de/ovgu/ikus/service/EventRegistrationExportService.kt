@@ -50,6 +50,7 @@ class EventRegistrationExportService {
                             RegistrationField.EMAIL -> cell(person.email ?: emptyFieldString, font = cellFont)
                             RegistrationField.ADDRESS -> cell(person.address ?: emptyFieldString, font = cellFont)
                             RegistrationField.COUNTRY -> cell(person.country ?: emptyFieldString, font = cellFont)
+                            RegistrationField.DATE_OF_BIRTH -> cell(person.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: emptyFieldString, font = cellFont)
                         }
                     }
                     cell("")
@@ -87,6 +88,7 @@ class EventRegistrationExportService {
                         RegistrationField.EMAIL -> person.email ?: emptyFieldString
                         RegistrationField.ADDRESS -> person.address ?: emptyFieldString
                         RegistrationField.COUNTRY -> person.country ?: emptyFieldString
+                        RegistrationField.DATE_OF_BIRTH -> person.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: emptyFieldString
                     }
                 }
                 row.addAll(actualColumns)
@@ -103,7 +105,7 @@ class EventRegistrationExportService {
             when {
                 index == 0 -> 1F
                 index >= 1 && index <= fields.size -> when (fields[index - 1]) {
-                    RegistrationField.MATRICULATION_NUMBER -> 1.5F
+                    RegistrationField.MATRICULATION_NUMBER, RegistrationField.DATE_OF_BIRTH -> 1.5F
                     RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME, RegistrationField.COUNTRY -> 2F
                     RegistrationField.EMAIL, RegistrationField.ADDRESS -> 3F
                 }

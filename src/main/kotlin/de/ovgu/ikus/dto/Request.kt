@@ -3,6 +3,7 @@ package de.ovgu.ikus.dto
 import de.ovgu.ikus.model.IkusLocale
 import de.ovgu.ikus.model.Platform
 import de.ovgu.ikus.model.RegistrationField
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 object Request {
@@ -43,6 +44,16 @@ object Request {
     data class UpdateFeature(val id: Int, val name: MultiLocaleString, val icon: String, val postId: Int?, val linkId: Int?)
 
     data class AppStartSignal(val token: String?, val platform: Platform?, val deviceId: String?)
-    data class RegisterEvent(val jwt: String?, val eventId: Int, val matriculationNumber: Int?, val firstName: String?, val lastName: String?, val email: String?, val address: String?, val country: String?)
+    data class RegisterEvent(
+        val jwt: String?,
+        val eventId: Int,
+        val matriculationNumber: Int?,
+        val firstName: String?,
+        val lastName: String?,
+        val email: String?,
+        val address: String?,
+        val country: String?,
+        val dateOfBirth: LocalDate?,
+    )
     data class UnregisterEvent(val jwt: String?, val eventId: Int, val token: String)
 }

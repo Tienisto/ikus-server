@@ -237,6 +237,7 @@ export default {
           case 'EMAIL': return 'E-Mail';
           case 'ADDRESS': return 'Adresse';
           case 'COUNTRY': return 'Heimatland';
+          case 'DATE_OF_BIRTH': return 'Geburtsdatum';
           default: return '';
         }
       }
