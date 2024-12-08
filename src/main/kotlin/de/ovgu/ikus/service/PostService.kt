@@ -13,38 +13,32 @@ class PostService (
         private val postRepo: PostRepo,
         private val postFileService: PostFileService
 ) {
-
-    // news (order by pinned > date > id)
-
-    suspend fun findByChannelOrderByDate(channel: Channel, limit: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByDateDesc(channel.id, limit)
+    suspend fun findByTypeOrderByPosition(type: PostType): List<Post> {
+        return postRepo.findByTypeAndArchivedOrderByPosition(type, false)
     }
 
-    suspend fun findByChannelOrderByPinnedDescDateDesc(channel: Channel): List<Post> {
-        return postRepo.findByChannelIdOrderByPinnedDescDateDescIdDesc(channel.id)
-    }
-
-    suspend fun findByTypeOrderByPinnedDescDateDesc(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByPinnedDescDateDescIdDesc(type)
-    }
-
-    suspend fun findPinnedOrderByDate(): List<Post> {
-        return postRepo.findByPinnedOrderByDateDescIdDesc(true)
+    suspend fun findByTypeOrderByPositionDesc(type: PostType): List<Post> {
+        return postRepo.findByTypeAndArchivedOrderByPositionDesc(type, false)
     }
 
     suspend fun findByTypeOrderByDateLimited(type: PostType, limit: Int): List<Post> {
         return postRepo.findByOrderByDateDesc(type, limit)
     }
 
-    // faq (order by position)
-
-    suspend fun findByTypeOrderByPosition(type: PostType): List<Post> {
-        return postRepo.findByTypeOrderByPosition(type)
+    suspend fun findByChannelIdOrderByPosition(channelId: Int): List<Post> {
+        return postRepo.findByChannelIdAndArchivedOrderByPosition(channelId, false)
     }
 
+    suspend fun findByChannelIdOrderByPositionDesc(channelId: Int): List<Post> {
+        return postRepo.findByChannelIdAndArchivedOrderByPositionDesc(channelId, false)
+    }
 
-    suspend fun findByChannelIdOrderByPosition(channelId: Int): List<Post> {
-        return postRepo.findByChannelIdOrderByPosition(channelId)
+    suspend fun findByChannelIdOrderByPositionLimited(channelId: Int, limit: Int): List<Post> {
+        return postRepo.findByChannelIdOrderByPositionDesc(channelId, limit)
+    }
+
+    suspend fun findArchivedOrderByDateDesc(): List<Post> {
+        return postRepo.findByTypeAndArchivedOrderByDateDesc(PostType.NEWS, true)
     }
 
     suspend fun search(title: String, type: PostType): List<Post> {
@@ -95,5 +89,9 @@ class PostService (
 
     suspend fun findMaxPositionByChannel(channel: Channel): Int {
         return postRepo.findMaxPositionByChannelId(channel.id) ?: -1
+    }
+
+    suspend fun findMaxPositionByType(type: PostType): Int {
+        return postRepo.findMaxPositionByType(type) ?: -1
     }
 }

@@ -37,6 +37,8 @@
         </v-card-text>
       </v-card>
 
+      <DatePicker v-model="date" label="Datum" />
+
     </template>
 
     <template v-slot:actions>
@@ -59,9 +61,10 @@ import ImageList from "@/components/ImageList";
 import {uploadPostFile} from "@/api";
 import {showSnackbar, sleep} from "@/utils";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import DatePicker from "@/components/input/DatePicker.vue";
 export default {
   name: 'PostDialog',
-  components: {LoadingOverlay, ImageList, RichEditor, LocaleSelector, GenericDialog},
+  components: {DatePicker, LoadingOverlay, ImageList, RichEditor, LocaleSelector, GenericDialog},
   props: {
     value: {
       type: Boolean,
@@ -92,13 +95,14 @@ export default {
     contentEn: '',
     contentDe: '',
     files: [],
+    date: '',
     uploading: false,
     uploadingText: '',
     uploadingProgress: 0,
     uploadIntermediate: false
   }),
   methods: {
-    reset: function(channel, locale) {
+    reset: function(channel, locale, date) {
       // reset input
       this.titleEn = '';
       this.titleDe = '';
@@ -109,6 +113,7 @@ export default {
       // apply predefined channel and locale
       this.channel = channel;
       this.locale = locale;
+      this.date = date;
 
       // also reset editor content
       setTimeout(() => {
@@ -123,6 +128,7 @@ export default {
       this.contentEn = post.content.en;
       this.contentDe = post.content.de;
       this.files = [ ...post.files ];
+      this.date = post.date;
 
       setTimeout(() => {
         this.$refs.editorEn.loadContent(post.content.en);
@@ -172,7 +178,8 @@ export default {
         channelId: this.channel.id,
         title: { en: this.titleEn, de: this.titleDe },
         content: { en: this.contentEn, de: this.contentDe },
-        files: this.files.map((f) => f.id)
+        files: this.files.map((f) => f.id),
+        date: this.date,
       });
     }
   },

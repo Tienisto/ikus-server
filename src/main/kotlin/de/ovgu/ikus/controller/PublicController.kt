@@ -54,7 +54,7 @@ class PublicController(
             val channels = channelService.findByTypeOrderByName(ChannelType.NEWS, locale)
             val channelsDtoMap = channels.associate { channel -> channel.id to channel.toLocalizedDto(locale) }
             val postsUnsorted = channels
-                .map { channel -> postService.findByChannelOrderByDate(channel, 10) }
+                .map { channel -> postService.findByChannelIdOrderByPositionLimited(channel.id, 10) }
                 .flatten()
             val files = postFileService.findByPostIn(postsUnsorted)
             val posts = postsUnsorted

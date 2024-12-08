@@ -15,68 +15,71 @@ import java.time.LocalDate
 
 @RestController
 @RequestMapping("/api/posts")
-class PostController (
-        private val logService: LogService,
-        private val cacheService: CacheService,
-        private val channelService: ChannelService,
-        private val postService: PostService,
-        private val postFileService: PostFileService
+class PostController(
+    private val logService: LogService,
+    private val cacheService: CacheService,
+    private val channelService: ChannelService,
+    private val postService: PostService,
+    private val postFileService: PostFileService
 ) {
 
     @GetMapping("/news/all")
-    suspend fun getAllNews(): NewsDto {
+    suspend fun getAllNews(): List<PostDto> {
         val channels = channelService.findByType(ChannelType.NEWS)
         val channelsDtoMap = channels.associate { channel -> channel.id to channel.toDto() }
-        val posts = postService.findByTypeOrderByPinnedDescDateDesc(PostType.NEWS)
+        val posts = postService.findByTypeOrderByPositionDesc(PostType.NEWS)
         val files = postFileService.findByPostIn(posts)
 
         val postsDto = posts.map { post ->
             val channel = channelsDtoMap[post.channelId] ?: throw ErrorCode(500, "channel not found in cache map")
             val currFiles = files
-                    .filter { file -> file.postId == post.id }
-                    .map { file -> file.toDto() }
+                .filter { file -> file.postId == post.id }
+                .map { file -> file.toDto() }
             post.toDto(channel, currFiles)
         }
 
-        val pinned = postsDto.filter { post -> post.pinned }
+        return postsDto
+    }
 
-        return NewsDto(postsDto, pinned)
+    @GetMapping("/news/archived")
+    suspend fun getArchivedNews(): List<PostDto> {
+        val channels = channelService.findByType(ChannelType.NEWS)
+        val channelsDtoMap = channels.associate { channel -> channel.id to channel.toDto() }
+        val posts = postService.findArchivedOrderByDateDesc()
+        val files = postFileService.findByPostIn(posts)
+
+        val postsDto = posts.map { post ->
+            val channel = channelsDtoMap[post.channelId] ?: throw ErrorCode(500, "channel not found in cache map")
+            val currFiles = files
+                .filter { file -> file.postId == post.id }
+                .map { file -> file.toDto() }
+            post.toDto(channel, currFiles)
+        }
+
+        return postsDto
     }
 
     @GetMapping("/news")
-    suspend fun getNewsInfo(@RequestParam channelId: Int): NewsDto {
+    suspend fun getNewsInfo(@RequestParam channelId: Int): List<PostDto> {
         val channels = channelService.findByType(ChannelType.NEWS)
-        val channel = channels.firstOrNull { channel -> channel.id == channelId } ?: throw ErrorCode(404, "Channel not found")
-        val posts = postService.findByChannelOrderByPinnedDescDateDesc(channel)
+        val channel =
+            channels.firstOrNull { channel -> channel.id == channelId } ?: throw ErrorCode(404, "Channel not found")
+        val posts = postService.findByChannelIdOrderByPositionDesc(channel.id)
         val files = postFileService.findByPostIn(posts)
 
         val postsDto = posts.map { post ->
             val currFiles = files
-                    .filter { file -> file.postId == post.id }
-                    .map { file -> file.toDto() }
+                .filter { file -> file.postId == post.id }
+                .map { file -> file.toDto() }
             post.toDto(channel.toDto(), currFiles)
         }
 
-        val pinned = postService.findPinnedOrderByDate().map { post ->
-            when (val digestedPost = postsDto.firstOrNull { postDto -> postDto.id == post.id }) {
-                null -> {
-                    // fetch from database
-                    val currChannel = channels.first { channel -> channel.id == post.channelId }.toDto()
-                    val currFiles = postFileService.findByPost(post).map { file -> file.toDto() }
-                    post.toDto(currChannel, currFiles)
-                }
-                else -> {
-                    // use finished post
-                    digestedPost
-                }
-            }
-        }
-
-        return NewsDto(postsDto, pinned)
+        return postsDto
     }
 
-    @GetMapping("/grouped-order-position")
-    suspend fun getByType(@RequestParam type: PostType): List<PostGroupDto> {
+    @GetMapping("/faq")
+    suspend fun getFaq(): List<PostGroupDto> {
+        val type = PostType.FAQ
         val posts = postService.findByTypeOrderByPosition(type)
         val channels = channelService.findByTypeOrderByPosition(type.toChannelType())
         val files = postFileService.findByPostIn(posts)
@@ -84,13 +87,13 @@ class PostController (
         return channels.map { channel ->
             val channelDto = channel.toDto()
             val postsDto = posts
-                    .filter { post -> post.channelId == channel.id }
-                    .map { post ->
-                        val currFiles = files
-                                .filter { file -> file.postId == post.id }
-                                .map { file -> file.toDto() }
-                        post.toDto(channelDto, currFiles)
-                    }
+                .filter { post -> post.channelId == channel.id }
+                .map { post ->
+                    val currFiles = files
+                        .filter { file -> file.postId == post.id }
+                        .map { file -> file.toDto() }
+                    post.toDto(channelDto, currFiles)
+                }
             PostGroupDto(channelDto, postsDto)
         }
     }
@@ -104,8 +107,8 @@ class PostController (
 
         return posts.map { post ->
             val currFiles = files
-                    .filter { file -> file.postId == post.id }
-                    .map { file -> file.toDto() }
+                .filter { file -> file.postId == post.id }
+                .map { file -> file.toDto() }
             val channel = channelsDtoMap[post.channelId] ?: ChannelDto(0, MultiLocaleString("ERROR", "ERROR"))
             post.toDto(channel, currFiles)
         }
@@ -115,12 +118,15 @@ class PostController (
     suspend fun createPost(authentication: Authentication, @RequestBody request: Request.CreatePost) {
         val channel = channelService.findById(request.channelId) ?: throw ErrorCode(404, "Channel not found")
         val postType = channel.type.toPostType() ?: throw ErrorCode(409, "Wrong Channel Type")
-        val maxPosition = postService.findMaxPositionByChannel(channel)
+        val maxPosition = when (postType) {
+            PostType.NEWS -> postService.findMaxPositionByType(postType)
+            PostType.FAQ -> postService.findMaxPositionByChannel(channel)
+        }
         val post = Post(
-                type = postType, channelId = channel.id, date = LocalDate.now(),
-                title = request.title.en.trim(), titleDe = request.title.de.trim(),
-                content = request.content.en.trim(), contentDe = request.content.de.trim(),
-                position = maxPosition + 1
+            type = postType, channelId = channel.id, date = LocalDate.now(),
+            title = request.title.en.trim(), titleDe = request.title.de.trim(),
+            content = request.content.en.trim(), contentDe = request.content.de.trim(),
+            position = maxPosition + 1
         )
 
         val files = postFileService.findByIdIn(request.files)
@@ -142,6 +148,9 @@ class PostController (
         post.titleDe = request.title.de.trim()
         post.content = request.content.en.trim()
         post.contentDe = request.content.de.trim()
+        if (request.date != null) {
+            post.date = request.date
+        }
 
         val files = postFileService.findByIdIn(request.files)
 
@@ -150,27 +159,42 @@ class PostController (
         triggerUpdateFlag(post.type)
     }
 
-    @PostMapping("/toggle-pin")
-    suspend fun togglePin(authentication: Authentication, @RequestParam postId: Int) {
+    @PostMapping("/toggle-archive")
+    suspend fun toggleArchive(authentication: Authentication, @RequestParam postId: Int) {
         val post = postService.findById(postId) ?: throw ErrorCode(404, "Post not found")
         if (post.type != PostType.NEWS)
             throw ErrorCode(409, "Wrong Type")
 
-        post.pinned = !post.pinned
+        post.archived = !post.archived
+
+        if (!post.archived) {
+            post.position = postService.findMaxPositionByType(PostType.NEWS) + 1
+        }
+
         postService.saveSimple(post)
-        logService.log(if (post.pinned) LogType.PIN_POST else LogType.UNPIN_POST, authentication.toUser(), "${post.title} (${post.titleDe})")
+        logService.log(
+            if (post.archived) LogType.ARCHIVE_POST else LogType.UNARCHIVE_POST,
+            authentication.toUser(),
+            "${post.title} (${post.titleDe})"
+        )
         triggerUpdateFlag(post.type)
     }
 
     @PostMapping("/move-up")
     suspend fun moveUp(authentication: Authentication, @RequestBody request: Request.Id) {
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
-        val posts = postService
-                .findByChannelIdOrderByPosition(post.channelId)
-                .moveUpItem(item = post, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
+        val posts = when (post.type) {
+            PostType.NEWS -> postService.findByTypeOrderByPosition(PostType.NEWS)
+            PostType.FAQ -> postService.findByChannelIdOrderByPosition(post.channelId)
+        }
+        val reorderedPosts = posts
+            .moveUpItem(
+                item = post,
+                equals = { a, b -> a.id == b.id },
+                setIndex = { item, index -> item.position = index })
 
-        if (posts != null) {
-            postService.saveAll(posts)
+        if (reorderedPosts != null) {
+            postService.saveAll(reorderedPosts)
             triggerUpdateFlag(post.type)
         }
     }
@@ -178,12 +202,18 @@ class PostController (
     @PostMapping("/move-down")
     suspend fun moveDown(authentication: Authentication, @RequestBody request: Request.Id) {
         val post = postService.findById(request.id) ?: throw ErrorCode(404, "Post not found")
-        val posts = postService
-                .findByChannelIdOrderByPosition(post.channelId)
-                .moveDownItem(item = post, equals = { a, b -> a.id == b.id }, setIndex = { item, index -> item.position = index })
+        val posts = when (post.type) {
+            PostType.NEWS -> postService.findByTypeOrderByPosition(PostType.NEWS)
+            PostType.FAQ -> postService.findByChannelIdOrderByPosition(post.channelId)
+        }
+        val reorderedPosts = posts
+            .moveDownItem(
+                item = post,
+                equals = { a, b -> a.id == b.id },
+                setIndex = { item, index -> item.position = index })
 
-        if (posts != null) {
-            postService.saveAll(posts)
+        if (reorderedPosts != null) {
+            postService.saveAll(reorderedPosts)
             triggerUpdateFlag(post.type)
         }
     }

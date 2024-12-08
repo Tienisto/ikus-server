@@ -31,6 +31,8 @@ export function logTypeString(type) {
         case 'DELETE_POST': return 'Beitrag gelöscht';
         case 'PIN_POST': return 'Beitrag angepinnt';
         case 'UNPIN_POST': return 'Beitrag-Pin entfernt'
+        case 'ARCHIVE_POST': return 'Beitrag archiviert';
+        case 'UNARCHIVE_POST': return 'Beitrag wiederhergestellt';
         case 'CREATE_EVENT': return 'Event erstellt';
         case 'UPDATE_EVENT': return 'Event geändert';
         case 'DELETE_EVENT': return 'Event gelöscht';

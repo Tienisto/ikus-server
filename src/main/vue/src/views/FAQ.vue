@@ -98,7 +98,7 @@ import {
   createPost,
   deleteChannel,
   deletePost,
-  getPostsGrouped, moveDownChannel, moveDownPost,
+  getFaq, moveDownChannel, moveDownPost,
   moveUpChannel, moveUpPost,
   renameChannel,
   updatePost
@@ -134,7 +134,7 @@ export default {
   methods: {
     fetchData: async function() {
       this.fetching = true;
-      this.groups = await getPostsGrouped({ type: 'FAQ' });
+      this.groups = await getFaq();
       this.channels = this.groups.map((g) => g.channel);
       this.fetching = false;
     },

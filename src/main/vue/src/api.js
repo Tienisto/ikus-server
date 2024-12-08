@@ -184,6 +184,13 @@ export async function getAllNews() {
     });
 }
 
+export async function getArchivedNews() {
+    return await makeRequest({
+        route: 'posts/news/archived',
+        method: 'GET'
+    });
+}
+
 export async function getNews({ channelId }) {
     return await makeRequest({
         route: 'posts/news',
@@ -192,11 +199,10 @@ export async function getNews({ channelId }) {
     });
 }
 
-export async function getPostsGrouped({ type }) {
+export async function getFaq() {
     return await makeRequest({
-        route: 'posts/grouped-order-position',
+        route: 'posts/faq',
         method: 'GET',
-        params: { type }
     });
 }
 
@@ -208,27 +214,19 @@ export async function searchPosts({ query }) {
     });
 }
 
-export async function createPost({ channelId, title, content, files }) {
+export async function createPost({ channelId, title, content, files, date }) {
     return await makeRequest({
         route: 'posts',
         method: 'POST',
-        body: { channelId, title, content, files }
+        body: { channelId, title, content, files, date }
     });
 }
 
-export async function updatePost({ id, channelId, title, content, files }) {
+export async function updatePost({ id, channelId, title, content, files, date }) {
     return await makeRequest({
         route: 'posts',
         method: 'PUT',
-        body: { id, channelId, title, content, files }
-    });
-}
-
-export async function togglePinPost({ postId }) {
-    return await makeRequest({
-        route: 'posts/toggle-pin',
-        method: 'POST',
-        params: { postId }
+        body: { id, channelId, title, content, files, date }
     });
 }
 
@@ -245,6 +243,14 @@ export async function moveDownPost({ id }) {
         route: 'posts/move-down',
         method: 'POST',
         body: { id }
+    });
+}
+
+export async function toggleArchive({ postId }) {
+    return await makeRequest({
+        route: 'posts/toggle-archive',
+        method: 'POST',
+        params: { postId }
     });
 }
 

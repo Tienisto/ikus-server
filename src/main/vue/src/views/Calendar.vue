@@ -134,7 +134,7 @@ export default {
     updateChannel: async function() {
       await this.fetchData();
     },
-    showCreateEvent: function(date = new Date().toISOString().substr(0, 10)) {
+    showCreateEvent: function(date = new Date().toISOString().substring(0, 10)) {
       this.$refs.eventDialog.reset(this.channel, this.locale, date);
       this.dialogEvent = true;
       this.dialogUpdating = false;
