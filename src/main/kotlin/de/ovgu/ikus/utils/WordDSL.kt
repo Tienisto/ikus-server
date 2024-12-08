@@ -11,7 +11,6 @@ import java.math.BigInteger
 fun wordDocument(content: XWPFDocument.() -> Unit): ByteArray {
     // init
     val document = XWPFDocument()
-    val outputStream = ByteArrayOutputStream()
 
     // set small padding https://stackoverflow.com/a/66209694/11127438
     var sectPr: CTSectPr? = document.document.body.sectPr
@@ -28,9 +27,11 @@ fun wordDocument(content: XWPFDocument.() -> Unit): ByteArray {
 
     // content
     content(document)
+
+    // write
+    val outputStream = ByteArrayOutputStream()
     document.write(outputStream)
     document.close()
-
     return outputStream.toByteArray()
 }
 

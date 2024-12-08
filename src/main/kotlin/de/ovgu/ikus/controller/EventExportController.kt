@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 
-enum class ExportType { PDF, WORD }
+enum class ExportType { PDF, WORD, EXCEL }
 
 @Controller
 @RequestMapping("/api/events/export")
@@ -34,11 +34,17 @@ class EventExportController(
                 third = "inline; filename=\"$title.pdf\""
             )
             ExportType.WORD -> Triple(
-                first = eventRegistrationExportService.exportWord(event, title, fields ?: listOf(RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME)),
+                first = eventRegistrationExportService.exportWord(event, fields ?: listOf(RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME)),
                 second = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 third = "attachment; filename=\"$title.docx\""
             )
+            ExportType.EXCEL -> Triple(
+                first = eventRegistrationExportService.exportExcel(event, fields ?: listOf(RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME)),
+                second = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                third = "attachment; filename=\"$title.xlsx\""
+            )
         }
+
         return ResponseEntity.ok()
             .contentLength(export.size.toLong())
             .contentType(MediaType.parseMediaType(mediaType))

@@ -25,6 +25,10 @@
       <br>
       {{ data.country || '(keine Angabe)' }}
       <br><br>
+      <b>Geburtsdatum: </b>
+      <br>
+      {{ dateOfBirth }}
+      <br><br>
       <b>Zeitstempel: </b>
       <br>
       {{ timestamp }}
@@ -56,6 +60,9 @@ export default {
     }
   },
   computed: {
+    dateOfBirth: function() {
+      return this.data.dateOfBirth ? moment(this.data.dateOfBirth).format('DD.MM.YYYY') : '(keine Angabe)';
+    },
     timestamp: function() {
       return moment(this.data.timestamp).format('DD.MM.YYYY, HH:mm');
     },

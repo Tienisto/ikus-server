@@ -27,6 +27,8 @@ data class RegistrationData(
     val email: String?,
     val address: String?,
     val country: String?,
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val dateOfBirth: LocalDate?,
 )
 

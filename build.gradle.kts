@@ -38,7 +38,7 @@ dependencies {
 	implementation("org.jsoup:jsoup:1.14.3") // parse html
 	implementation("com.drewnoakes:metadata-extractor:2.18.0") // get image orientation
 	implementation("com.github.librepdf:openpdf:1.3.28") // generate pdf
-	implementation("org.apache.poi:poi-ooxml:5.2.2") // generate word document
+	implementation("org.apache.poi:poi-ooxml:5.3.0") // generate word document
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

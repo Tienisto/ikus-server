@@ -25,7 +25,12 @@ class EventRegistrationExportService {
         return document(title) {
             text(event.nameDe, titleFont, spacingBefore = 0F, spacingAfter = 0F)
             text("Englisch: ${event.name}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
-            text("Beginn: ${event.startTime.germany().format(datePattern)}", subTitleFont, spacingBefore = 0F, spacingAfter = 0F)
+            text(
+                "Beginn: ${event.startTime.germany().format(datePattern)}",
+                subTitleFont,
+                spacingBefore = 0F,
+                spacingAfter = 0F
+            )
             text("Ort: ${event.place ?: "keine Angabe"}", subTitleFont, spacingBefore = 0F, spacingAfter = 20F)
 
             table(getRowWidths(fields)) {
@@ -44,13 +49,22 @@ class EventRegistrationExportService {
                     cell("${index + 1}", font = cellFont)
                     fields.forEach { field ->
                         when (field) {
-                            RegistrationField.MATRICULATION_NUMBER -> cell(person.matriculationNumber?.toString() ?: emptyFieldString, font = cellFont)
+                            RegistrationField.MATRICULATION_NUMBER -> cell(
+                                person.matriculationNumber?.toString() ?: emptyFieldString, font = cellFont
+                            )
+
                             RegistrationField.FIRST_NAME -> cell(person.firstName ?: emptyFieldString, font = cellFont)
                             RegistrationField.LAST_NAME -> cell(person.lastName ?: emptyFieldString, font = cellFont)
                             RegistrationField.EMAIL -> cell(person.email ?: emptyFieldString, font = cellFont)
                             RegistrationField.ADDRESS -> cell(person.address ?: emptyFieldString, font = cellFont)
                             RegistrationField.COUNTRY -> cell(person.country ?: emptyFieldString, font = cellFont)
-                            RegistrationField.DATE_OF_BIRTH -> cell(person.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: emptyFieldString, font = cellFont)
+                            RegistrationField.DATE_OF_BIRTH -> cell(
+                                person.dateOfBirth?.format(
+                                    DateTimeFormatter.ofPattern(
+                                        "dd.MM.yyyy"
+                                    )
+                                ) ?: emptyFieldString, font = cellFont
+                            )
                         }
                     }
                     cell("")
@@ -59,7 +73,7 @@ class EventRegistrationExportService {
         }
     }
 
-    fun exportWord(event: Event, title: String, fields: List<RegistrationField>): ByteArray {
+    fun exportWord(event: Event, fields: List<RegistrationField>): ByteArray {
         return wordDocument {
             logo()
             text(event.nameDe, fontSize = 16, bold = true)
@@ -76,29 +90,48 @@ class EventRegistrationExportService {
             val rowWidthSum = rowWidths.sum()
             val rowWidthsNormalized = rowWidths.map { width -> ((width / rowWidthSum) * 100 * 50).roundToLong() }
 
-            val rows = event.registrations.mapIndexed { index, r ->
-                val person = r.parseJSON<RegistrationData>()
-                val row = mutableListOf<String>()
-                row.add("${index + 1}")
-                val actualColumns = fields.map { field ->
-                    when (field) {
-                        RegistrationField.MATRICULATION_NUMBER -> person.matriculationNumber?.toString() ?: emptyFieldString
-                        RegistrationField.FIRST_NAME -> person.firstName ?: emptyFieldString
-                        RegistrationField.LAST_NAME -> person.lastName ?: emptyFieldString
-                        RegistrationField.EMAIL -> person.email ?: emptyFieldString
-                        RegistrationField.ADDRESS -> person.address ?: emptyFieldString
-                        RegistrationField.COUNTRY -> person.country ?: emptyFieldString
-                        RegistrationField.DATE_OF_BIRTH -> person.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) ?: emptyFieldString
-                    }
-                }
-                row.addAll(actualColumns)
-                row.add("")
-                row
-            }
+            val rows = getTableString(event, fields)
             table(header, rows, rowWidthsNormalized)
         }
     }
 
+    fun exportExcel(event: Event, fields: List<RegistrationField>): ByteArray {
+        val header = mutableListOf<String>()
+        header.add("Platz")
+        header.addAll(fields.map { field -> field.germanLabel })
+
+        val rows = getTableString(event, fields)
+
+        return excelDocument(
+            widths = getRowWidths(fields).map { width -> (width * 256 * 15).toInt() },
+            rows = listOf(header) + rows,
+        )
+    }
+
+    private fun getTableString(event: Event, fields: List<RegistrationField>): List<List<String>> {
+        return event.registrations.mapIndexed { index, r ->
+            val person = r.parseJSON<RegistrationData>()
+            val row = mutableListOf<String>()
+            row.add("${index + 1}")
+            val actualColumns = fields.map { field ->
+                when (field) {
+                    RegistrationField.MATRICULATION_NUMBER -> person.matriculationNumber?.toString()
+                        ?: emptyFieldString
+
+                    RegistrationField.FIRST_NAME -> person.firstName ?: emptyFieldString
+                    RegistrationField.LAST_NAME -> person.lastName ?: emptyFieldString
+                    RegistrationField.EMAIL -> person.email ?: emptyFieldString
+                    RegistrationField.ADDRESS -> person.address ?: emptyFieldString
+                    RegistrationField.COUNTRY -> person.country ?: emptyFieldString
+                    RegistrationField.DATE_OF_BIRTH -> person.dateOfBirth?.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                        ?: emptyFieldString
+                }
+            }
+            row.addAll(actualColumns)
+            row.add("")
+            row
+        }
+    }
 
     private fun getRowWidths(fields: List<RegistrationField>): List<Float> {
         return List(1 + fields.size + 1) { index ->
@@ -109,6 +142,7 @@ class EventRegistrationExportService {
                     RegistrationField.FIRST_NAME, RegistrationField.LAST_NAME, RegistrationField.COUNTRY -> 2F
                     RegistrationField.EMAIL, RegistrationField.ADDRESS -> 3F
                 }
+
                 else -> 2F
             }
         }

@@ -23,6 +23,10 @@
         <v-icon left>mdi-export-variant</v-icon>
         Word
       </v-btn>
+      <v-btn @click="submit('EXCEL')" color="primary">
+        <v-icon left>mdi-export-variant</v-icon>
+        EXCEL
+      </v-btn>
     </template>
   </GenericDialog>
 </template>
