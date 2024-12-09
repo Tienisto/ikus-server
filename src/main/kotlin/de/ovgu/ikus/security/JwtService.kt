@@ -7,6 +7,7 @@ import de.ovgu.ikus.properties.JwtProperties
 import de.ovgu.ikus.repository.UserRepo
 import io.jsonwebtoken.JwtParser
 import io.jsonwebtoken.Jwts
+import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -14,7 +15,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.util.*
-import javax.annotation.PostConstruct
 import javax.crypto.spec.SecretKeySpec
 
 data class AuthContext(val user: User, val isAdmin: Boolean)

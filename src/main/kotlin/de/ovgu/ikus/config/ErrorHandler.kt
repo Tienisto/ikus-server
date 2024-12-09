@@ -18,7 +18,7 @@ class GlobalErrorHandler : ErrorWebExceptionHandler {
     override fun handle(serverWebExchange: ServerWebExchange, throwable: Throwable): Mono<Void> {
         val (status, message) = when(throwable) {
             is ErrorCode -> Pair(throwable.code, throwable.info)
-            is ResponseStatusException -> Pair(throwable.status.value(), throwable.reason)
+            is ResponseStatusException -> Pair(throwable.statusCode.value(), throwable.reason)
             else -> {
                 throwable.printStackTrace()
                 Pair(500, throwable.message)

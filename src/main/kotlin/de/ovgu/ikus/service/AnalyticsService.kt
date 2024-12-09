@@ -36,7 +36,7 @@ class AnalyticsService (
         return appStartCacheRepo.count(monthStart, weekStart, dayStart)
     }
 
-    suspend fun deleteAppStartCacheOlderThan(timestamp: OffsetDateTime): Int {
+    suspend fun deleteAppStartCacheOlderThan(timestamp: OffsetDateTime): Long {
         return appStartCacheRepo.deleteOlderThan(timestamp)
     }
 

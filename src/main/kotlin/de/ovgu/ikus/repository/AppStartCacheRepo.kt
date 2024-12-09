@@ -64,7 +64,7 @@ class AppStartCacheRepo(
                 .awaitRowsUpdated()
     }
 
-    suspend fun deleteOlderThan(timestamp: OffsetDateTime): Int {
+    suspend fun deleteOlderThan(timestamp: OffsetDateTime): Long {
         return client.sql("DELETE FROM app_start_cache WHERE last_update < :timestamp")
                 .bind("timestamp", timestamp)
                 .fetch()

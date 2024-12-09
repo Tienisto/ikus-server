@@ -25,7 +25,7 @@ class FlywayConfig (
                 .configure()
                 .dataSource("jdbc:" + propsDB.url, propsDB.user, propsDB.password)
                 .callbacks(object : BaseCallback() {
-                    override fun supports(event: Event, context: Context): Boolean {
+                    override fun supports(event: Event, context: Context?): Boolean {
                         return event == Event.AFTER_MIGRATE
                     }
 
