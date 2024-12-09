@@ -100,6 +100,13 @@
       Dieser Vorgang ist nicht widerrufbar.
     </GenericDeleteDialog>
 
+    <router-link to="/calendar" v-slot="{ href, navigate }" custom>
+      <v-btn @click="navigate" :href="href" color="black" class="mt-6" text>
+        <v-icon left>mdi-arrow-left</v-icon>
+        Zurück
+      </v-btn>
+    </router-link>
+
   </MainContainer>
 </template>
 
