@@ -57,6 +57,10 @@
           <v-icon left>mdi-clipboard-text</v-icon>
           Anmeldungen
         </v-btn>
+        <v-btn @click="$emit('repeat')" class="mt-4" color="primary" :disabled="loading" text>
+          <v-icon left>mdi-repeat</v-icon>
+          Wiederholen
+        </v-btn>
       </div>
 
     </template>

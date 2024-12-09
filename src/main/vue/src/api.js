@@ -324,6 +324,14 @@ export async function deleteEvent({ id }) {
     });
 }
 
+export async function repeatEvent({ eventId, interval, endDate }) {
+    return await makeRequest({
+        route: 'events/repeat',
+        method: 'POST',
+        body: { eventId, interval, endDate }
+    });
+}
+
 export async function updateEventRegistration({ eventId, fields, slots, slotsWaiting, open }) {
     return await makeRequest({
         route: 'events/registrations',

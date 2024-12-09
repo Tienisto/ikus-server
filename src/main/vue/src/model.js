@@ -7,3 +7,10 @@ export const registrationFields = {
     COUNTRY: 'COUNTRY',
     DATE_OF_BIRTH: 'DATE_OF_BIRTH',
 }
+
+export const IntervalType = {
+    WEEKLY: 'WEEKLY',
+    BIWEEKLY: 'BIWEEKLY',
+    MONTHLY: 'MONTHLY',
+    MONTHLY_WEEKDAY: 'MONTHLY_WEEKDAY',
+};

@@ -24,6 +24,17 @@ object Request {
 
     data class CreateEvent(val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
     data class UpdateEvent(val id: Int, val channelId: Int, val name: MultiLocaleString, val info: MultiLocaleString?, val place: String?, val coords: CoordsDto?, val startTime: OffsetDateTime, val endTime: OffsetDateTime?)
+    enum class EventInterval {
+        WEEKLY,
+        BIWEEKLY,
+        MONTHLY,
+        MONTHLY_WEEKDAY
+    }
+    data class RepeatEventRequest(
+        val eventId: Int,
+        val interval: EventInterval,
+        val endDate: LocalDate,
+    )
     data class UpdateEventRegistrationInfo(val id: Int, val fields: List<RegistrationField>, val slots: Int, val slotsWaiting: Int, val open: Boolean)
     data class KickEventRegistration(val eventId: Int, val token: String)
 

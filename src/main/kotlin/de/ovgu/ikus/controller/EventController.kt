@@ -6,6 +6,7 @@ import de.ovgu.ikus.model.Event
 import de.ovgu.ikus.model.LogType
 import de.ovgu.ikus.security.toUser
 import de.ovgu.ikus.service.*
+import de.ovgu.ikus.utils.repeatDates
 import de.ovgu.ikus.utils.toDto
 import de.ovgu.ikus.utils.toPoint
 import de.ovgu.ikus.utils.trimOrNull
@@ -96,6 +97,32 @@ class EventController (
 
         eventService.delete(event)
         logService.log(LogType.DELETE_EVENT, authentication.toUser(), "${event.name} (${event.nameDe})")
+        cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
+    }
+
+    @PostMapping("/repeat")
+    suspend fun repeatEvent(authentication: Authentication, @RequestBody request: Request.RepeatEventRequest) {
+        val originalEvent = eventService.findById(request.eventId) ?: throw ErrorCode(404, "Event not found")
+
+        val newTimes = repeatDates(
+            originalStartTime = originalEvent.startTime,
+            originalEndTime = originalEvent.endTime,
+            interval = request.interval,
+            endDate = request.endDate,
+        )
+
+        val newEvents = newTimes.map { time ->
+            Event(
+                channelId = originalEvent.channelId,
+                place = originalEvent.place, coords = originalEvent.coords,
+                startTime = time.first, endTime = time.second,
+                name = originalEvent.name, nameDe = originalEvent.nameDe,
+                info = originalEvent.info, infoDe = originalEvent.infoDe
+            )
+        }
+
+        eventService.saveAll(newEvents)
+        logService.log(LogType.CREATE_EVENT, authentication.toUser(), "${originalEvent.name} (${originalEvent.nameDe}) ${newEvents.size}x")
         cacheService.triggerUpdateFlag(CacheKey.CALENDAR)
     }
 

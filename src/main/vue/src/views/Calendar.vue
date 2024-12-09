@@ -48,7 +48,10 @@
     </v-card>
 
     <EventDialog ref="eventDialog" v-model="dialogEvent" :channels="channels" :updating="dialogUpdating" :loading="loading"
-                  @submit="submit" @delete="showDeleteDialog" @registrations="$router.push(`/calendar/registrations?eventId=${selectedEvent.id}`)"/>
+                  @submit="submit" @delete="showDeleteDialog" @registrations="$router.push(`/calendar/registrations?eventId=${selectedEvent.id}`)"
+                  @repeat="showRepeatDialog"/>
+
+    <EventRepeatDialog ref="eventRepeatDialog" v-model="dialogRepeat" :loading="loading" @submit="submitRepeat"/>
 
     <GenericDialog v-model="dialogDelete" title="Event löschen">
       <template v-slot:content>
@@ -84,6 +87,7 @@ import {
   getAllEvents,
   getChannels,
   getEventsByChannel,
+  repeatEvent,
   updateEvent,
 } from "@/api";
 import LocaleSelector from "@/components/LocaleSelector";
@@ -92,12 +96,13 @@ import EventDialog from "@/components/dialog/EventDialog";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import {showSnackbar} from "@/utils";
 import GenericDialog from "@/components/dialog/GenericDialog";
+import EventRepeatDialog from "@/components/dialog/EventRepeatDialog.vue";
 
 const channelAll = { id: -1, name: { en: 'Alle', de: 'Alle' } };
 
 export default {
   name: 'CalendarView',
-  components: {GenericDialog, LoadingIndicator, EventDialog, Calendar, LocaleSelector, MainContainer},
+  components: {GenericDialog, LoadingIndicator, EventDialog, Calendar, LocaleSelector, MainContainer, EventRepeatDialog},
   data: () => ({
     fetching: true,
     loading: false,
@@ -109,6 +114,7 @@ export default {
     dialogEvent: false,
     dialogUpdating: false,
     dialogDelete: false,
+    dialogRepeat: false,
     selectedEvent: {}
   }),
   methods: {
@@ -150,11 +156,32 @@ export default {
       this.dialogEvent = false;
       this.dialogDelete = true;
     },
+    showRepeatDialog: function() {
+      this.$refs.eventRepeatDialog.reset();
+      this.dialogRepeat = true;
+    },
     submit: async function(event) {
       if (this.dialogUpdating)
         await this.updateEvent(event);
       else
         await this.createEvent(event);
+    },
+    submitRepeat: async function(interval, endDate) {
+      try {
+        this.loading = true;
+        await repeatEvent({
+          eventId: this.selectedEvent.id,
+          interval: interval,
+          endDate: endDate
+        });
+        this.dialogEvent = false;
+        this.dialogRepeat = false;
+        await this.fetchData();
+      } catch (e) {
+        showSnackbar('Ein Fehler ist aufgetreten');
+      } finally {
+        this.loading = false;
+      }
     },
     createEvent: async function(event) {
       try {
