@@ -8,7 +8,7 @@
       <v-card-text class="text-body-2">
         <br>
         <p class="font-weight-bold">Verantwortliche/r</p>
-        M.A. Anne-Katrin Behnert
+        M.A. Anne-Katrin Güldenpfennig
         <br>
         Dezernat Akademisches Auslandsamt (K6)
         <br>
@@ -18,7 +18,7 @@
         <br>
         Deutschland
         <br><br>
-        E-Mail: anne-katrin.behnert@ovgu.de
+        E-Mail: anne-katrin.gueldenpfennig@ovgu.de
         <br><br>
         <p class="font-weight-bold">Verarbeitetende Daten</p>
         Die Welcome to OVGU - App sammelt, speichert oder verteilt keinerlei persönliche Informationen.
