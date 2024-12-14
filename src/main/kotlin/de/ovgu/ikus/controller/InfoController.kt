@@ -42,10 +42,10 @@ class InfoController (
 
     @GetMapping("/status")
     suspend fun status(request: ServerHttpRequest): StatusDto {
-
         val token = request.cookies["jwt"]?.firstOrNull()?.value
-        val env = when (jwtService.getUser(token)?.name) {
-            propsAdmin.name -> {
+        val isAdmin = jwtService.getUser(token)?.name == propsAdmin.name
+        val env = when (isAdmin) {
+            true -> {
                 listOf(
                         EnvDto("storage.path", "Pfad zum persistenten Dateispeicher", "(ein invalider Pfad)", propsStorage.path),
                         EnvDto("db.url", "URL der Datenbank", BuildInfo.DEFAULT_PROPS["db.url"] as String, propsDB.url),
@@ -64,7 +64,7 @@ class InfoController (
         return StatusDto(
                 version = BuildInfo.VERSION,
                 date = BuildInfo.BUILD_DATE,
-                runTime = System.currentTimeMillis() - startTime,
+                runTime = if (isAdmin) System.currentTimeMillis() - startTime else null,
                 database = true,
                 storageRead = fileService.hasReadAccess(),
                 storageWrite = fileService.hasWriteAccess(),
