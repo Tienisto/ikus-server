@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "de.ovgu"
-version = "1.10.2"
+version = "1.11.0"
 
 java {
 	toolchain {
