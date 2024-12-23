@@ -31,13 +31,11 @@
         <LocaleSelector v-model="locale" />
       </div>
       <div v-if="!post && !link" class="mt-6 mb-4" style="display: flex; align-items: center; justify-content: space-evenly">
-        <v-btn @click="showSearchPost" rounded>
-          <v-icon left>mdi-pencil</v-icon>
+        <v-btn @click="showSearchPost" prepend-icon="mdi-pencil" color="primary" rounded>
           Post
         </v-btn>
 
-        <v-btn @click="showSearchLink" rounded>
-          <v-icon left>mdi-web</v-icon>
+        <v-btn @click="showSearchLink" prepend-icon="mdi-web" color="primary" rounded>
           Link
         </v-btn>
       </div>

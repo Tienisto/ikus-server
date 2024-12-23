@@ -11,8 +11,7 @@
       <p class="text-h6 mb-3">Optionen</p>
       <LocaleSelector v-model="locale" />
       <br>
-      <v-btn @click="showCreateGroup" color="primary" block :disabled="loading">
-        <v-icon left>mdi-plus</v-icon>
+      <v-btn @click="showCreateGroup" color="primary" block :disabled="loading" prepend-icon="mdi-plus">
         Neue Gruppe
       </v-btn>
     </template>

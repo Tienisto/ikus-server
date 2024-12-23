@@ -21,8 +21,7 @@
 
       <br>
 
-      <v-btn @click="showCreateEvent()" color="primary" block :disabled="loading || channels.length === 0">
-        <v-icon left>mdi-plus</v-icon>
+      <v-btn @click="showCreateEvent()" color="primary" block :disabled="loading || channels.length === 0" prepend-icon="mdi-plus">
         Neues Event
       </v-btn>
     </template>

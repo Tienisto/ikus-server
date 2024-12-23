@@ -16,8 +16,7 @@
 
       <br>
 
-      <v-btn @click="showCreateDialog" color="primary" block :disabled="loading">
-        <v-icon left>mdi-plus</v-icon>
+      <v-btn @click="showCreateDialog" color="primary" block :disabled="loading" prepend-icon="mdi-plus">
         Neuer Eintrag
       </v-btn>
     </template>

@@ -9,8 +9,7 @@
           Hier sehen Sie den aktuellen Stand auf einem Blick.
         </div>
         <div>
-          <v-btn @click="showAccountSettings" rounded color="primary">
-            <v-icon left>mdi-account</v-icon>
+          <v-btn @click="showAccountSettings" color="primary" prepend-icon="mdi-account">
             {{ user.name }}
           </v-btn>
         </div>
