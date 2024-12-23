@@ -8,8 +8,9 @@ Let's run this server on your (local) machine.
 1. Install Java 17 and Node (22 or greater)
 2. Build the vue frontend
     1. `cd <project root>/src/main/vue`
-    2. `npm i`
-    3. `npm run build`
+    2. `npm install -g pnpm`
+    3. `pnpm i`
+    4. `pnpm generate`
 3. Build the spring server, it will use the compiled files by vue
     1. `cd <project root>`
     2. `./gradle build -x test` or `gradlew.bat build -x test`
