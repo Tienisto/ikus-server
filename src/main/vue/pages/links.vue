@@ -29,10 +29,10 @@
               class="mb-6">
 
       <template v-slot:item="{ item }">
-        <span class="">
+        <span>
           <b>{{ localized(item.info) }}</b>
           <br>
-          {{ localized(item.url) }}
+          <span style="line-break: anywhere">{{ localized(item.url) }}</span>
         </span>
       </template>
 
