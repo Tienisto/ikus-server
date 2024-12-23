@@ -46,6 +46,7 @@ class VueController (
             }
         }
 
-        return ClassPathResource("static/index.html")
+        // This is safe because we only allow specific paths
+        return ClassPathResource("static$path/index.html")
     }
 }

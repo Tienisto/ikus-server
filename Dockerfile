@@ -1,14 +1,17 @@
-FROM node:16.14.2-alpine3.15 as stage-vue
+FROM node:22.12.0-slim as stage-vue
 WORKDIR /vue-build
+
+# setup pnpm
+RUN npm i -g pnpm
 
 # add vue dependencies
 COPY src/main/vue/package.json .
-COPY src/main/vue/package-lock.json .
-RUN npm i
+COPY src/main/vue/pnpm-lock.yaml .
+RUN pnpm i
 
 # build vue
 COPY src/main/vue/ .
-RUN npm run build
+RUN pnpm generate
 
 FROM gradle:8.5-jdk17 as stage-spring
 WORKDIR /build

@@ -1,24 +1,28 @@
-# vue
+# Welcome to OVGU App Website
 
-## Project setup
-```
-npm install
-```
+## Setup
 
-### Compiles and hot-reloads for development
-```
-npm run serve
+Make sure to install [pnpm](https://pnpm.io).
+
+```bash
+npm install -g pnpm
 ```
 
-### Compiles and minifies for production
-```
-npm run build
+Get dependencies
+
+```bash
+pnpm i
 ```
 
-### Lints and fixes files
-```
-npm run lint
+Start the development server
+
+```bash
+pnpm dev
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Documentation
+
+### Material Icons
+
+Besides the default Material Design Icons, we also use the [Material Icons](https://fonts.google.com/icons) font.
+These icons are added in `public/mi/*` and loaded in `nuxt.config.ts`.
