@@ -196,7 +196,7 @@ export default {
     loading: false,
     channelsWithAll: [] as ChannelDto[],
     channels: [channelAll] as ChannelDto[],
-    channel: {} as ChannelDto,
+    channel: channelAll,
     posts: [] as PostDto[],
     pinned: [],
     locale: 'EN',

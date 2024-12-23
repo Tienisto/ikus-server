@@ -90,7 +90,7 @@ export default {
     loading: false,
     channelsWithAll: [] as ChannelDto[],
     channels: [] as ChannelDto[],
-    channel: {} as ChannelDto,
+    channel: channelAll as ChannelDto,
     locale: 'EN',
     events: [] as EventDto[],
     dialogEvent: false,
